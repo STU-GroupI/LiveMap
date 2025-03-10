@@ -28,6 +28,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {Icon} from "react-native-paper";
+import {Camera, MapView} from "@maplibre/maplibre-react-native";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -61,6 +62,25 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const mapConfig = {
+      version: 8,
+      sources: {
+          osm: {
+              type: 'raster',
+              tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], // OSM Tiles
+              tileSize: 256,
+          },
+      },
+      layers: [
+          {
+              id: 'osm-tiles',
+              type: 'raster',
+              source: 'osm',
+              minzoom: 0,
+              maxzoom: 19,
+          },
+      ],
+  };
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -88,6 +108,11 @@ function App(): React.JSX.Element {
                 style={backgroundStyle}>
                 <View style={{paddingRight: safePadding}}>
                     <Header/>
+                </View>
+                <View>
+                    <MapView mapStyle={mapConfig} style={{height: 300}}>
+                        <Camera />
+                    </MapView>
                 </View>
                 <View
                     style={{
