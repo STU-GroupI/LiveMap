@@ -5,6 +5,9 @@
  * @format
  */
 
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
+
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
@@ -23,6 +26,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {Icon} from "react-native-paper";
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -73,39 +78,42 @@ function App(): React.JSX.Element {
   const safePadding = '5%';
 
   return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
+    <GestureHandlerRootView>
+        <View style={backgroundStyle}>
+            <StatusBar
+                barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                backgroundColor={backgroundStyle.backgroundColor}
+            />
+            <ScrollView
+                style={backgroundStyle}>
+                <View style={{paddingRight: safePadding}}>
+                    <Header/>
+                </View>
+                <View
+                    style={{
+                        backgroundColor: isDarkMode ? Colors.black : Colors.white,
+                        paddingHorizontal: safePadding,
+                        paddingBottom: safePadding,
+                    }}>
+                    <Section title="Step One">
+                        <Icon source="rocket" size={30} color="#900" />
+                        Edit <Text style={styles.highlight}>App.tsx</Text> to change this
+                        screen and then come back to see your edits.
+                    </Section>
+                    <Section title="See Your Changes">
+                        <ReloadInstructions />
+                    </Section>
+                    <Section title="Debug">
+                        <DebugInstructions />
+                    </Section>
+                    <Section title="Learn More">
+                        Read the docs to discover what to do next:
+                    </Section>
+                    <LearnMoreLinks />
+                </View>
+            </ScrollView>
         </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
