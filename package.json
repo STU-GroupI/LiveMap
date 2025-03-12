@@ -13,6 +13,8 @@
     "@gorhom/bottom-sheet": "^5",
     "@maplibre/maplibre-react-native": "^10.1.0",
     "@react-navigation/native-stack": "^7.2.1",
+    "@turf/turf": "^7.2.0",
+    "axios": "^1.8.3",
     "react": "19.0.0",
     "react-native": "0.78.0",
     "react-native-gesture-handler": "^2.24.0",
