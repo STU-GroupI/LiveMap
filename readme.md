@@ -1,13 +1,33 @@
+# 📌 Livemap ![DEMO DEVOPS](https://img.shields.io/badge/Livemap-React_Native_App-red)
+---
+| CI     | status                                                                                                                                                                |
+|--------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Eslint | [![ESLint Linter](https://github.com/STU-GroupI/LiveMap/actions/workflows/linter.yml/badge.svg)](https://github.com/STU-GroupI/LiveMap/actions/workflows/linter.yml)  |
+| Jest   | [![Jest Code Coverage](https://github.com/STU-GroupI/LiveMap/actions/workflows/jest.yml/badge.svg)](https://github.com/STU-GroupI/LiveMap/actions/workflows/jest.yml) |
+
+## 🚩 Structure
+
+```markdown
+│── src/             # App code (create this directory)
+│   ├── Interfaces/  # Interfaces (TS)
+│   ├── components/  # Reusable UI components
+│   ├── screens/     # Screens
+│   ├── navigation/  # Navigation setup
+│   ├── store/       # State management?
+│   ├── models/
+│   ├── services/    # API calls
+│   ├── assets/      # Images, icons, fonts
+│── App.js           # Entry point
+```
+
+
+## ⏳ Installation
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
-# Getting Started
-
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Step 1: Start Metro
-
+### Step 1: Start Metro
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
 To start the Metro dev server, run the following command from the root of your React Native project:
 
 ```sh
@@ -18,12 +38,11 @@ npm start
 yarn start
 ```
 
-## Step 2: Build and run your app
+### Step 2: Build and run your app
 
 With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
-### Android
-
+#### Android
 ```sh
 # Using npm
 npm run android
@@ -32,10 +51,8 @@ npm run android
 yarn android
 ```
 
-### iOS
-
+#### iOS
 For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
 The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
 
 ```sh
@@ -62,31 +79,37 @@ If everything is set up correctly, you should see your new app running in the An
 
 This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
-## Step 3: Modify your app
+### Step 3: Modify
 
 Now that you have successfully run the app, let's make changes!
-
 Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
 When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
 
 - **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
 - **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
-## Congratulations! :tada:
 
-You've successfully run and modified your React Native App. :partying_face:
+## 📦 Packages
 
-### Now what?
+| Package        | Source                                                                                                                         |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------|
+| Reanimated     | [https://docs.swmansion.com/react-native-reanimated/ ](https://docs.swmansion.com/react-native-reanimated/)                    |
+| GestureHandler | [https://docs.swmansion.com/react-native-gesture-handler/docs/](https://docs.swmansion.com/react-native-gesture-handler/docs/) |
+| Navigation     | [https://reactnavigation.org/](https://reactnavigation.org/)                                                                   |
+| Screens        | [https://docs.swmansion.com/react-native-screens/](https://docs.swmansion.com/react-native-screens/)                           |
+| Gorham Sheets  | [https://github.com/gorhom/react-native-bottom-sheetl](https://github.com/gorhom/react-native-bottom-sheetl)                   |
+| Paper          | [https://reactnativepaper.com/](https://reactnativepaper.com/)                                                                 |
+| Maplibre       | [https://github.com/maplibre/maplibre-react-native](https://github.com/maplibre/maplibre-react-native)                         |
+| Turf           | [https://www.npmjs.com/package/@turf/turf](https://www.npmjs.com/package/@turf/turf)                                           |
+| Axios          | [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)                                                     |
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
 
-# Troubleshooting
+## ⛓️‍💥 Troubleshooting
 
 If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-# Learn More
+
+## 🧪 Learn More
 
 To learn more about React Native, take a look at the following resources:
 
