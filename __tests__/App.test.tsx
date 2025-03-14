@@ -2,6 +2,9 @@
  * @format
  */
 
+import 'react-native-gesture-handler';
+import 'react-native-reanimated';
+
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
 import App from '../App';
