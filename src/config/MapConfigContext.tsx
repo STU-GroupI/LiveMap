@@ -2,6 +2,7 @@ import React, {createContext, useContext, useEffect, useRef, useState} from 'rea
 import MAP_STYLE, {DEFAULT_CENTER} from './MapConfig.ts';
 import {CameraRef, LocationManager} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
+import {POI} from '../models/POI.ts';
 
 
 const defaultConfig: IMapConfig = {
@@ -11,6 +12,7 @@ const defaultConfig: IMapConfig = {
 
 const MapConfigContext = createContext<IMapConfigContext>({
     config: defaultConfig,
+    pois: [],
     loading: true,
     handleRecenter: () => {},
 });
@@ -19,6 +21,17 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const [config, setConfig] = useState<IMapConfig>(defaultConfig);
     const [loading, setLoading] = useState(true);
     const cameraRef = useRef<CameraRef>(null);
+
+    const [pois] = useState<POI[]>([
+        {
+            longitude: 5.0400051970327695,
+            latitude: 51.645112317326367,
+        },
+        {
+            longitude: 5.037716482415021,
+            latitude: 51.64509753870843,
+        },
+    ]);
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -51,7 +64,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     };
 
     return (
-        <MapConfigContext.Provider value={{config, loading, cameraRef, handleRecenter}}>
+        <MapConfigContext.Provider value={{config, pois, loading, cameraRef, handleRecenter}}>
             {children}
         </MapConfigContext.Provider>
     );

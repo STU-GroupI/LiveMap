@@ -3,13 +3,14 @@ import {useMapConfig} from '../config/MapConfigContext.tsx';
 import useLocation from '../hooks/UseLocation.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {Camera, MapView, UserLocation} from '@maplibre/maplibre-react-native';
+import {Camera, MapView, PointAnnotation, UserLocation} from '@maplibre/maplibre-react-native';
 import {Icon} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const MapScreen = () => {
     const {
         config,
+        pois,
         loading,
         cameraRef,
         handleRecenter,
@@ -31,6 +32,18 @@ const MapScreen = () => {
                     ref={cameraRef}
                     centerCoordinate={config.center}
                 />
+
+                {pois.map((poi, idx) => (
+                    <PointAnnotation
+                        key={idx}
+                        id={idx.toString()}
+                        coordinate={[poi.longitude, poi.latitude]}
+                        anchor={{ x: 0.45, y: 0.9 }}
+                        onSelected={() => console.log('POI selected:', poi)}
+                    >
+                        <Icon size={30} source="map-marker" />
+                    </PointAnnotation>
+                ))}
 
                 <UserLocation showsUserHeadingIndicator={true}/>
             </MapView>
