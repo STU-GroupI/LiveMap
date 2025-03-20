@@ -24,6 +24,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
     const [pois] = useState<POI[]>([
         {
+            guid: '0',
             longitude: 5.0400051970327695,
             latitude: 51.645112317326367,
             title: 'Supermarkt Landal Plus',
@@ -31,6 +32,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
             wheelChairAccessible: true,
         },
         {
+            guid: '1',
             longitude: 5.037716482415021,
             latitude: 51.64509753870843,
             title: 'Supermarkt Landal Min',

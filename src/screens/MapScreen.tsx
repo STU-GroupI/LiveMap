@@ -1,17 +1,17 @@
-import React, { useRef, useState  } from 'react';
+import React, { useState  } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {Icon} from 'react-native-paper';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {useMapConfig} from '../config/MapConfigContext.tsx';
 import useLocation from '../hooks/UseLocation.tsx';
+import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
 
-import {Camera, MapView, PointAnnotation, UserLocation} from '@maplibre/maplibre-react-native';
+import {Camera, MapView, UserLocation} from '@maplibre/maplibre-react-native';
 import { POI } from '../models/POI.ts';
 import MapPOIBottomSheet from '../components/MapPOIBottomSheet.tsx';
-import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import POIMarker from '../components/POIMarker.tsx';
 
 const MapScreen = () => {
     const {
@@ -22,70 +22,66 @@ const MapScreen = () => {
         handleRecenter,
     } = useMapConfig();
     const { hasPermission } = useLocation();
+    const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
     const insets = useSafeAreaInsets();
 
-    // ref
-    const bottomSheetRef = useRef<BottomSheetMethods | null>(null);
-
-    const [poi, setPoi] = useState<POI|undefined>();
-
-    // callbacks
-    const handleOpenSheet = () => {
-        if (bottomSheetRef.current) {
-          bottomSheetRef.current.snapToIndex(0);
-        }
-    };
+    const [activePoi, setActivePoi] = useState<POI|undefined>();
 
     if (loading || !hasPermission) {
         return <Loader />;
     }
 
+    const handlePoiSelect = (selectedPoi: POI) => {
+        if (activePoi?.guid !== selectedPoi.guid) {
+            cameraRef?.current?.flyTo([selectedPoi.longitude, selectedPoi.latitude]);
+            handleClose(() => setActivePoi(undefined));
+
+            setActivePoi({ ...selectedPoi });
+            setTimeout(() => handleOpen(), 0);
+        }
+    };
+
     return (
         <View style={styles.container}>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <MapView
-                    style={styles.map}
-                    mapStyle={config.mapStyle}
-                >
-                    <Camera
-                        ref={cameraRef}
-                        centerCoordinate={config.center}
-                    />
+            <MapView
+                style={styles.map}
+                mapStyle={config.mapStyle}
+                rotateEnabled={false}
+            >
+                <Camera
+                    ref={cameraRef}
+                    centerCoordinate={config.center}
+                />
 
-                {pois.map((selectedPoi, idx) => (
-                    <PointAnnotation
-                        key={idx}
-                        id={idx.toString()}
-                        coordinate={[selectedPoi.longitude, selectedPoi.latitude]}
-                        anchor={{ x: 0.45, y: 0.9 }}
-                        onSelected={() => {
-                            setPoi(selectedPoi);
-                            handleOpenSheet();
-                        }}
-                    >
-                        <Icon size={30} source="map-marker" />
-                    </PointAnnotation>
+                {pois.map((mapPoi) => (
+                    <POIMarker
+                        key={`poi-${mapPoi.guid}`}
+                        poi={mapPoi}
+                        isActive={activePoi?.guid === mapPoi.guid}
+                        onSelect={handlePoiSelect}
+                    />
                 ))}
 
-                    <UserLocation showsUserHeadingIndicator={true}/>
-                </MapView>
+                <UserLocation showsUserHeadingIndicator={true}/>
+            </MapView>
 
-                <View
-                    style={[
-                        styles.controls,
-                        {
-                            top: insets.top + 10,
-                            right: insets.right + 10,
-                        },
-                    ]}
-                >
-                    <TouchableOpacity style={styles.button} onPress= {() => { handleOpenSheet(); handleRecenter;}} activeOpacity={0.9}>
-                        <Icon source="crosshairs-gps" size={26} color="#000" />
-                    </TouchableOpacity>
-                </View>
+            <View
+                style={[
+                    styles.controls,
+                    {
+                        top: insets.top + 10,
+                        right: insets.right + 10,
+                    },
+                ]}
+            >
+                <TouchableOpacity style={styles.button} onPress= {() => handleRecenter} activeOpacity={0.9}>
+                    <Icon source="crosshairs-gps" size={26} color="#000" />
+                </TouchableOpacity>
+            </View>
 
-                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={poi} />
-            </GestureHandlerRootView>
+            {activePoi && (
+                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
+            )}
         </View>
     );
 };
@@ -96,6 +92,20 @@ const styles = StyleSheet.create({
     },
     map: {
         flex: 1,
+    },
+    markerWrapper: {
+        padding: 10,
+        backgroundColor: 'transparent',
+    },
+    markerHitbox: {
+        padding: 10,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+    },
+    markerSelected: {
+        backgroundColor: 'rgba(0, 23, 238, 0.1)',
     },
     controls: {
         position: 'absolute',
