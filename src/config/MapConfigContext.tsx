@@ -26,10 +26,16 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         {
             longitude: 5.0400051970327695,
             latitude: 51.645112317326367,
+            title: "Supermarkt Landal Plus",
+            rating: 4.5,
+            wheelChairAccessible: true,
         },
         {
             longitude: 5.037716482415021,
             latitude: 51.64509753870843,
+            title: "Supermarkt Landal Min",
+            rating: 3.5,
+            wheelChairAccessible: false,
         },
     ]);
 
