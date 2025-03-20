@@ -19,7 +19,7 @@ const UseLocation = () => {
         };
 
         requestPermission();
-    });
+    }, []);
 
 
     return { hasPermission };
