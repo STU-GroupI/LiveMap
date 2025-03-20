@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useRef, useState  } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text, Image } from 'react-native';
-import {Icon, Button} from 'react-native-paper';
-import { GestureHandlerRootView, ScrollView } from 'react-native-gesture-handler';
+import React, { useRef, useState  } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import {Icon} from 'react-native-paper';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {useMapConfig} from '../config/MapConfigContext.tsx';
@@ -9,7 +9,6 @@ import useLocation from '../hooks/UseLocation.tsx';
 import Loader from '../components/Loader.tsx';
 
 import {Camera, MapView, PointAnnotation, UserLocation} from '@maplibre/maplibre-react-native';
-import BottomSheet, { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 import { POI } from '../models/POI.ts';
 import MapPOIBottomSheet from '../components/MapPOIBottomSheet.tsx';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -39,7 +38,7 @@ const MapScreen = () => {
 
     if (loading || !hasPermission) {
         return <Loader />;
-    } 
+    }
 
     return (
         <View style={styles.container}>
@@ -53,14 +52,14 @@ const MapScreen = () => {
                         centerCoordinate={config.center}
                     />
 
-                {pois.map((poi, idx) => (
+                {pois.map((selectedPoi, idx) => (
                     <PointAnnotation
                         key={idx}
                         id={idx.toString()}
-                        coordinate={[poi.longitude, poi.latitude]}
+                        coordinate={[selectedPoi.longitude, selectedPoi.latitude]}
                         anchor={{ x: 0.45, y: 0.9 }}
                         onSelected={() => {
-                            setPoi(poi);
+                            setPoi(selectedPoi);
                             handleOpenSheet();
                         }}
                     >
@@ -80,7 +79,7 @@ const MapScreen = () => {
                         },
                     ]}
                 >
-                    <TouchableOpacity style={styles.button} onPress= {() => { handleOpenSheet(); handleRecenter}} activeOpacity={0.9}>
+                    <TouchableOpacity style={styles.button} onPress= {() => { handleOpenSheet(); handleRecenter;}} activeOpacity={0.9}>
                         <Icon source="crosshairs-gps" size={26} color="#000" />
                     </TouchableOpacity>
                 </View>

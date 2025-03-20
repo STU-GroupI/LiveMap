@@ -1,4 +1,4 @@
-import { Double } from "react-native/Libraries/Types/CodegenTypes";
+import { Double } from 'react-native/Libraries/Types/CodegenTypes';
 
 export type POI = {
     longitude: number;

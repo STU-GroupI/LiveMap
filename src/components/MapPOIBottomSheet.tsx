@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import React, { useCallback, useRef, useState } from 'react';
-import {View, StyleSheet, ActivityIndicator, Image, Text, TouchableOpacity} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import { Icon } from 'react-native-paper';
 import { POI } from '../models/POI';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
