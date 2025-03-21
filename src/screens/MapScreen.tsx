@@ -2,12 +2,11 @@ import React from 'react';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
-import {Camera, MapView} from '@maplibre/maplibre-react-native';
+import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
 
 import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const MapScreen = () => {
     const {
@@ -20,7 +19,6 @@ const MapScreen = () => {
         handleZoomIn,
         handleZoomOut,
     } = useMapConfig();
-    const insets = useSafeAreaInsets();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;

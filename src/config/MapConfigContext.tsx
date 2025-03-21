@@ -1,6 +1,6 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM} from './MapConfig.ts';
-import {CameraRef, LocationManager} from '@maplibre/maplibre-react-native';
+import {CameraRef} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
@@ -47,11 +47,10 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
     const handleRecenter = async () => {
         try {
-            const location = await LocationManager.getLastKnownLocation();
-            if (location) {
-                const { coords } = location;
+            if (userLocation) {
+                const [ longitude, latitude ] = userLocation;
                 cameraRef.current?.setCamera({
-                    centerCoordinate: [coords.longitude, coords.latitude],
+                    centerCoordinate: [longitude, latitude],
                     zoomLevel: config.maxZoom,
                     animationDuration: 1000,
                 });
