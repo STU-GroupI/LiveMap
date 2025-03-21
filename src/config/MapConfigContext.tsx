@@ -3,6 +3,8 @@ import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM} from './Map
 import {CameraRef, LocationManager} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
 
+import useLocation from '../hooks/UseLocation.tsx';
+
 
 const defaultConfig: IMapConfig = {
     mapStyle: MAP_STYLE,
@@ -15,6 +17,8 @@ const defaultConfig: IMapConfig = {
 const MapConfigContext = createContext<IMapConfigContext>({
     config: defaultConfig,
     loading: true,
+    userLocation: null,
+    hasLocationPermission: false,
     handleRecenter: () => {},
     handleZoomIn: () => {},
     handleZoomOut: () => {},
@@ -25,6 +29,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const [loading, setLoading] = useState(true);
     const zoomRef  = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
+    const { hasLocationPermission, userLocation } = useLocation();
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -73,7 +78,18 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     };
 
     return (
-        <MapConfigContext.Provider value={{config, loading, cameraRef, handleRecenter, handleZoomIn, handleZoomOut}}>
+        <MapConfigContext.Provider value={
+            {
+                config,
+                userLocation,
+                hasLocationPermission,
+                loading,
+                cameraRef,
+                handleRecenter,
+                handleZoomIn,
+                handleZoomOut,
+            }
+        }>
             {children}
         </MapConfigContext.Provider>
     );

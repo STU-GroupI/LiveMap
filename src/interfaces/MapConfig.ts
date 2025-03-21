@@ -12,6 +12,8 @@ export interface IMapConfig {
 export interface IMapConfigContext {
     config: IMapConfig,
     loading: boolean,
+    userLocation: [number, number] | null,
+    hasLocationPermission: boolean,
     cameraRef?: React.RefObject<CameraRef | null>,
     handleRecenter: () => void,
     handleZoomIn: () => void,
