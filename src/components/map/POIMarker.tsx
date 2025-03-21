@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
-import { POI } from '../models/POI';
+import { POI } from '../../models/POI.ts';
 
 interface POIMarkerProps {
     poi: POI;

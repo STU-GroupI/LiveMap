@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { POI } from '../models/POI';
+import { POI } from '../../models/POI.ts';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import BaseBottomSheet from './base/baseBottomSheet.tsx';
+import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
@@ -26,7 +26,7 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                 <View style={styles.imageWrapper}>
                     <Image
                         style={styles.image}
-                        source={require('../images/plus-supermarket.png')}
+                        source={require('../../images/plus-supermarket.png')}
                     />
                 </View>
                 <TouchableOpacity style={styles.modalReportButton} activeOpacity={0.8}>

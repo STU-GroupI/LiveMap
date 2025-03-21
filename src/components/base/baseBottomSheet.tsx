@@ -34,6 +34,7 @@ export default function BaseBottomSheet({
             snapPoints={snapPoints}
             enablePanDownToClose
             onChange={handleSheetChange}
+            style={styles.bottomSheetContainer}
         >
             <BottomSheetScrollView style={styles.scrollContainer}>
                 {children}
@@ -44,6 +45,10 @@ export default function BaseBottomSheet({
 
 
 const styles = StyleSheet.create({
+    bottomSheetContainer: {
+        zIndex: 100,
+        elevation: 100,
+    },
     scrollContainer: {
         flex: 1,
         backgroundColor: '#fff',

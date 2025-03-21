@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
 import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
@@ -10,8 +10,8 @@ import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 
 import { POI } from '../models/POI.ts';
-import MapPOIBottomSheet from '../components/MapPOIBottomSheet.tsx';
-import POIMarker from '../components/POIMarker.tsx';
+import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
+import POIMarker from '../components/map/POIMarker.tsx';
 
 const MapScreen = () => {
     const {
@@ -26,10 +26,8 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
     const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
-
     const [activePoi, setActivePoi] = useState<POI|undefined>();
 
-    if (loading || !hasPermission) {
     if (loading || !hasLocationPermission) {
         return <Loader />;
     }
@@ -80,13 +78,13 @@ const MapScreen = () => {
                 )}
             </MapView>
 
-            {activePoi && (
-                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
-            )}
-
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
             <MapTopBarButton />
+
+            {activePoi && (
+                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
+            )}
         </View>
     );
 };
@@ -119,17 +117,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#0017EE',
         borderWidth: 2,
         borderColor: '#fff',
-    },
-    controls: {
-        position: 'absolute',
-    },
-    button: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 });
 

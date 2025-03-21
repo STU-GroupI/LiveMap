@@ -33,12 +33,13 @@ const getStyles = (theme: MD3Theme) =>
     StyleSheet.create({
         controls: {
             position: 'absolute',
+            zIndex: 1,
         },
+
         button: {
             width: 52,
             height: 52,
-            borderRadius: 24,
-            borderColor: theme.colors.outline,
+            borderRadius: 26,
             backgroundColor: theme.colors.background,
             justifyContent: 'center',
             alignItems: 'center',
