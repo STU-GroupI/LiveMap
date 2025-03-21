@@ -53,7 +53,7 @@ const MapScreen = () => {
                     centerCoordinate={config.center}
                 />
 
-                {pois.map((mapPoi) => (
+                {pois.length > 0 && pois.map((mapPoi) => (
                     <POIMarker
                         key={`poi-${mapPoi.guid}`}
                         poi={mapPoi}
