@@ -1,14 +1,14 @@
-import React, { useState  } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import {Icon} from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import React from 'react';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
-import useLocation from '../hooks/UseLocation.tsx';
 import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
+import {StyleSheet, View} from 'react-native';
+import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
 
-import {Camera, MapView, UserLocation} from '@maplibre/maplibre-react-native';
+import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
+import MapCenterButton from '../components/map/MapCenterButton.tsx';
+import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
+
 import { POI } from '../models/POI.ts';
 import MapPOIBottomSheet from '../components/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/POIMarker.tsx';
@@ -18,16 +18,19 @@ const MapScreen = () => {
         config,
         pois,
         loading,
+        hasLocationPermission,
+        userLocation,
         cameraRef,
         handleRecenter,
+        handleZoomIn,
+        handleZoomOut,
     } = useMapConfig();
-    const { hasPermission } = useLocation();
     const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
-    const insets = useSafeAreaInsets();
 
     const [activePoi, setActivePoi] = useState<POI|undefined>();
 
     if (loading || !hasPermission) {
+    if (loading || !hasLocationPermission) {
         return <Loader />;
     }
 
@@ -46,11 +49,17 @@ const MapScreen = () => {
             <MapView
                 style={styles.map}
                 mapStyle={config.mapStyle}
+                compassEnabled={true}
+                compassViewPosition={3}
                 rotateEnabled={false}
             >
                 <Camera
                     ref={cameraRef}
                     centerCoordinate={config.center}
+                    zoomLevel={config.zoom}
+                    minZoomLevel={config.minZoom}
+                    maxZoomLevel={config.maxZoom}
+                    followUserLocation={false}
                 />
 
                 {pois.length > 0 && pois.map((mapPoi) => (
@@ -62,26 +71,22 @@ const MapScreen = () => {
                     />
                 ))}
 
-                <UserLocation showsUserHeadingIndicator={true}/>
+                {userLocation && (
+                    <PointAnnotation id="user-location" coordinate={userLocation}>
+                        <View
+                            style={styles.mapUserMarker}
+                        />
+                    </PointAnnotation>
+                )}
             </MapView>
-
-            <View
-                style={[
-                    styles.controls,
-                    {
-                        top: insets.top + 10,
-                        right: insets.right + 10,
-                    },
-                ]}
-            >
-                <TouchableOpacity style={styles.button} onPress= {() => handleRecenter} activeOpacity={0.9}>
-                    <Icon source="crosshairs-gps" size={26} color="#000" />
-                </TouchableOpacity>
-            </View>
 
             {activePoi && (
                 <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
             )}
+
+            <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
+            <MapCenterButton handleRecenter={handleRecenter} />
+            <MapTopBarButton />
         </View>
     );
 };
@@ -106,6 +111,14 @@ const styles = StyleSheet.create({
     },
     markerSelected: {
         backgroundColor: 'rgba(0, 23, 238, 0.1)',
+    },
+    mapUserMarker: {
+        width: 18,
+        height: 18,
+        borderRadius: 10,
+        backgroundColor: '#0017EE',
+        borderWidth: 2,
+        borderColor: '#fff',
     },
     controls: {
         position: 'absolute',
