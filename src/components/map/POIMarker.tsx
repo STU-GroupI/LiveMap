@@ -10,7 +10,7 @@ interface POIMarkerProps {
     onSelect: (poi: POI) => void;
 }
 
-const POIMarker = ({ poi, isActive, onSelect }: POIMarkerProps) => {
+export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) {
     return (
         <PointAnnotation
             key={`poi-${poi.guid}-${isActive ? 'active' : 'inactive'}`}
@@ -47,5 +47,3 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 23, 238, 0.1)',
     },
 });
-
-export default POIMarker;
