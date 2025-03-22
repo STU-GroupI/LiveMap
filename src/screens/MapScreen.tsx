@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
+import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
@@ -8,9 +9,14 @@ import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 
+import { POI } from '../models/POI.ts';
+import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
+import POIMarker from '../components/map/POIMarker.tsx';
+
 const MapScreen = () => {
     const {
         config,
+        pois,
         loading,
         hasLocationPermission,
         userLocation,
@@ -19,10 +25,22 @@ const MapScreen = () => {
         handleZoomIn,
         handleZoomOut,
     } = useMapConfig();
+    const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
+    const [activePoi, setActivePoi] = useState<POI|undefined>();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
     }
+
+    const handlePoiSelect = (selectedPoi: POI) => {
+        if (activePoi?.guid !== selectedPoi.guid) {
+            cameraRef?.current?.flyTo([selectedPoi.longitude, selectedPoi.latitude]);
+            handleClose(() => setActivePoi(undefined));
+
+            setActivePoi({ ...selectedPoi });
+            setTimeout(() => handleOpen(), 0);
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -42,6 +60,15 @@ const MapScreen = () => {
                     followUserLocation={false}
                 />
 
+                {pois.length > 0 && pois.map((mapPoi) => (
+                    <POIMarker
+                        key={`poi-${mapPoi.guid}`}
+                        poi={mapPoi}
+                        isActive={activePoi?.guid === mapPoi.guid}
+                        onSelect={handlePoiSelect}
+                    />
+                ))}
+
                 {userLocation && (
                     <PointAnnotation id="user-location" coordinate={userLocation}>
                         <View
@@ -54,6 +81,10 @@ const MapScreen = () => {
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
             <MapTopBarButton />
+
+            {activePoi && (
+                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
+            )}
         </View>
     );
 };
@@ -65,6 +96,20 @@ const styles = StyleSheet.create({
     map: {
         flex: 1,
     },
+    markerWrapper: {
+        padding: 10,
+        backgroundColor: 'transparent',
+    },
+    markerHitbox: {
+        padding: 10,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 10,
+    },
+    markerSelected: {
+        backgroundColor: 'rgba(0, 23, 238, 0.1)',
+    },
     mapUserMarker: {
         width: 18,
         height: 18,
@@ -72,17 +117,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#0017EE',
         borderWidth: 2,
         borderColor: '#fff',
-    },
-    controls: {
-        position: 'absolute',
-    },
-    button: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: 'white',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
 });
 

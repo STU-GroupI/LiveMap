@@ -2,6 +2,9 @@ import React, {createContext, useContext, useEffect, useRef, useState} from 'rea
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM} from './MapConfig.ts';
 import {CameraRef} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
+import {POI} from '../models/POI.ts';
+
+import {fetchPois} from '../services/apiService.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
 
@@ -16,6 +19,7 @@ const defaultConfig: IMapConfig = {
 
 const MapConfigContext = createContext<IMapConfigContext>({
     config: defaultConfig,
+    pois: [],
     loading: true,
     userLocation: null,
     hasLocationPermission: false,
@@ -31,6 +35,8 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const cameraRef = useRef<CameraRef>(null);
     const { hasLocationPermission, userLocation } = useLocation();
 
+    const [pois, setPois] = useState<POI[]>([]);
+
     useEffect(() => {
         const loadConfig = async () => {
             try {
@@ -43,6 +49,21 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         };
 
         loadConfig();
+    }, []);
+
+    useEffect(() => {
+        const loadPois = async () => {
+            try {
+                const loadedPois = await fetchPois();
+                setPois(loadedPois);
+            } catch (error) {
+                console.error('Failed to load poi config:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPois();
     }, []);
 
     const handleRecenter = async () => {
@@ -80,6 +101,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         <MapConfigContext.Provider value={
             {
                 config,
+                pois,
                 userLocation,
                 hasLocationPermission,
                 loading,

@@ -21,3 +21,13 @@ jest.mock('@maplibre/maplibre-react-native', () => {
         },
     };
 });
+
+jest.mock('@react-native-community/geolocation', () => {
+    return {
+        addListener: jest.fn(),
+        startObserving: jest.fn(),
+        stopObserving: jest.fn(),
+        getCurrentPosition: jest.fn(),
+        watchPosition: jest.fn(),
+    };
+});
