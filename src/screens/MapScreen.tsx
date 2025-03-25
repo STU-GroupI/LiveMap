@@ -9,7 +9,7 @@ import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 
-import { POI } from '../models/POI.ts';
+import { POI } from '../models/POI/POI.ts';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 
@@ -34,7 +34,7 @@ const MapScreen = () => {
 
     const handlePoiSelect = (selectedPoi: POI) => {
         if (activePoi?.guid !== selectedPoi.guid) {
-            cameraRef?.current?.flyTo([selectedPoi.longitude, selectedPoi.latitude]);
+            cameraRef?.current?.flyTo([selectedPoi.coordinate.longitude, selectedPoi.coordinate.latitude]);
             handleClose(() => setActivePoi(undefined));
 
             setActivePoi({ ...selectedPoi });

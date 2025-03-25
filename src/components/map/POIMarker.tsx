@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
-import { POI } from '../../models/POI.ts';
+import { POI } from '../../models/POI/POI.ts';
 
 interface POIMarkerProps {
     poi: POI;
@@ -15,7 +15,7 @@ export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) 
         <PointAnnotation
             key={`poi-${poi.guid}-${isActive ? 'active' : 'inactive'}`}
             id={`poi-${poi.guid}`}
-            coordinate={[poi.longitude, poi.latitude]}
+            coordinate={[poi.coordinate.longitude, poi.coordinate.latitude]}
             anchor={{ x: 0.5, y: 1 }}
             onSelected={() => onSelect(poi)}
         >
