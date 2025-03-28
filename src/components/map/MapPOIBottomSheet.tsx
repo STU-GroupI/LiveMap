@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { POI } from '../../models/POI.ts';
+import { POI } from '../../models/POI/POI.ts';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {CameraRef} from '@maplibre/maplibre-react-native';
-import {POI} from '../models/POI.ts';
+import {POI} from '../models/POI/POI.ts';
 
 export interface IMapConfig {
     mapStyle: any;
