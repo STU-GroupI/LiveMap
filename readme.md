@@ -24,7 +24,8 @@
 ## ⏳ Installation
 
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+> [!IMPORTANT]
+> Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
 ### Step 1: Start Metro
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
@@ -89,7 +90,28 @@ When you want to forcefully reload, for example to reset the state of your app, 
 - **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
 
+## Tests
+In this package all tests are handled with Jest. To run the tests, you can use the following command:
+
+```bash
+# Using npm
+npm test
+
+# OR using Yarn
+yarn test
+```
+
+The following types of tests are used in this package:
+* Snapshot testing is used to test the UI components.
+* Unit tests are used to test the functions and services.
+* Integration tests are minimally used as this app acts as a client to the backend.
+
+Each component requires a test file with the same name as the component file. For example, the component `Button.tsx` should have a corresponding test file `Button.spec.ts`. The test file should be placed in the same directory as the component file.
+Besides the component tests, there are also tests for the services and functions which are handled the same way as the component tests.
+
 ## 📦 Packages
+> [!IMPORTANT]
+> This list is not exhaustive and may be updated as the project progresses.
 
 | Package        | Source                                                                                                                         |
 |----------------|--------------------------------------------------------------------------------------------------------------------------------|
