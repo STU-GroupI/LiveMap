@@ -102,12 +102,16 @@ yarn test
 ```
 
 The following types of tests are used in this package:
-* Snapshot testing is used to test the UI components.
+* Snapshot and functional testing is used to test the UI components.
 * Unit tests are used to test the functions and services.
 * Integration tests are minimally used as this app acts as a client to the backend.
 
+> [!IMPORTANT]
+> Functional tests are used to test the UI components which are more complicated than the simple components. A simple button component does not require a functional test, but a component that utilizes data from or performs a complicated callback with repercussions should have a functional test.
+
 Each component requires a test file with the same name as the component file. For example, the component `Button.tsx` should have a corresponding test file `Button.spec.ts`. The test file should be placed in the same directory as the component file.
 Besides the component tests, there are also tests for the services and functions which are handled the same way as the component tests.
+
 
 ## 📦 Packages
 > [!IMPORTANT]
