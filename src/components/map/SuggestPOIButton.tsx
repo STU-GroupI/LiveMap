@@ -19,7 +19,7 @@ export default function SuggestPOIButton({ handleZoomIn } : props) {
         <View style={styles.container}>
             <TouchableOpacity style={styles.suggestButton}
                        onPress={handleZoomIn}>
-                <Text style={styles.suggestButtonText}>Request POI</Text>
+                <Text style={styles.suggestButtonText}>Suggest POI</Text>
             </TouchableOpacity>
         </View>
     );
