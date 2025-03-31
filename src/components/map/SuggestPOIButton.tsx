@@ -36,7 +36,7 @@ const getStyles = (theme: MD3Theme, insets) =>
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 8,
-            width: 80,
+            width: 90,
             elevation: 3,
             shadowColor: theme.colors.shadow ?? '#000',
             shadowOffset: { width: 0, height: 2 },
@@ -50,6 +50,7 @@ const getStyles = (theme: MD3Theme, insets) =>
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 6,
+            padding: 5
         },
 
         suggestButtonText: {
