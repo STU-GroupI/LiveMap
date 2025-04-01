@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, Text, TouchableOpacity, FlatList } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { POI } from '../../models/POI/POI.ts';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -15,6 +15,16 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
     if (!poi) {
         return null;
     }
+
+    const schedule = [
+        { day: "Monday", hours: "Closed" },
+        { day: "Tuesday", hours: "11:00-18:00" },
+        { day: "Wednesday", hours: "09:00-20:00" },
+        { day: "Thursday", hours: "10:00-18:00" },
+        { day: "Friday", hours: "09:00-17:00" },
+        { day: "Saturday", hours: "Closed" },
+        { day: "Sunday", hours: "10:00-18:00" },
+    ];
 
     return (
         <BaseBottomSheet
@@ -63,6 +73,21 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                             <Icon source="wheelchair-accessibility" size={16} color="#000" />
                         </>
                     )}
+                </View>
+
+                <View>
+                    <Text style={styles.timeTableHeader}>Openingstijden</Text>
+                    <FlatList
+                        style={styles.timeTable}
+                        data={schedule}
+                        keyExtractor={(item) => item.day}
+                        renderItem={({ item }) => (
+                        <View style={styles.row}>
+                            <Text style={styles.cell}>{item.day}</Text>
+                            <Text style={styles.cell}>{item.hours}</Text>
+                        </View>
+                        )}
+                    />
                 </View>
             </View>
         </BaseBottomSheet>
@@ -126,4 +151,21 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginHorizontal: 4,
     },
+    timeTable: {
+        padding: 8,
+    },
+    timeTableHeader: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    row: {
+        flexDirection: "row",
+        borderBottomWidth: 1,
+        borderBottomColor: "#ccc",
+        paddingVertical: 8,
+    },
+    cell: {
+        flex: 1,
+        fontSize: 16,
+    }
 });
