@@ -2,6 +2,7 @@ import {POI} from '../models/POI/POI.ts';
 import {POIStatus} from '../models/POI/POIStatus.ts';
 import {POICoordinate} from '../models/POI/POICoordinate.ts';
 import {POICategory} from '../models/POI/POICategory.ts';
+import {POIOpeningHours} from '../models/POI/POIOpeningHours.ts';
 import {Map} from '../models/Map/Map.ts';
 
 import axios from 'axios';
@@ -16,12 +17,21 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
 
+        console.error(response.data);
+
         return response.data.map((item: any) => {
             const latitude = Number(item.coordinate?.latitude);
             const longitude = Number(item.coordinate?.longitude);
 
             const isValidLatitude = latitude >= -90 && latitude <= 90;
             const isValidLongitude = longitude >= -180 && longitude <= 180;
+
+            const openingHours: POIOpeningHours[] = item.openingHours?.map((entry: any) => ({
+                guid: entry.guid,
+                dayOfWeek: entry.dayOfWeek,
+                start: entry.start,
+                end: entry.end,
+            })) ?? [];
 
             return {
                 guid: item.id,
@@ -40,6 +50,7 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
                     guid: item.mapId,
                 } as Map,
                 wheelChairAccessible: item.wheelChairAccessible ?? false,
+                openingHours: openingHours,
             } as POI;
         });
     } catch (error) {
