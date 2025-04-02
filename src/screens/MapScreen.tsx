@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
+import { Feature, Point } from 'geojson';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
-import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
@@ -8,11 +8,14 @@ import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native'
 import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
-import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx'
+import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx';
 
 import { POI } from '../models/POI/POI.ts';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
+import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
+import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
+import useBottomSheets from '../hooks/useBottomSheet.tsx';
 
 const MapScreen = () => {
     const {
@@ -26,8 +29,12 @@ const MapScreen = () => {
         handleZoomIn,
         handleZoomOut,
     } = useMapConfig();
-    const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
-    const [activePoi, setActivePoi] = useState<POI|undefined>();
+
+    // Use the updated dynamic bottom sheet hook
+    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location']);
+    const [activePoi, setActivePoi] = useState<POI | undefined>();
+
+    const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -36,10 +43,25 @@ const MapScreen = () => {
     const handlePoiSelect = (selectedPoi: POI) => {
         if (activePoi?.guid !== selectedPoi.guid) {
             cameraRef?.current?.flyTo([selectedPoi.coordinate.longitude, selectedPoi.coordinate.latitude]);
-            handleClose(() => setActivePoi(undefined));
 
             setActivePoi({ ...selectedPoi });
-            setTimeout(() => handleOpen(), 0);
+            handleOpen('detail');
+        }
+    };
+
+    const handleCreateSuggestion = () => {
+        if (userLocation) {
+            if (suggestedLocation === undefined) {
+                setSuggestedLocation(userLocation);
+            }
+        }
+
+        handleOpen('location');
+    };
+
+    const handleSetSuggestedLocation = (event: Feature<Point>) => {
+        if (suggestedLocation !== undefined) {
+            setSuggestedLocation([event.geometry.coordinates[0], event.geometry.coordinates[1]]);
         }
     };
 
@@ -51,6 +73,7 @@ const MapScreen = () => {
                 compassEnabled={true}
                 compassViewPosition={3}
                 rotateEnabled={false}
+                onPress={handleSetSuggestedLocation}
             >
                 <Camera
                     ref={cameraRef}
@@ -61,35 +84,60 @@ const MapScreen = () => {
                     followUserLocation={false}
                 />
 
-                {pois.length > 0 && pois.map((mapPoi) => (
-                    <POIMarker
-                        key={`poi-${mapPoi.guid}`}
-                        poi={mapPoi}
-                        isActive={activePoi?.guid === mapPoi.guid}
-                        onSelect={handlePoiSelect}
-                    />
-                ))}
+                {pois.length > 0 &&
+                    pois.map((mapPoi) => (
+                        <POIMarker
+                            key={`poi-${mapPoi.guid}`}
+                            poi={mapPoi}
+                            isActive={activePoi?.guid === mapPoi.guid}
+                            onSelect={handlePoiSelect}
+                        />
+                    ))}
+
+                {suggestedLocation && (
+                    <SuggestedPOIMarker location={suggestedLocation} />
+                )}
 
                 {userLocation && (
                     <PointAnnotation id="user-location" coordinate={userLocation}>
-                        <View
-                            style={styles.mapUserMarker}
-                        />
+                        <View style={styles.mapUserMarker} />
                     </PointAnnotation>
                 )}
             </MapView>
 
-            <SuggestPOIButton handleZoomIn={handleZoomIn}/>
+            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
             <MapTopBarButton />
 
+            {suggestedLocation && (
+                <MapSuggestLocationBottomSheet
+                    onConfirm={() => {
+                        handleClose();
+                        setSuggestedLocation(undefined);
+                    }}
+                    onCancel={() => {
+                        handleClose();
+                        setSuggestedLocation(undefined);
+                    }}
+                    onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
+                    bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
+                />
+            )}
+
             {activePoi && (
-                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
+                <MapPOIBottomSheet
+                    bottomSheetRef={(ref) => (bottomSheetRefs.current.detail = ref)}
+                    poi={activePoi}
+                    onClose={() => {
+                        setActivePoi(undefined);
+                    }}
+                />
             )}
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

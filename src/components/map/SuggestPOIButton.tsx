@@ -1,16 +1,15 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { MD3Theme, Text, useTheme } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 
 
 interface props {
-    handleZoomIn: () => void;
+    handleCreateSuggestion: () => void;
 }
 
 
-export default function SuggestPOIButton({ handleZoomIn } : props) {
+export default function SuggestPOIButton({handleCreateSuggestion}: props) {
     const theme = useTheme();
     const insets = useSafeAreaInsets();
     const styles = getStyles(theme, insets);
@@ -18,14 +17,14 @@ export default function SuggestPOIButton({ handleZoomIn } : props) {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.suggestButton}
-                       onPress={handleZoomIn}>
+                              onPress={handleCreateSuggestion}>
                 <Text style={styles.suggestButtonText}>Suggest POI</Text>
             </TouchableOpacity>
         </View>
     );
 }
 
-const getStyles = (theme: MD3Theme, insets) =>
+const getStyles = (theme: MD3Theme, insets: EdgeInsets) =>
     StyleSheet.create({
         container: {
             backgroundColor: theme.colors.background,

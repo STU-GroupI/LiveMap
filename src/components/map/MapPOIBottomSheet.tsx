@@ -1,13 +1,14 @@
-import React from 'react';
+import React, {RefObject} from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { POI } from '../../models/POI/POI.ts';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
+import BottomSheet from '@gorhom/bottom-sheet';
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
-    bottomSheetRef: React.RefObject<BottomSheetMethods | null>;
+    bottomSheetRef: ((ref: BottomSheet | null) => void) | RefObject<BottomSheetMethods | null>;
     onClose?: () => void;
 }
 
