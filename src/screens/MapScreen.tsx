@@ -8,7 +8,7 @@ import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native'
 import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
-import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx'
+import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx';
 
 import { POI } from '../models/POI/POI.ts';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
@@ -47,6 +47,16 @@ const MapScreen = () => {
             setActivePoi({ ...selectedPoi });
             handleOpen('detail');
         }
+    };
+
+    const handleCreateSuggestion = () => {
+        if (userLocation) {
+            if (suggestedLocation === undefined) {
+                setSuggestedLocation(userLocation);
+            }
+        }
+
+        handleOpen('location');
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
@@ -95,7 +105,7 @@ const MapScreen = () => {
                 )}
             </MapView>
 
-            <SuggestPOIButton handleZoomIn={handleZoomIn}/>
+            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
             <MapTopBarButton />
