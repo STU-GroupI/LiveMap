@@ -16,6 +16,7 @@ import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
 import useBottomSheets from '../hooks/useBottomSheet.tsx';
+import SuggestLocationDataSheet from '../components/map/suggestion/SuggestLocationDataSheet.tsx';
 
 const MapScreen = () => {
     const {
@@ -31,10 +32,13 @@ const MapScreen = () => {
     } = useMapConfig();
 
     // Use the updated dynamic bottom sheet hook
-    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location']);
+    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
+    const [showDataSheet, setShowDataSheet] = useState(false);
+    const [showCenterButton, setShowCenterButton] = useState(true);
+        const [canAddLocation, setCanAddLocation] = useState(false);
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -56,14 +60,17 @@ const MapScreen = () => {
             }
         }
 
+        setShowCenterButton(false);
+        setCanAddLocation(true);
         handleOpen('location');
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
+        if(canAddLocation){
         if (suggestedLocation !== undefined) {
             setSuggestedLocation([event.geometry.coordinates[0], event.geometry.coordinates[1]]);
         }
-    };
+    }};
 
     return (
         <View style={styles.container}>
@@ -107,18 +114,25 @@ const MapScreen = () => {
 
             <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
-            <MapCenterButton handleRecenter={handleRecenter} />
+             {showCenterButton && <MapCenterButton handleRecenter={handleRecenter}/>}
             <MapTopBarButton />
 
             {suggestedLocation && (
                 <MapSuggestLocationBottomSheet
                     onConfirm={() => {
+                        setSuggestedLocation(suggestedLocation);
+                        cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]]);
                         handleClose();
-                        setSuggestedLocation(undefined);
+                        setShowDataSheet(true);
+                        setCanAddLocation(false);
+                        handleOpen('dataform');
+
                     }}
                     onCancel={() => {
                         handleClose();
                         setSuggestedLocation(undefined);
+                        setShowCenterButton(true)
+                        setCanAddLocation(false);
                     }}
                     onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
                     bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
@@ -134,6 +148,27 @@ const MapScreen = () => {
                     }}
                 />
             )}
+         { showDataSheet && (
+             <SuggestLocationDataSheet
+                               onCancel={() => {
+                                    handleClose();
+                                    setShowDataSheet(false);
+                                    setShowCenterButton(false)
+                                    setCanAddLocation(true);
+                                    handleOpen('location')
+                                    }}
+                                onSubmit={() =>{
+                                    handleClose();
+                                    setShowDataSheet(false);
+                                    setShowCenterButton(true)
+                                    setSuggestedLocation(undefined);
+                                    }
+                                }
+                                                bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
+                            />
+                    )}
+
+
         </View>
     );
 };
