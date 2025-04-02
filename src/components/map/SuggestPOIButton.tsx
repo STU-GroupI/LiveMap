@@ -6,13 +6,14 @@ import { EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
 
 interface props {
     handleCreateSuggestion: () => void;
+    active: boolean
 }
 
 
-export default function SuggestPOIButton({handleCreateSuggestion}: props) {
+export default function SuggestPOIButton({handleCreateSuggestion, active}: props) {
     const theme = useTheme();
     const insets = useSafeAreaInsets();
-    const styles = getStyles(theme, insets);
+    const styles = getStyles(theme, insets, active);
 
     return (
         <View style={styles.container}>
@@ -24,7 +25,7 @@ export default function SuggestPOIButton({handleCreateSuggestion}: props) {
     );
 }
 
-const getStyles = (theme: MD3Theme, insets: EdgeInsets) =>
+const getStyles = (theme: MD3Theme, insets: EdgeInsets, active: boolean) =>
     StyleSheet.create({
         container: {
             backgroundColor: theme.colors.background,
@@ -44,6 +45,7 @@ const getStyles = (theme: MD3Theme, insets: EdgeInsets) =>
         },
 
         suggestButton: {
+            backgroundColor: active ? theme.colors.primary : theme.colors.background,
             width: '100%',
             paddingVertical: 8,
             justifyContent: 'center',
@@ -53,8 +55,8 @@ const getStyles = (theme: MD3Theme, insets: EdgeInsets) =>
         },
 
         suggestButtonText: {
+            color: active ? theme.colors.background : theme.colors.primary,
             fontSize: 14,
-            color: '#000',
             textAlign: 'center',
         },
     });

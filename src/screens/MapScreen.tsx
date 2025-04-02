@@ -1,26 +1,29 @@
 import React, {useState} from 'react';
-import { Feature, Point } from 'geojson';
+import {Feature, Point} from 'geojson';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
-
-import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx';
 
-import { POI } from '../models/POI/POI.ts';
+import {POI} from '../models/POI/POI.ts';
+import {ScreenState} from '../interfaces/MapConfig.ts';
+import useBottomSheets from '../hooks/useBottomSheet.tsx';
+import useSnackbar from '../hooks/useSnackbar.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
-import useBottomSheets from '../hooks/useBottomSheet.tsx';
+import CustomSnackbar from '../components/CustomSnackbar.tsx';
 
 const MapScreen = () => {
     const {
         config,
         pois,
+        screenState,
+        setScreenState,
         loading,
         hasLocationPermission,
         userLocation,
@@ -30,11 +33,11 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
 
-    // Use the updated dynamic bottom sheet hook
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
+    const { visible, toggleSnackBar, dismissSnackBar } = useSnackbar();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -56,6 +59,7 @@ const MapScreen = () => {
             }
         }
 
+        setScreenState(ScreenState.SUGGESTING);
         handleOpen('location');
     };
 
@@ -94,7 +98,7 @@ const MapScreen = () => {
                         />
                     ))}
 
-                {suggestedLocation && (
+                {(suggestedLocation && screenState === ScreenState.SUGGESTING) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
                 )}
 
@@ -105,21 +109,31 @@ const MapScreen = () => {
                 )}
             </MapView>
 
-            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion}/>
+            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion} active={screenState === ScreenState.SUGGESTING}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
-            <MapTopBarButton />
+            {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
+
+            <CustomSnackbar
+                visible={visible}
+                dismissSnackBar={dismissSnackBar}
+                message="Your suggestion has been submitted!"
+            />
 
             {suggestedLocation && (
                 <MapSuggestLocationBottomSheet
                     onConfirm={() => {
                         handleClose();
+                        toggleSnackBar();
                         setSuggestedLocation(undefined);
+                        setScreenState(ScreenState.VIEWING);
                     }}
                     onCancel={() => {
                         handleClose();
                         setSuggestedLocation(undefined);
+                        setScreenState(ScreenState.VIEWING);
                     }}
+                    onClose={() => setScreenState(ScreenState.VIEWING)}
                     onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
                     bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
                 />
@@ -137,7 +151,6 @@ const MapScreen = () => {
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {

@@ -1,8 +1,8 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
-import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM} from './MapConfig.ts';
+import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from './MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
-import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
+import {IMapConfig, IMapConfigContext, ScreenState} from '../interfaces/MapConfig.ts';
 import {POI} from '../models/POI/POI.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
@@ -20,6 +20,8 @@ const defaultConfig: IMapConfig = {
 const MapConfigContext = createContext<IMapConfigContext>({
     config: defaultConfig,
     pois: [],
+    screenState: ScreenState.VIEWING,
+    setScreenState: () => {},
     loading: true,
     userLocation: null,
     hasLocationPermission: false,
@@ -31,11 +33,13 @@ const MapConfigContext = createContext<IMapConfigContext>({
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
     const [config, setConfig] = useState<IMapConfig>(defaultConfig);
     const [loading, setLoading] = useState(true);
+    const [pois, setPois] = useState<POI[]>([]);
+    const [screenState, setScreenState] = useState(ScreenState.VIEWING);
+
     const zoomRef  = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
-    const { hasLocationPermission, userLocation } = useLocation();
 
-    const [pois, setPois] = useState<POI[]>([]);
+    const { hasLocationPermission, userLocation } = useLocation();
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -97,6 +101,8 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
             {
                 config,
                 pois,
+                screenState,
+                setScreenState,
                 userLocation,
                 hasLocationPermission,
                 loading,
