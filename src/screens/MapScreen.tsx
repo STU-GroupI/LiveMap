@@ -30,7 +30,6 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
 
-    // Use the updated dynamic bottom sheet hook
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
