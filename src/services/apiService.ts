@@ -10,7 +10,7 @@ import axios from 'axios';
  * Keep it http instead of https as that causes SSL issues which we can't solve in the emulator.
  * If we want SSL we'd have to disable that for the request which is not supported without packages.
 */
-const API_URL = 'http://10.0.2.2:5115/api';
+const API_URL = 'http://10.0.2.2:5006/api';
 
 export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
