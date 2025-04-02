@@ -10,7 +10,7 @@ interface SuggestedPOIMarkerProps {
 export default function SuggestedPOIMarker ({ location }: SuggestedPOIMarkerProps) {
     return (
         <PointAnnotation
-            key={`suggested-poi-${Math.round(location[0])}}-${Math.round(location[1])}}`}
+            key={`suggested-poi-${Math.round(location[0])}-${Math.round(location[1])}`}
             id={`suggested-poi-${Math.round(location[0])}}`}
             coordinate={[location[0], location[1]]}
             anchor={{ x: 0.5, y: 1 }}
