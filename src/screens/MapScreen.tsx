@@ -180,11 +180,6 @@ const MapScreen = () => {
                             setSuggestedLocation(undefined);
                             setScreenState(ScreenState.VIEWING);
                         }}
-                        onClose={() => {
-                            if (screenState === ScreenState.FORM) {
-                                setScreenState(ScreenState.VIEWING);
-                            }
-                        }}
                         bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
                     />
                 )}
