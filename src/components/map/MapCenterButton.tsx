@@ -33,7 +33,6 @@ const getStyles = (theme: MD3Theme) =>
     StyleSheet.create({
         controls: {
             position: 'absolute',
-            zIndex: 1,
         },
 
         button: {

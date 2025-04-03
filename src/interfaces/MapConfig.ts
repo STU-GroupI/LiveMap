@@ -10,9 +10,16 @@ export interface IMapConfig {
     maxZoom: number;
 }
 
+export enum ScreenState {
+    VIEWING,
+    SUGGESTING
+}
+
 export interface IMapConfigContext {
     config: IMapConfig,
     pois: POI[],
+    screenState: ScreenState,
+    setScreenState: (state: ScreenState) => void,
     loading: boolean,
     userLocation: [number, number] | null,
     hasLocationPermission: boolean,
