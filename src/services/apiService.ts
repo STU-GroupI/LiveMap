@@ -13,6 +13,16 @@ import axios from 'axios';
 */
 const API_URL = 'http://10.0.2.2:5006/api';
 
+function formatTime(timeString: string): string {
+    const [hours, minutes, seconds] = timeString.split(':');
+    return `${hours}:${minutes}`;
+};
+
+function dayOfWeekToString(dayOfWeek: number): string {
+    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    return days[dayOfWeek] || days[0];
+}
+
 export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
@@ -28,9 +38,9 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
 
             const openingHours: POIOpeningHours[] = item.openingHours?.map((entry: any) => ({
                 guid: entry.guid,
-                dayOfWeek: entry.dayOfWeek,
-                start: entry.start,
-                end: entry.end,
+                dayOfWeek: dayOfWeekToString(entry.dayOfWeek),
+                start: formatTime(entry.start),
+                end: formatTime(entry.end),
             })) ?? [];
 
             return {

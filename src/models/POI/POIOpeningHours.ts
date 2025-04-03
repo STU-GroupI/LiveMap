@@ -1,6 +1,6 @@
 export type POIOpeningHours = {
     guid: string,
-    dayOfWeek: number,
+    dayOfWeek: string,
     start: string,
     end: string
 }

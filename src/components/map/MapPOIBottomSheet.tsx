@@ -16,16 +16,6 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
         return null;
     }
 
-    // const schedule = [
-    //     { day: "Monday", hours: "Closed" },
-    //     { day: "Tuesday", hours: "11:00-18:00" },
-    //     { day: "Wednesday", hours: "09:00-20:00" },
-    //     { day: "Thursday", hours: "10:00-18:00" },
-    //     { day: "Friday", hours: "09:00-17:00" },
-    //     { day: "Saturday", hours: "Closed" },
-    //     { day: "Sunday", hours: "10:00-18:00" },
-    // ];
-
     return (
         <BaseBottomSheet
             bottomSheetRef={bottomSheetRef}
@@ -80,13 +70,16 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                     <FlatList
                         style={styles.timeTable}
                         data={poi?.openingHours}
-                        keyExtractor={(item) => item.guid}
-                        renderItem={({ item }) => (
-                        <View style={styles.row}>
-                            <Text style={styles.cell}>{item.dayOfWeek}</Text>
-                            <Text style={styles.cell}>{item.start} - {item.end}</Text>
-                        </View>
-                        )}
+                        keyExtractor={(item, index) => item.guid || index.toString()}
+                        nestedScrollEnabled={true}
+                        renderItem={({ item }) => {
+                            return (
+                                <View style={styles.row}>
+                                    <Text style={styles.cell}>{item.dayOfWeek}</Text>
+                                    <Text style={styles.cell}>{item.start} - {item.end}</Text>
+                                </View>
+                            );
+                        }}
                     />
                 </View>
             </View>
