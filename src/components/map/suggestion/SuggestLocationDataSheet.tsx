@@ -80,7 +80,7 @@ export default function SuggestLocationDataSheet({
                     rating: 0,
                     coordinate: {longitude: 0, latitude: 0},
                     category: selectedCategory,
-                    status: selectedStatus,
+                    status: { id: '3', label: 'Pending' },
                     wheelChairAccessible: false,
                 },
             });
@@ -110,12 +110,6 @@ export default function SuggestLocationDataSheet({
         setSelectedCategory(category);
         setValue('category', category);
         setCategoryMenuVisible(false);
-    };
-
-    const handleStatusSelect = (status: POIStatus) => {
-        setSelectedStatus(status);
-        setValue('status', status);
-        setStatusMenuVisible(false);
     };
 
     return (
@@ -185,25 +179,6 @@ export default function SuggestLocationDataSheet({
                 )}
             />
                 {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
-
-           <Controller
-                control={control}
-                name="status"
-                rules={{ required: 'Status is required'}}
-                render={() => (
-                <Menu
-                    visible={statusMenuVisible}
-                    onDismiss={() => setStatusMenuVisible(false)}
-                    anchor={<Button onPress={() => setStatusMenuVisible(true)}>{selectedStatus?.label || 'Select Status'}</Button>}
-                >
-                    {statuses.map((status) => (
-                        <Menu.Item key={status.id} title={status.label} onPress={() => handleStatusSelect(status)} />
-                    ))}
-                </Menu>
-                )}
-            />
-                {errors.status && <HelperText type="error">{errors.status.message}</HelperText>}
-
 
                 <Controller
                     control={control}
