@@ -16,7 +16,6 @@ import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
-import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import SuggestLocationDataSheet from '../components/map/suggestion/SuggestLocationDataSheet.tsx';
 import CustomSnackbar from '../components/CustomSnackbar.tsx';
 
@@ -40,9 +39,6 @@ const MapScreen = () => {
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
-    const [showDataSheet, setShowDataSheet] = useState(false);
-    const [showCenterButton, setShowCenterButton] = useState(true);
-    const [canAddLocation, setCanAddLocation] = useState(false);
     const { visible, toggleSnackBar, dismissSnackBar } = useSnackbar();
 
     if (loading || !hasLocationPermission) {
@@ -65,18 +61,15 @@ const MapScreen = () => {
             }
         }
 
-        setShowCenterButton(false);
-        setCanAddLocation(true);
         setScreenState(ScreenState.SUGGESTING);
         handleOpen('location');
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
-        if(canAddLocation){
         if (suggestedLocation !== undefined) {
             setSuggestedLocation([event.geometry.coordinates[0], event.geometry.coordinates[1]]);
         }
-    }};
+    };
 
     return (
         <View style={styles.container}>
@@ -132,19 +125,24 @@ const MapScreen = () => {
             {suggestedLocation && (
                 <MapSuggestLocationBottomSheet
                     onConfirm={() => {
+                        setScreenState(ScreenState.FORM);
+                        handleClose();
+
                         setSuggestedLocation(suggestedLocation);
                         cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]]);
-                        handleClose();
-                        setShowDataSheet(true);
-                        setCanAddLocation(false);
+
                         handleOpen('dataform');
                     }}
                     onCancel={() => {
+                        setScreenState(ScreenState.VIEWING);
                         handleClose();
                         setSuggestedLocation(undefined);
-                        setScreenState(ScreenState.VIEWING);
                     }}
-                    onClose={() => setScreenState(ScreenState.VIEWING)}
+                    onClose={() => {
+                        if (screenState === ScreenState.SUGGESTING) {
+                            setScreenState(ScreenState.VIEWING);
+                        }
+                    }}
                     onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
                     bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
                 />
@@ -159,38 +157,37 @@ const MapScreen = () => {
                     }}
                 />
             )}
-         { showDataSheet && (
-             <SuggestLocationDataSheet
-                               onCancel={() => {
-                                    handleClose();
-                                    setShowDataSheet(false);
-                                    setShowCenterButton(false)
-                                    setCanAddLocation(true);
-                                    handleOpen('location')
-                                    }}
-                                onSubmit={(data) =>{
-                                    //The coordinates are added in using this class given there's an instance variable for them.
-                                    data.coordinate = { latitude: suggestedLocation[0], longitude: suggestedLocation[1]};
-                                    //The mapguid is hardcoded for now, but it will be dynamically set up
-                                    data.mapguid = '2b0bf3ea-0f37-dc37-8143-ab809c55727d';
-                                    //Console.log for testing purposes
-                                    //console.log('Submitted POI Data:', data);
+                { (screenState === ScreenState.FORM && suggestedLocation) && (
+                    <SuggestLocationDataSheet
+                        onCancel={() => {
+                            handleClose();
+                            setScreenState(ScreenState.SUGGESTING);
+                            handleOpen('location');
+                        }}
+                        onSubmit={(data) =>{
+                            handleClose();
+                            toggleSnackBar();
 
-                                    //TO-DO: Create a POST request to the API to store the new data
+                            //The coordinates are added in using this class given there's an instance variable for them.
+                            data.coordinate = { latitude: suggestedLocation[0], longitude: suggestedLocation[1]};
+                            //The mapguid is hardcoded for now, but it will be dynamically set up
+                            data.mapguid = '2b0bf3ea-0f37-dc37-8143-ab809c55727d';
+                            //Console.log for testing purposes
+                            //console.log('Submitted POI Data:', data);
 
-                                    handleClose();
-                                    setShowDataSheet(false);
-                                    setShowCenterButton(true)
-                                    toggleSnackBar();
-                                    setSuggestedLocation(undefined);
-                                    setScreenState(ScreenState.VIEWING);
-                                    }
-                                }
-                                                bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
-                            />
-                    )}
+                            //TO-DO: Create a POST request to the API to store the new data
 
-
+                            setSuggestedLocation(undefined);
+                            setScreenState(ScreenState.VIEWING);
+                        }}
+                        onClose={() => {
+                            if (screenState === ScreenState.FORM) {
+                                setScreenState(ScreenState.VIEWING);
+                            }
+                        }}
+                        bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
+                    />
+                )}
         </View>
     );
 };

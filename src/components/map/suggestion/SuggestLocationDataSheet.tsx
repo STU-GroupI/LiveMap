@@ -37,6 +37,7 @@ interface POIForm {
     category: POICategory;
     status: POIStatus;
     map: Map;
+    mapguid: string;
     wheelChairAccessible: boolean;
 }
 
@@ -45,7 +46,7 @@ interface SuggestLocationDataSheetProps {
     onSubmit: (data: POIForm) => void;
     onClose?: () => void;
     onCancel: () => void;
-    defaultValues: {
+    defaultValues?: {
         guid: string;
         coordinate: POICoordinate;
         map: Map;
@@ -171,7 +172,7 @@ export default function SuggestLocationDataSheet({
                     control={control}
                     name="category"
                     rules={{ required: 'Category is required'}}
-                    render={({ field: { onChange, value } }) => (
+                    render={() => (
                 <Menu
                     visible={categoryMenuVisible}
                     onDismiss={() => setCategoryMenuVisible(false)}
@@ -189,7 +190,7 @@ export default function SuggestLocationDataSheet({
                 control={control}
                 name="status"
                 rules={{ required: 'Status is required'}}
-                render={({ field: { onChange, value } }) => (
+                render={() => (
                 <Menu
                     visible={statusMenuVisible}
                     onDismiss={() => setStatusMenuVisible(false)}
@@ -220,7 +221,7 @@ export default function SuggestLocationDataSheet({
                     <Button mode="contained" onPress={handleSubmit(onSubmit)}>
                         Submit
                     </Button>
-                    <Button mode="outlined" style={[styles.button, styles.cancelButton]} onPress={onCancel}>
+                    <Button mode="outlined" onPress={onCancel}>
                         Cancel
                     </Button>
                 </View>
@@ -238,5 +239,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 16,
         alignItems: 'center',
+        justifyContent: 'space-between',
     },
 });
