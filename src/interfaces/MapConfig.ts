@@ -12,7 +12,8 @@ export interface IMapConfig {
 
 export enum ScreenState {
     VIEWING,
-    SUGGESTING
+    SUGGESTING,
+    FORM
 }
 
 export interface IMapConfigContext {

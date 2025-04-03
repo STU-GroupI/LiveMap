@@ -43,7 +43,6 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
             } as POI;
         });
     } catch (error) {
-        console.error('Fetch failed:', error);
         return [];
     }
 };

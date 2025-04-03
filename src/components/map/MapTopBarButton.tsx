@@ -38,8 +38,8 @@ const getStyles = (theme: MD3Theme) =>
             left: '50%',
             position: 'absolute',
             zIndex: 10,
-            marginLeft: -130,
-            width: 275,
+            marginLeft: -100,
+            width: 250,
         },
 
         toggleButtonGroup: {
