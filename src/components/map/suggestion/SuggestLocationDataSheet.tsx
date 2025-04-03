@@ -8,9 +8,6 @@ import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import uuid from 'react-native-uuid';
 import { Menu } from 'react-native-paper';
 
-
-
-
 interface POICoordinate {
     latitude: number;
     longitude: number;
@@ -65,7 +62,6 @@ export default function SuggestLocationDataSheet({
 }: SuggestLocationDataSheetProps) {
         const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
         const [statusMenuVisible, setStatusMenuVisible] = useState(false);
-
         const [selectedCategory, setSelectedCategory] = useState<POICategory | undefined>(undefined);
         const [selectedStatus, setSelectedStatus] = useState<POIStatus | undefined>(undefined);
 
@@ -87,8 +83,6 @@ export default function SuggestLocationDataSheet({
                     wheelChairAccessible: false,
                 },
             });
-
-
 
     //IMPORTANT NOTE
     /*
@@ -124,7 +118,7 @@ export default function SuggestLocationDataSheet({
     };
 
     return (
-        <BaseBottomSheet bottomSheetRef={bottomSheetRef} index={0} onClose={onClose} snapPoints={['60%', '60']}>
+        <BaseBottomSheet bottomSheetRef={bottomSheetRef} index={0} onClose={onClose} snapPoints={['70%', '70%']}>
             <View style={styles.modalContent}>
                 <Controller
                     control={control}
@@ -188,14 +182,14 @@ export default function SuggestLocationDataSheet({
                     ))}
                 </Menu>
                 )}
-                />
+            />
                 {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
 
-                           <Controller
-                                    control={control}
-                                    name="status"
-                                    rules={{ required: 'Status is required'}}
-                                    render={({ field: { onChange, value } }) => (
+           <Controller
+                control={control}
+                name="status"
+                rules={{ required: 'Status is required'}}
+                render={({ field: { onChange, value } }) => (
                 <Menu
                     visible={statusMenuVisible}
                     onDismiss={() => setStatusMenuVisible(false)}
@@ -207,7 +201,7 @@ export default function SuggestLocationDataSheet({
                 </Menu>
                 )}
             />
-                            {errors.category && <HelperText type="error">{errors.status.message}</HelperText>}
+                {errors.status && <HelperText type="error">{errors.status.message}</HelperText>}
 
 
                 <Controller
