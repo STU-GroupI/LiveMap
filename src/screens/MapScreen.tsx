@@ -157,7 +157,15 @@ const MapScreen = () => {
                                     setCanAddLocation(true);
                                     handleOpen('location')
                                     }}
-                                onSubmit={() =>{
+                                onSubmit={(data) =>{
+                                    //The coordinates are added in using this class given there's an instance variable for them.
+                                    data.coordinate = { latitude: suggestedLocation[0], longitude: suggestedLocation[1]};
+                                    //The mapguid is hardcoded for now, but it will be dynamically set up
+                                    data.mapguid = '2b0bf3ea-0f37-dc37-8143-ab809c55727d';
+                                    console.log('Submitted POI Data:', data);
+
+                                    //TO-DO: Create a POST request to the API to store the new data
+
                                     handleClose();
                                     setShowDataSheet(false);
                                     setShowCenterButton(true)
