@@ -1,27 +1,31 @@
 import React, {useState} from 'react';
-import { Feature, Point } from 'geojson';
+import {Feature, Point} from 'geojson';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
-
-import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx';
 
-import { POI } from '../models/POI/POI.ts';
+import {POI} from '../models/POI/POI.ts';
+import {ScreenState} from '../interfaces/MapConfig.ts';
+import useBottomSheets from '../hooks/useBottomSheet.tsx';
+import useSnackbar from '../hooks/useSnackbar.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
 import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import SuggestLocationDataSheet from '../components/map/suggestion/SuggestLocationDataSheet.tsx';
+import CustomSnackbar from '../components/CustomSnackbar.tsx';
 
 const MapScreen = () => {
     const {
         config,
         pois,
+        screenState,
+        setScreenState,
         loading,
         hasLocationPermission,
         userLocation,
@@ -38,7 +42,8 @@ const MapScreen = () => {
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
     const [showDataSheet, setShowDataSheet] = useState(false);
     const [showCenterButton, setShowCenterButton] = useState(true);
-        const [canAddLocation, setCanAddLocation] = useState(false);
+    const [canAddLocation, setCanAddLocation] = useState(false);
+    const { visible, toggleSnackBar, dismissSnackBar } = useSnackbar();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -62,6 +67,7 @@ const MapScreen = () => {
 
         setShowCenterButton(false);
         setCanAddLocation(true);
+        setScreenState(ScreenState.SUGGESTING);
         handleOpen('location');
     };
 
@@ -101,7 +107,7 @@ const MapScreen = () => {
                         />
                     ))}
 
-                {suggestedLocation && (
+                {(suggestedLocation && screenState === ScreenState.SUGGESTING) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
                 )}
 
@@ -112,10 +118,16 @@ const MapScreen = () => {
                 )}
             </MapView>
 
-            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion}/>
+            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion} active={screenState === ScreenState.SUGGESTING}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
-             {showCenterButton && <MapCenterButton handleRecenter={handleRecenter}/>}
-            <MapTopBarButton />
+            <MapCenterButton handleRecenter={handleRecenter} />
+            {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
+
+            <CustomSnackbar
+                visible={visible}
+                dismissSnackBar={dismissSnackBar}
+                message="Your suggestion has been submitted!"
+            />
 
             {suggestedLocation && (
                 <MapSuggestLocationBottomSheet
@@ -126,14 +138,13 @@ const MapScreen = () => {
                         setShowDataSheet(true);
                         setCanAddLocation(false);
                         handleOpen('dataform');
-
                     }}
                     onCancel={() => {
                         handleClose();
                         setSuggestedLocation(undefined);
-                        setShowCenterButton(true)
-                        setCanAddLocation(false);
+                        setScreenState(ScreenState.VIEWING);
                     }}
+                    onClose={() => setScreenState(ScreenState.VIEWING)}
                     onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
                     bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
                 />
@@ -170,7 +181,9 @@ const MapScreen = () => {
                                     handleClose();
                                     setShowDataSheet(false);
                                     setShowCenterButton(true)
+                                    toggleSnackBar();
                                     setSuggestedLocation(undefined);
+                                    setScreenState(ScreenState.VIEWING);
                                     }
                                 }
                                                 bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
@@ -181,7 +194,6 @@ const MapScreen = () => {
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
