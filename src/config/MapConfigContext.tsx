@@ -59,7 +59,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     useEffect(() => {
 
         const loadPois = async () => {
-            const loadedPois = await fetchPois('1447212b-372e-2238-6cb5-48f45b6a4b83');
+            const loadedPois = await fetchPois('7af5d8c9-2e11-d07c-676f-60c19827d8dc');
             setPois(loadedPois);
         };
 

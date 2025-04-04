@@ -2,6 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {DataTable, Avatar, Text, IconButton, Chip} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 
 import {POI} from '../../models/POI/POI.ts';
 import {ScreenState} from '../../interfaces/MapConfig.ts';
@@ -99,47 +100,51 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                             <IconButton icon="alert-circle-outline" size={28} containerColor="red" iconColor="white" style={styles.reportButton} onPress={handleSuggestChange} />
                         </View>
 
-                        <View style={styles.content}>
-                            {poi?.category && (
-                                <Chip style={styles.categoryChip} textStyle={styles.categoryText}>
-                                    {poi.category?.categoryName}
-                                </Chip>
-                            )}
-
-                            <Text variant="titleLarge" style={styles.title}>
-                                {poi?.title}
-                            </Text>
-
-                            <Text variant="bodyMedium" style={styles.description}>
-                                {poi?.description}
-                            </Text>
-
-                            <View style={styles.iconRow}>
-                                {poi?.wheelChairAccessible && (
-                                    <View style={styles.iconItem}>
-                                        <Avatar.Icon size={24} icon="wheelchair-accessibility" style={styles.icon} />
-                                        <Text style={styles.iconText}>Accessible</Text>
-                                    </View>
+                        <BottomSheetScrollView>
+                            <View style={styles.content}>
+                                {poi?.category && (
+                                    <Chip style={styles.categoryChip} textStyle={styles.categoryText}>
+                                        {poi.category?.categoryName}
+                                    </Chip>
                                 )}
+
+                                <Text variant="titleLarge" style={styles.title}>
+                                    {poi?.title}
+                                </Text>
+
+                                <Text variant="bodyMedium" style={styles.description}>
+                                    {poi?.description}
+                                </Text>
+
+                                <View style={styles.iconRow}>
+                                    {poi?.wheelChairAccessible && (
+                                        <View style={styles.iconItem}>
+                                            <Avatar.Icon size={24} icon="wheelchair-accessibility" style={styles.icon} />
+                                            <Text style={styles.iconText}>Accessible</Text>
+                                        </View>
+                                    )}
+                                </View>
                             </View>
-                        </View>
 
-                        <View>
-                            <Text style={styles.timeTableHeader}>Openingstijden</Text>
-                            <DataTable>
-                                <DataTable.Header>
-                                    <DataTable.Title>Day</DataTable.Title>
-                                    <DataTable.Title>Open - closed</DataTable.Title>
-                                </DataTable.Header>
+                            <View style={styles.content}>
+                                <Text variant="titleLarge" style={styles.title}>
+                                    Opening Hours
+                                </Text>
+                                <DataTable>
+                                    <DataTable.Header>
+                                        <DataTable.Title>Day</DataTable.Title>
+                                        <DataTable.Title>Open - closed</DataTable.Title>
+                                    </DataTable.Header>
 
-                                {poi.openingHours.map((item, index) => (
-                                    <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
-                                        <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
-                                        <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
-                                    </DataTable.Row>
-                                ))}
-                            </DataTable>
-                        </View>
+                                    {poi.openingHours.map((item, index) => (
+                                        <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
+                                            <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
+                                            <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
+                                        </DataTable.Row>
+                                    ))}
+                                </DataTable>
+                            </View>
+                        </BottomSheetScrollView>
                     </View>
                 </BaseBottomSheet>
             )}
@@ -213,22 +218,5 @@ const styles = StyleSheet.create({
     actionButton: {
         marginTop: 15,
         backgroundColor: '#d9534f',
-    },
-    timeTable: {
-        padding: 8,
-    },
-    timeTableHeader: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    row: {
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        paddingVertical: 8,
-    },
-    cell: {
-        flex: 1,
-        fontSize: 16,
     },
 });

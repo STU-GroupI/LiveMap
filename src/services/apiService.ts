@@ -2,6 +2,7 @@ import {POI} from '../models/POI/POI.ts';
 import {POIStatus} from '../models/POI/POIStatus.ts';
 import {POICoordinate} from '../models/POI/POICoordinate.ts';
 import {POICategory} from '../models/POI/POICategory.ts';
+import {POIOpeningHours} from '../models/POI/POIOpeningHours.ts';
 import {Map} from '../models/Map/Map.ts';
 
 import axios from 'axios';
@@ -18,9 +19,9 @@ interface ChangeRFC {
 }
 
 function formatTime(timeString: string): string {
-    const [hours, minutes, seconds] = timeString.split(':');
+    const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
-};
+}
 
 function dayOfWeekToString(dayOfWeek: number): string {
     const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
