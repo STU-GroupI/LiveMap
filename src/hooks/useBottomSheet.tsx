@@ -20,6 +20,8 @@ const useBottomSheets = (ids: string[]) => {
                 ref?.close();
             }
         });
+
+        console.log('handleOpen', id);
     }, []);
 
     const handleClose = useCallback((id?: string) => {

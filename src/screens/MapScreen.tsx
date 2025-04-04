@@ -30,7 +30,7 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
 
-    const { handleOpen } = useBottomSheets(['detail', 'location', 'dataform']);
+    const { handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
@@ -55,8 +55,13 @@ const MapScreen = () => {
             }
         }
 
-        setScreenState(ScreenState.SUGGESTING);
-        handleOpen('location');
+        if (screenState === ScreenState.SUGGESTING) {
+            setScreenState(ScreenState.VIEWING);
+            handleClose();
+        } else {
+            setScreenState(ScreenState.SUGGESTING);
+            handleOpen('location');
+        }
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
