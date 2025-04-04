@@ -27,8 +27,6 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
 
-        console.error(response.data);
-
         return response.data.map((item: any) => {
             const latitude = Number(item.coordinate?.latitude);
             const longitude = Number(item.coordinate?.longitude);
