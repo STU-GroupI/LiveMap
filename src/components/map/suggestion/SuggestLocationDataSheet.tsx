@@ -1,26 +1,16 @@
 import React, {useState, RefObject} from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
 import { TextInput, Button, HelperText, Checkbox } from 'react-native-paper';
-import BaseBottomSheet from '../../base/baseBottomSheet.tsx';
+import { View, StyleSheet } from 'react-native';
+import { Menu } from 'react-native-paper';
+import { useForm, Controller } from 'react-hook-form';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import uuid from 'react-native-uuid';
-import { Menu } from 'react-native-paper';
+
+import BaseBottomSheet from '../../base/baseBottomSheet.tsx';
 
 interface POICoordinate {
-    latitude: number;
     longitude: number;
-}
-
-interface POICategory {
-    id: string;
-    name: string;
-}
-
-interface POIStatus {
-    id: string;
-    label: string;
+    latitude: number;
 }
 
 interface Map {
@@ -29,16 +19,13 @@ interface Map {
 }
 
 interface POIForm {
-    guid: string;
     title: string;
     description: string;
-    rating: number;
     coordinate: POICoordinate;
-    category: POICategory;
-    status: POIStatus;
+    category: string;
     map: Map;
-    mapguid: string;
-    wheelChairAccessible: boolean;
+    mapId: string;
+    isWheelchairAccessible: boolean;
 }
 
 interface SuggestLocationDataSheetProps {
@@ -62,7 +49,7 @@ export default function SuggestLocationDataSheet({
 
 }: SuggestLocationDataSheetProps) {
     const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState<POICategory | undefined>(undefined);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
 
     const {
         control,
@@ -70,18 +57,15 @@ export default function SuggestLocationDataSheet({
         setValue,
         formState: { errors },
     } = useForm<POIForm>({
-                defaultValues: {
-                    ...defaultValues,
-                    guid: uuid.v4(),
-                    title: '',
-                    description: '',
-                    rating: 0,
-                    coordinate: {longitude: 0, latitude: 0},
-                    category: selectedCategory,
-                    status: { id: '3', label: 'Pending' },
-                    wheelChairAccessible: false,
-                },
-            });
+        defaultValues: {
+            ...defaultValues,
+            title: '',
+            description: '',
+            coordinate: {longitude: 0, latitude: 0},
+            category: selectedCategory,
+            isWheelchairAccessible: false,
+        },
+    });
 
     //IMPORTANT NOTE
     /*
@@ -98,7 +82,7 @@ export default function SuggestLocationDataSheet({
         { id: '6', name: 'Trash Bin' },
     ];
 
-    const handleCategorySelect = (category: POICategory) => {
+    const handleCategorySelect = (category: string) => {
         setSelectedCategory(category);
         setValue('category', category);
         setCategoryMenuVisible(false);
@@ -138,48 +122,31 @@ export default function SuggestLocationDataSheet({
                 {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
 
                 <Controller
-                    control={control}
-                    name="rating"
-                    rules={{ required: 'Rating is required', min: 1, max: 10 }}
-                    render={({ field: { onChange, value } }) => (
-                        <TextInput
-                            label="Rating (1-10)*"
-                            keyboardType="numeric"
-                            value={value?.toString()}
-                            onChangeText={(text) => onChange(parseFloat(text) || 0)}
-                            error={!!errors.rating}
-                        />
+                        control={control}
+                        name="category"
+                        rules={{ required: 'Category is required'}}
+                        render={() => (
+                    <Menu
+                        visible={categoryMenuVisible}
+                        onDismiss={() => setCategoryMenuVisible(false)}
+                        anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
+                    >
+                        {categories.map((category) => (
+                            <Menu.Item key={category.id} title={category.name} onPress={() => handleCategorySelect(category.name)} />
+                        ))}
+                    </Menu>
                     )}
                 />
-                {errors.rating && <HelperText type="error">{errors.rating.message}</HelperText>}
-
-
-           <Controller
-                    control={control}
-                    name="category"
-                    rules={{ required: 'Category is required'}}
-                    render={() => (
-                <Menu
-                    visible={categoryMenuVisible}
-                    onDismiss={() => setCategoryMenuVisible(false)}
-                    anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory?.name || 'Select Category'}</Button>}
-                >
-                    {categories.map((category) => (
-                        <Menu.Item key={category.id} title={category.name} onPress={() => handleCategorySelect(category)} />
-                    ))}
-                </Menu>
-                )}
-            />
                 {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}
 
                 <Controller
                     control={control}
-                    name="wheelChairAccessible"
+                    name="isWheelchairAccessible"
                     render={({ field: { value } }) => (
                         <Checkbox.Item
                             label="Wheelchair Accessible"
                             status={value ? 'checked' : 'unchecked'}
-                            onPress={() => setValue('wheelChairAccessible', !value)}
+                            onPress={() => setValue('isWheelchairAccessible', !value)}
                         />
                     )}
                 />

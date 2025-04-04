@@ -12,6 +12,18 @@ import axios from 'axios';
 */
 const API_URL = 'http://10.0.2.2:5006/api';
 
+interface SuggestionRFC {
+    title: string,
+    description: string,
+    category: string,
+    mapId: string,
+    coordinate: {
+        longitude: number,
+        latitude: number
+    },
+    isWheelchairAccessible: boolean
+}
+
 export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
@@ -47,3 +59,14 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
     }
 };
 
+export const createSuggestionRFC = async (data: SuggestionRFC): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+        await axios.post(API_URL + '/rfc/poisuggestion', data).then((response) => {
+            if (response.status === 201) {
+                resolve(response.data);
+            }
+        }).catch((error) => {
+            reject(error);
+        });
+    });
+};
