@@ -1,8 +1,10 @@
 import React from 'react';
+import {DataTable, Icon } from 'react-native-paper';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { POI } from '../../models/POI/POI.ts';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+
+import { POI } from '../../models/POI/POI.ts';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 
 interface MapPOIBottomSheetProps {
@@ -34,7 +36,7 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.modalDetails}>
+            <BottomSheetScrollView style={styles.modalDetails}>
                 <Text style={styles.poiTitle}>{poi?.title}</Text>
                 <View style={styles.poiRatingRow}>
                     <Text style={styles.poiRatingValue}>{poi?.rating?.toFixed(1)}</Text>
@@ -64,7 +66,24 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                         </>
                     )}
                 </View>
-            </View>
+
+                <View>
+                    <Text style={styles.timeTableHeader}>Openingstijden</Text>
+                    <DataTable>
+                        <DataTable.Header>
+                            <DataTable.Title>Day</DataTable.Title>
+                            <DataTable.Title>Open - closed</DataTable.Title>
+                        </DataTable.Header>
+
+                        {poi.openingHours.map((item, index) => (
+                            <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
+                                <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
+                                <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
+                            </DataTable.Row>
+                        ))}
+                    </DataTable>
+                </View>
+            </BottomSheetScrollView>
         </BaseBottomSheet>
     );
 }
@@ -125,5 +144,22 @@ const styles = StyleSheet.create({
     dotSeparator: {
         fontSize: 12,
         marginHorizontal: 4,
+    },
+    timeTable: {
+        padding: 8,
+    },
+    timeTableHeader: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
+    row: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        paddingVertical: 8,
+    },
+    cell: {
+        flex: 1,
+        fontSize: 16,
     },
 });
