@@ -12,6 +12,11 @@ import axios from 'axios';
 */
 const API_URL = 'http://10.0.2.2:5006/api';
 
+interface ChangeRFC {
+    poiId: string;
+    message: string;
+}
+
 export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
@@ -48,3 +53,14 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
     }
 };
 
+export const createChangeRFC = async (data: ChangeRFC): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+        await axios.post(API_URL + '/rfc', data).then((response) => {
+          if (response.status === 201) {
+            resolve(response.data);
+          }
+        }).catch((error) => {
+          reject(error);
+        });
+    });
+};

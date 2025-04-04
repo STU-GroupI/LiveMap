@@ -1,19 +1,20 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {Avatar, Button, Card, Text, Icon, IconButton, Chip} from 'react-native-paper';
+import {Avatar, Text, IconButton, Chip} from 'react-native-paper';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 import {POI} from '../../models/POI/POI.ts';
 import {ScreenState} from '../../interfaces/MapConfig.ts';
 
 import {useMapConfig} from '../../config/MapConfigContext.tsx';
-import SuggestLocationDataSheet from './suggestion/SuggestLocationDataSheet.tsx';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 import useSnackbar from '../../hooks/useSnackbar.tsx';
 import useDialog from '../../hooks/useDialog.tsx';
 import useBottomSheets from '../../hooks/useBottomSheet.tsx';
 import CustomSnackbar from '../CustomSnackbar.tsx';
 import SuggestCancelDialog from './suggestion/SuggestCancelDialog.tsx';
+import SuggestPOIChangeDataSheet from './suggestion/SuggestPOIChangeDataSheet.tsx';
+import {createChangeRFC} from '../../services/apiService.ts';
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
@@ -26,6 +27,8 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
         screenState,
         setScreenState,
     } = useMapConfig();
+
+    const [ snackbarMessage, setSnackbarMessage ] = React.useState<string>('');
 
     const { handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
 
@@ -48,7 +51,7 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
             <CustomSnackbar
                 visible={visibleSnackbar}
                 dismissSnackBar={dismissSnackBar}
-                message="Your suggestion has been submitted!"
+                message={snackbarMessage}
             />
 
             <SuggestCancelDialog
@@ -61,24 +64,25 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
             />
 
             { (screenState === ScreenState.FORM_CHANGE) && (
-                <SuggestLocationDataSheet
+                <SuggestPOIChangeDataSheet
                     poi={poi}
                     onCancel={() => {
                         showDialog();
                     }}
                     onSubmit={(data) =>{
-                        handleClose();
-                        toggleSnackBar();
-                        // console.log('Submitted POI Data:', data);
-                        //TO-DO: Create a POST request to the API to store the new data using the apiService.ts
-                        setScreenState(ScreenState.VIEWING);
+                        createChangeRFC(data).finally(() => {
+                            handleClose();
+
+                            setSnackbarMessage('Your suggestion has been submitted!');
+                            toggleSnackBar();
+
+                            setScreenState(ScreenState.VIEWING);
+                        }).catch(() => {
+                            setSnackbarMessage('Your suggestion could not be submitted!');
+                            toggleSnackBar();
+                        });
                     }}
                     onClose={() => setScreenState(ScreenState.VIEWING)}
-                    defaultValues={{
-                        guid: poi.guid,
-                        coordinate: poi.coordinate,
-                        map: poi.map,
-                    }}
                     bottomSheetRef={(ref) => (bottomSheetRef.current.dataform = ref)}
                 />
             )}
