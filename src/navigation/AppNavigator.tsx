@@ -22,6 +22,7 @@ function AppNavigator() {
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
                 renderScene={renderScene}
+                keyboardHidesNavigationBar={false}
             />
         </MapConfigProvider>
     );

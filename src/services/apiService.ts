@@ -13,10 +13,15 @@ import axios from 'axios';
 */
 const API_URL = 'http://10.0.2.2:5006/api';
 
+interface ChangeRFC {
+    poiId: string;
+    message: string;
+}
+
 function formatTime(timeString: string): string {
-    const [hours, minutes, seconds] = timeString.split(':');
+    const [hours, minutes] = timeString.split(':');
     return `${hours}:${minutes}`;
-};
+}
 
 function dayOfWeekToString(dayOfWeek: number): string {
     const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
@@ -44,6 +49,7 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
             return {
                 guid: item.id,
                 title: item.title,
+                description: item.description,
                 coordinate: {
                     longitude: isValidLongitude ? longitude : 0,
                     latitude: isValidLatitude ? latitude : 0,
@@ -53,16 +59,27 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
                     categoryName: item.categoryName,
                 } as POICategory,
                 status: item.status as POIStatus,
-                rating: item.rating ?? 0,
                 map: {
                     guid: item.mapId,
+                    name: item.mapName || '',
                 } as Map,
                 wheelChairAccessible: item.wheelChairAccessible ?? false,
                 openingHours: openingHours,
             } as POI;
         });
     } catch (error) {
-        console.error('Fetch failed:', error);
         return [];
     }
+};
+
+export const createChangeRFC = async (data: ChangeRFC): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+        await axios.post(API_URL + '/rfc', data).then((response) => {
+          if (response.status === 201) {
+            resolve(response.data);
+          }
+        }).catch((error) => {
+          reject(error);
+        });
+    });
 };

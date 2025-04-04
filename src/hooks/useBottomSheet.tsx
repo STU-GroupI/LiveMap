@@ -1,24 +1,36 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 
-const useBottomSheet = () => {
-    const bottomSheetRef = useRef<BottomSheet>(null);
+const useBottomSheets = (ids: string[]) => {
+    const bottomSheetRefs = useRef<Record<string, BottomSheet | null>>({});
 
-    const handleOpen = useCallback(() => {
-        bottomSheetRef.current?.expand();
-        bottomSheetRef.current?.snapToIndex(0);
+    useEffect(() => {
+        ids.forEach((id) => {
+            if (!bottomSheetRefs.current[id]) {
+                bottomSheetRefs.current[id] = null;
+            }
+        });
+    }, [ids]);
+
+    const handleOpen = useCallback((id: string) => {
+        Object.entries(bottomSheetRefs.current).forEach(([key, ref]) => {
+            if (key === id) {
+                ref?.expand();
+            } else {
+                ref?.close();
+            }
+        });
     }, []);
 
-    const handleClose = useCallback((callback?: () => void) => {
-        bottomSheetRef.current?.close();
-        bottomSheetRef.current?.snapToIndex(-1);
-
-        if (callback) {
-            callback();
+    const handleClose = useCallback((id?: string) => {
+        if (id) {
+            bottomSheetRefs.current[id]?.close();
+        } else {
+            Object.values(bottomSheetRefs.current).forEach((ref) => ref?.close());
         }
     }, []);
 
-    return { bottomSheetRef, handleOpen, handleClose };
+    return { bottomSheetRefs, handleOpen, handleClose };
 };
 
-export default useBottomSheet;
+export default useBottomSheets;
