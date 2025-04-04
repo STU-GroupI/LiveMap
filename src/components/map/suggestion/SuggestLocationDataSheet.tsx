@@ -12,7 +12,6 @@ import {Map} from '../../../models/Map/Map.ts';
 import {POI} from '../../../models/POI/POI.ts';
 import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
 import {POICategory} from '../../../models/POI/POICategory.ts';
-import {POIStatus} from '../../../models/POI/POIStatus.ts';
 
 interface POIForm {
     guid: string;
@@ -21,7 +20,6 @@ interface POIForm {
     rating: number;
     coordinate: POICoordinate;
     category: POICategory;
-    status: POIStatus;
     map: Map;
     mapguid: string;
     wheelChairAccessible: boolean;
