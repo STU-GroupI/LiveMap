@@ -1,22 +1,22 @@
 import {useCallback, useState} from 'react';
 
 export default function  useDialog() {
-    const [visible, setVisible] = useState(false);
+    const [visibleDialog, setVisibleDialog] = useState(false);
 
-    const show = useCallback((callback?: () => void) => {
-        setVisible(true);
-
-        if (callback) {
-            callback();
-        }
-    }, []);
-    const hide = useCallback((callback?: () => void) => {
-        setVisible(false);
+    const showDialog = useCallback((callback?: () => void) => {
+        setVisibleDialog(true);
 
         if (callback) {
             callback();
         }
     }, []);
+    const hideDialog = useCallback((callback?: () => void) => {
+        setVisibleDialog(false);
 
-    return { visible, show, hide };
+        if (callback) {
+            callback();
+        }
+    }, []);
+
+    return { visibleDialog, showDialog, hideDialog };
 }

@@ -46,3 +46,4 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
         return [];
     }
 };
+

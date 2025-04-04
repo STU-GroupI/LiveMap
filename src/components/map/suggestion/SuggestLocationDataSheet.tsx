@@ -61,10 +61,8 @@ export default function SuggestLocationDataSheet({
     defaultValues,
 
 }: SuggestLocationDataSheetProps) {
-        const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
-        const [statusMenuVisible, setStatusMenuVisible] = useState(false);
-        const [selectedCategory, setSelectedCategory] = useState<POICategory | undefined>(undefined);
-        const [selectedStatus, setSelectedStatus] = useState<POIStatus | undefined>(undefined);
+    const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<POICategory | undefined>(undefined);
 
     const {
         control,
@@ -100,12 +98,6 @@ export default function SuggestLocationDataSheet({
         { id: '6', name: 'Trash Bin' },
     ];
 
-    const statuses = [
-        { id: '1', label: 'Active' },
-        { id: '2', label: 'Inactive' },
-        { id: '3', label: 'Pending' },
-    ];
-
     const handleCategorySelect = (category: POICategory) => {
         setSelectedCategory(category);
         setValue('category', category);
@@ -114,7 +106,7 @@ export default function SuggestLocationDataSheet({
 
     return (
         <BaseBottomSheet bottomSheetRef={bottomSheetRef} index={0} onClose={onClose} snapPoints={['70%', '70%']}>
-            <View style={styles.modalContent}>
+            <View style={styles.modalContent} >
                 <Controller
                     control={control}
                     name="title"

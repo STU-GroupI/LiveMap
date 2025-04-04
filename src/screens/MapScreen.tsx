@@ -6,18 +6,14 @@ import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
-import SuggestPOIButton from '../components/map/SuggestPOIButton.tsx';
+import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
 
 import {POI} from '../models/POI/POI.ts';
 import {ScreenState} from '../interfaces/MapConfig.ts';
 import useBottomSheets from '../hooks/useBottomSheet.tsx';
-import useSnackbar from '../hooks/useSnackbar.tsx';
-import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
-import MapSuggestLocationBottomSheet from '../components/map/suggestion/MapSuggestLocationBottomSheet.tsx';
-import SuggestLocationDataSheet from '../components/map/suggestion/SuggestLocationDataSheet.tsx';
-import CustomSnackbar from '../components/CustomSnackbar.tsx';
+import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 
 const MapScreen = () => {
     const {
@@ -34,12 +30,10 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
 
-    // Use the updated dynamic bottom sheet hook
-    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
+    const { handleOpen } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
-    const { visible, toggleSnackBar, dismissSnackBar } = useSnackbar();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -116,73 +110,12 @@ const MapScreen = () => {
             <MapCenterButton handleRecenter={handleRecenter} />
             {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
 
-            <CustomSnackbar
-                visible={visible}
-                dismissSnackBar={dismissSnackBar}
-                message="Your suggestion has been submitted!"
+            <MapCreateSuggestion
+                suggestedLocation={suggestedLocation}
+                setSuggestedLocation={setSuggestedLocation}
+                activePoi={activePoi}
+                setActivePoi={setActivePoi}
             />
-
-            {suggestedLocation && (
-                <MapSuggestLocationBottomSheet
-                    onConfirm={() => {
-                        setScreenState(ScreenState.FORM);
-                        handleClose();
-
-                        setSuggestedLocation(suggestedLocation);
-                        cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]]);
-
-                        handleOpen('dataform');
-                    }}
-                    onCancel={() => {
-                        setScreenState(ScreenState.VIEWING);
-                        handleClose();
-                        setSuggestedLocation(undefined);
-                    }}
-                    onClose={() => {
-                        if (screenState === ScreenState.SUGGESTING) {
-                            setScreenState(ScreenState.VIEWING);
-                        }
-                    }}
-                    onFlyToLocation={() => cameraRef?.current?.flyTo([suggestedLocation[0], suggestedLocation[1]])}
-                    bottomSheetRef={(ref) => (bottomSheetRefs.current.location = ref)}
-                />
-            )}
-
-            {activePoi && (
-                <MapPOIBottomSheet
-                    bottomSheetRef={(ref) => (bottomSheetRefs.current.detail = ref)}
-                    poi={activePoi}
-                    onClose={() => {
-                        setActivePoi(undefined);
-                    }}
-                />
-            )}
-                { (screenState === ScreenState.FORM && suggestedLocation) && (
-                    <SuggestLocationDataSheet
-                        onCancel={() => {
-                            handleClose();
-                            setScreenState(ScreenState.SUGGESTING);
-                            handleOpen('location');
-                        }}
-                        onSubmit={(data) =>{
-                            handleClose();
-                            toggleSnackBar();
-
-                            //The coordinates are added in using this class given there's an instance variable for them.
-                            data.coordinate = { latitude: suggestedLocation[0], longitude: suggestedLocation[1]};
-                            //The mapguid is hardcoded for now, but it will be dynamically set up
-                            data.mapguid = '2b0bf3ea-0f37-dc37-8143-ab809c55727d';
-                            //Console.log for testing purposes
-                            //console.log('Submitted POI Data:', data);
-
-                            //TO-DO: Create a POST request to the API to store the new data
-
-                            setSuggestedLocation(undefined);
-                            setScreenState(ScreenState.VIEWING);
-                        }}
-                        bottomSheetRef={(ref) => (bottomSheetRefs.current.dataform = ref)}
-                    />
-                )}
         </View>
     );
 };
