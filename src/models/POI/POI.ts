@@ -6,7 +6,7 @@ import {Map} from '../Map/Map.ts';
 export type POI = {
     guid: string;
     title: string;
-    rating: number;
+    description: string;
     coordinate: POICoordinate;
     category: POICategory;
     status: POIStatus;

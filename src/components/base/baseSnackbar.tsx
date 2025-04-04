@@ -1,5 +1,6 @@
 import React from 'react';
 import {Snackbar, useTheme} from 'react-native-paper';
+import {StyleSheet} from 'react-native';
 
 interface BaseSnackbarProps {
     children: React.ReactNode;
@@ -20,10 +21,12 @@ export default function BaseSnackbar({
     action,
 }: BaseSnackbarProps) {
     const theme = useTheme();
+    const styles = getStyles();
 
     return (
         <Snackbar
             elevation={3}
+            style={styles.snackbar}
             icon={icon}
             onIconPress={dismissSnackBar}
             visible={visible}
@@ -35,3 +38,11 @@ export default function BaseSnackbar({
         </Snackbar>
     );
 }
+
+
+const getStyles = () =>
+    StyleSheet.create({
+        snackbar: {
+            zIndex: 10,
+        },
+    });

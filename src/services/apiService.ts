@@ -26,6 +26,7 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
             return {
                 guid: item.id,
                 title: item.title,
+                description: item.description,
                 coordinate: {
                     longitude: isValidLongitude ? longitude : 0,
                     latitude: isValidLatitude ? latitude : 0,
@@ -35,11 +36,11 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
                     categoryName: item.categoryName,
                 } as POICategory,
                 status: item.status as POIStatus,
-                rating: item.rating ?? 0,
                 map: {
                     guid: item.mapId,
+                    name: item.mapName || '',
                 } as Map,
-                wheelChairAccessible: item.wheelChairAccessible ?? false,
+                wheelChairAccessible: item.wheelChairAccessible ?? true,
             } as POI;
         });
     } catch (error) {
