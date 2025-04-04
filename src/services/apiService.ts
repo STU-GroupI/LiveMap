@@ -17,6 +17,16 @@ interface ChangeRFC {
     message: string;
 }
 
+function formatTime(timeString: string): string {
+    const [hours, minutes, seconds] = timeString.split(':');
+    return `${hours}:${minutes}`;
+};
+
+function dayOfWeekToString(dayOfWeek: number): string {
+    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    return days[dayOfWeek] || days[0];
+}
+
 export const fetchPois = async (mapId: String): Promise<POI[]> => {
     try {
         const response = await axios.get(API_URL + '/poi?mapId=' + mapId);
@@ -27,6 +37,13 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
 
             const isValidLatitude = latitude >= -90 && latitude <= 90;
             const isValidLongitude = longitude >= -180 && longitude <= 180;
+
+            const openingHours: POIOpeningHours[] = item.openingHours?.map((entry: any) => ({
+                guid: entry.guid,
+                dayOfWeek: dayOfWeekToString(entry.dayOfWeek),
+                start: formatTime(entry.start),
+                end: formatTime(entry.end),
+            })) ?? [];
 
             return {
                 guid: item.id,
@@ -45,7 +62,8 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
                     guid: item.mapId,
                     name: item.mapName || '',
                 } as Map,
-                wheelChairAccessible: item.wheelChairAccessible ?? true,
+                wheelChairAccessible: item.wheelChairAccessible ?? false,
+                openingHours: openingHours,
             } as POI;
         });
     } catch (error) {
