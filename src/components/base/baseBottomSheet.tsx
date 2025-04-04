@@ -11,6 +11,7 @@ interface BaseBottomSheetProps {
     onChange?: (index: number) => void;
     onClose?: () => void;
     snapPoints?: (string | number)[];
+    background?: string;
 }
 
 export default function BaseBottomSheet({
@@ -19,7 +20,9 @@ export default function BaseBottomSheet({
     onChange,
     onClose,
     snapPoints = ["40%", "70%"],
+    background = '#fff',
 }: BaseBottomSheetProps) {
+    const styles = getStyles(background);
     const handleSheetChange = useCallback(
         (newIndex: number) => {
             onChange?.(newIndex);
@@ -43,13 +46,13 @@ export default function BaseBottomSheet({
     );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (background: string) => StyleSheet.create({
     bottomSheetContainer: {
         zIndex: 100,
         elevation: 100,
     },
     scrollContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: background,
     },
 });

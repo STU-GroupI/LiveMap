@@ -28,6 +28,7 @@ const MapConfigContext = createContext<IMapConfigContext>({
     handleRecenter: () => {},
     handleZoomIn: () => {},
     handleZoomOut: () => {},
+    canInteractWithMap: () => false,
 });
 
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
@@ -58,7 +59,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     useEffect(() => {
 
         const loadPois = async () => {
-            const loadedPois = await fetchPois('2b0bf3ea-0f37-dc37-8143-ab809c55727d');
+            const loadedPois = await fetchPois('0df27af6-893d-fb88-8cb0-206eee1bf6e6');
             setPois(loadedPois);
         };
 
@@ -96,6 +97,10 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         cameraRef.current?.zoomTo(zoom);
     };
 
+    const canInteractWithMap = () => {
+        return screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
+    };
+
     return (
         <MapConfigContext.Provider value={
             {
@@ -110,6 +115,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
                 handleRecenter,
                 handleZoomIn,
                 handleZoomOut,
+                canInteractWithMap,
             }
         }>
             {children}

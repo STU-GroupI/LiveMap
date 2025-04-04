@@ -29,6 +29,7 @@ const MapScreen = () => {
         handleRecenter,
         handleZoomIn,
         handleZoomOut,
+        canInteractWithMap
     } = useMapConfig();
 
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
@@ -41,7 +42,7 @@ const MapScreen = () => {
     }
 
     const handlePoiSelect = (selectedPoi: POI) => {
-        if (activePoi?.guid !== selectedPoi.guid) {
+        if (activePoi?.guid !== selectedPoi.guid && canInteractWithMap()) {
             cameraRef?.current?.flyTo([selectedPoi.coordinate.longitude, selectedPoi.coordinate.latitude]);
 
             setActivePoi({ ...selectedPoi });
@@ -118,7 +119,7 @@ const MapScreen = () => {
 
             {activePoi && (
                 <MapPOIBottomSheet
-                    bottomSheetRef={(ref) => (bottomSheetRefs.current.detail = ref)}
+                    bottomSheetRef={bottomSheetRefs}
                     poi={activePoi}
                     onClose={() => {
                         setActivePoi(undefined);
