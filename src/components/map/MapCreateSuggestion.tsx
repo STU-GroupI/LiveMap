@@ -51,7 +51,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
             {suggestedLocation && (
                 <MapSuggestLocationBottomSheet
                     onConfirm={() => {
-                        setScreenState(ScreenState.FORM);
+                        setScreenState(ScreenState.FORM_NEW);
                         handleClose();
 
                         setSuggestedLocation(suggestedLocation);
@@ -74,7 +74,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
                 />
             )}
 
-            { (screenState === ScreenState.FORM && suggestedLocation) && (
+            { (screenState === ScreenState.FORM_NEW && suggestedLocation) && (
                 <SuggestLocationDataSheet
                     onCancel={() => {
                         showDialog();

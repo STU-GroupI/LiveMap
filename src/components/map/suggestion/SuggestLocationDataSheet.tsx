@@ -3,15 +3,14 @@ import { TextInput, Button, HelperText, Checkbox } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
+
 import BottomSheet from '@gorhom/bottom-sheet';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-
 import BaseBottomSheet from '../../base/baseBottomSheet.tsx';
 
-interface POICoordinate {
-    longitude: number;
-    latitude: number;
-}
+import {POI} from '../../../models/POI/POI.ts';
+import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
+import {POICategory} from '../../../models/POI/POICategory.ts';
 
 interface Map {
     id: string;
@@ -33,18 +32,35 @@ interface SuggestLocationDataSheetProps {
     onSubmit: (data: POIForm) => void;
     onClose?: () => void;
     onCancel: () => void;
+    poi?: POI;
     defaultValues?: {
         guid: string;
         coordinate: POICoordinate;
         map: Map;
-        };
+    };
 }
+
+//IMPORTANT NOTE
+/*
+Below, I've hardcoded the dropdown values for the categories and statuses.
+However, I planned on using the API endpoint to retrieve all possible categories and statuses.
+It turns out there hasn't been a set endpoint for the values.
+*/
+const categories: POICategory[] = [
+    { category: '1', categoryName: 'Entertainment' },
+    { category: '2', categoryName: 'First-aid & Medical' },
+    { category: '3', categoryName: 'Information' },
+    { category: '4', categoryName: 'Parking' },
+    { category: '5', categoryName: 'Store' },
+    { category: '6', categoryName: 'Trash Bin' },
+];
 
 export default function SuggestLocationDataSheet({
     bottomSheetRef,
     onSubmit,
     onClose,
     onCancel,
+    poi,
     defaultValues,
 
 }: SuggestLocationDataSheetProps) {
@@ -67,21 +83,6 @@ export default function SuggestLocationDataSheet({
         },
     });
 
-    //IMPORTANT NOTE
-    /*
-    Below, I've hardcoded the dropdown values for the categories and statuses.
-    However, I planned on using the API endpoint to retrieve all possible categories and statuses.
-    It turns out there hasn't been a set endpoint for the values.
-    */
-    const categories = [
-        { id: '1', name: 'Entertainment' },
-        { id: '2', name: 'First-Aid & Medical' },
-        { id: '3', name: 'Information' },
-        { id: '4', name: 'Parking' },
-        { id: '5', name: 'Store' },
-        { id: '6', name: 'Trash Bin' },
-    ];
-
     const handleCategorySelect = (category: string) => {
         setSelectedCategory(category);
         setValue('category', category);
@@ -91,6 +92,10 @@ export default function SuggestLocationDataSheet({
     return (
         <BaseBottomSheet bottomSheetRef={bottomSheetRef} index={0} onClose={onClose} snapPoints={['70%', '70%']}>
             <View style={styles.modalContent} >
+                <Text variant="titleLarge" style={styles.title}>
+                    {poi ? 'Suggest a change' : 'Suggest a Location'}
+                </Text>
+
                 <Controller
                     control={control}
                     name="title"
@@ -122,6 +127,21 @@ export default function SuggestLocationDataSheet({
                 {errors.description && <HelperText type="error">{errors.description.message}</HelperText>}
 
                 <Controller
+                    control={control}
+                    name="category"
+                    rules={{ required: 'Category is required'}}
+                    render={() => (
+                        <Menu
+                            visible={categoryMenuVisible}
+                            onDismiss={() => setCategoryMenuVisible(false)}
+                            anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory?.categoryName || 'Select Category'}</Button>}
+                        >
+                            {categories.map((category) => (
+                                <Menu.Item key={category.category} title={category.categoryName} onPress={() => handleCategorySelect(category)} />
+                            ))}
+                        </Menu>
+                    )}
+                />
                         control={control}
                         name="category"
                         rules={{ required: 'Category is required'}}
@@ -174,5 +194,9 @@ const styles = StyleSheet.create({
         marginTop: 16,
         alignItems: 'center',
         justifyContent: 'space-between',
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 20,
     },
 });
