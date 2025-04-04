@@ -14,6 +14,7 @@ import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
+import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 
 const MapScreen = () => {
     const {
@@ -30,7 +31,7 @@ const MapScreen = () => {
         handleZoomOut,
     } = useMapConfig();
 
-    const { handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
+    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
 
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
@@ -115,11 +116,20 @@ const MapScreen = () => {
             <MapCenterButton handleRecenter={handleRecenter} />
             {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
 
+            {activePoi && (
+                <MapPOIBottomSheet
+                    bottomSheetRef={(ref) => (bottomSheetRefs.current.detail = ref)}
+                    poi={activePoi}
+                    onClose={() => {
+                        setActivePoi(undefined);
+                    }}
+                />
+            )}
+
             <MapCreateSuggestion
+                bottomSheetRef={bottomSheetRefs}
                 suggestedLocation={suggestedLocation}
                 setSuggestedLocation={setSuggestedLocation}
-                activePoi={activePoi}
-                setActivePoi={setActivePoi}
             />
         </View>
     );
