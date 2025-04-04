@@ -1,5 +1,5 @@
 import React, {useState, RefObject} from 'react';
-import { TextInput, Button, HelperText, Checkbox } from 'react-native-paper';
+import { TextInput, Button, HelperText, Checkbox, Text } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { Menu } from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
@@ -134,27 +134,12 @@ export default function SuggestLocationDataSheet({
                         <Menu
                             visible={categoryMenuVisible}
                             onDismiss={() => setCategoryMenuVisible(false)}
-                            anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory?.categoryName || 'Select Category'}</Button>}
+                            anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
                         >
                             {categories.map((category) => (
-                                <Menu.Item key={category.category} title={category.categoryName} onPress={() => handleCategorySelect(category)} />
+                                <Menu.Item key={category.category} title={category.categoryName} onPress={() => handleCategorySelect(category.categoryName)} />
                             ))}
                         </Menu>
-                    )}
-                />
-                        control={control}
-                        name="category"
-                        rules={{ required: 'Category is required'}}
-                        render={() => (
-                    <Menu
-                        visible={categoryMenuVisible}
-                        onDismiss={() => setCategoryMenuVisible(false)}
-                        anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
-                    >
-                        {categories.map((category) => (
-                            <Menu.Item key={category.id} title={category.name} onPress={() => handleCategorySelect(category.name)} />
-                        ))}
-                    </Menu>
                     )}
                 />
                 {errors.category && <HelperText type="error">{errors.category.message}</HelperText>}

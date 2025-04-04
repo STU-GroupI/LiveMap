@@ -81,7 +81,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
                     }}
                     onSubmit={(data) =>{
                         data.coordinate = { longitude: suggestedLocation[0], latitude: suggestedLocation[1] };
-                        data.mapId = '41c751fc-82dd-2cdb-4e44-87b47ff984ed'; // Replace with actual mapId
+                        data.mapId = 'd6a6fbdd-be95-c767-a3f4-4096c91e9cbc'; // Replace with actual mapId
 
                         createSuggestionRFC(data).then(() => {
                             handleClose();
