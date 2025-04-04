@@ -26,19 +26,18 @@ export default function BaseSnackbar({
     return (
         <Snackbar
             elevation={3}
-            style={styles.snackbar}
             icon={icon}
             onIconPress={dismissSnackBar}
             visible={visible}
             onDismiss={dismissSnackBar}
             action={action}
             theme={theme}
+            style={styles.snackbar}
         >
             {children}
         </Snackbar>
     );
 }
-
 
 const getStyles = () =>
     StyleSheet.create({

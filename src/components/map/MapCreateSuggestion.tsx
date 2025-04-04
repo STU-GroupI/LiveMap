@@ -9,6 +9,7 @@ import useSnackbar from '../../hooks/useSnackbar.tsx';
 import useDialog from '../../hooks/useDialog.tsx';
 import {useMapConfig} from '../../config/MapConfigContext.tsx';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
+import {createSuggestionRFC} from '../../services/apiService.ts';
 
 interface props {
     bottomSheetRef: React.RefObject<Record<string, BottomSheetMethods | null>>
@@ -22,6 +23,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
         setScreenState,
         cameraRef,
     } = useMapConfig();
+    const [snackbarMessage, setSnackbarMessage] = React.useState<string>('');
 
     const { handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
 
@@ -33,7 +35,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
             <CustomSnackbar
                 visible={visibleSnackbar}
                 dismissSnackBar={dismissSnackBar}
-                message="Your suggestion has been submitted!"
+                message={snackbarMessage}
             />
 
             <SuggestCancelDialog
@@ -78,20 +80,21 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
                         showDialog();
                     }}
                     onSubmit={(data) =>{
-                        handleClose();
-                        toggleSnackBar();
+                        data.coordinate = { longitude: suggestedLocation[0], latitude: suggestedLocation[1] };
+                        data.mapId = 'd6a6fbdd-be95-c767-a3f4-4096c91e9cbc'; // Replace with actual mapId
 
-                        //The coordinates are added in using this class given there's an instance variable for them.
-                        data.coordinate = { latitude: suggestedLocation[0], longitude: suggestedLocation[1]};
-                        //The mapguid is hardcoded for now, but it will be dynamically set up
-                        data.mapguid = '2b0bf3ea-0f37-dc37-8143-ab809c55727d';
-                        //Console.log for testing purposes
-                        //console.log('Submitted POI Data:', data);
+                        createSuggestionRFC(data).then(() => {
+                            handleClose();
 
-                        //TO-DO: Create a POST request to the API to store the new data using the apiService.ts
+                            setSnackbarMessage('Your suggestion has been submitted!');
+                            toggleSnackBar();
 
-                        setSuggestedLocation(undefined);
-                        setScreenState(ScreenState.VIEWING);
+                            setSuggestedLocation(undefined);
+                            setScreenState(ScreenState.VIEWING);
+                        }).catch(() => {
+                            setSnackbarMessage('Your suggestion could not be submitted!');
+                            toggleSnackBar();
+                        });
                     }}
                     bottomSheetRef={(ref) => (bottomSheetRef.current.dataform = ref)}
                 />
