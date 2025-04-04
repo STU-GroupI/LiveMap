@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Image, Text, TouchableOpacity, FlatList } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { POI } from '../../models/POI/POI.ts';
+import {DataTable, Icon } from 'react-native-paper';
+import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
+
+import { POI } from '../../models/POI/POI.ts';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 
 interface MapPOIBottomSheetProps {
@@ -34,7 +36,7 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                 </TouchableOpacity>
             </View>
 
-            <View style={styles.modalDetails}>
+            <BottomSheetScrollView style={styles.modalDetails}>
                 <Text style={styles.poiTitle}>{poi?.title}</Text>
                 <View style={styles.poiRatingRow}>
                     <Text style={styles.poiRatingValue}>{poi?.rating?.toFixed(1)}</Text>
@@ -67,22 +69,21 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
 
                 <View>
                     <Text style={styles.timeTableHeader}>Openingstijden</Text>
-                    <FlatList
-                        style={styles.timeTable}
-                        data={poi?.openingHours}
-                        keyExtractor={(item, index) => item.guid || index.toString()}
-                        nestedScrollEnabled={true}
-                        renderItem={({ item }) => {
-                            return (
-                                <View style={styles.row}>
-                                    <Text style={styles.cell}>{item.dayOfWeek}</Text>
-                                    <Text style={styles.cell}>{item.start} - {item.end}</Text>
-                                </View>
-                            );
-                        }}
-                    />
+                    <DataTable>
+                        <DataTable.Header>
+                            <DataTable.Title>Day</DataTable.Title>
+                            <DataTable.Title>Open - closed</DataTable.Title>
+                        </DataTable.Header>
+
+                        {poi.openingHours.map((item, index) => (
+                            <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
+                                <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
+                                <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
+                            </DataTable.Row>
+                        ))}
+                    </DataTable>
                 </View>
-            </View>
+            </BottomSheetScrollView>
         </BaseBottomSheet>
     );
 }
@@ -152,13 +153,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     row: {
-        flexDirection: "row",
+        flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: "#ccc",
+        borderBottomColor: '#ccc',
         paddingVertical: 8,
     },
     cell: {
         flex: 1,
         fontSize: 16,
-    }
+    },
 });
