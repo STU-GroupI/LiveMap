@@ -136,7 +136,9 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                                         <DataTable.Title>Open - closed</DataTable.Title>
                                     </DataTable.Header>
 
-                                    {poi.openingHours.map((item, index) => (
+                                    {poi.openingHours
+                                        .sort((a, b) => (a.dayIndex < b.dayIndex ? -1 : 1))
+                                        .map((item, index) => (
                                         <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
                                             <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
                                             <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>

@@ -27,6 +27,7 @@ export default function MapZoomInOutButton({handleZoomIn, handleZoomOut}: props)
                 <TouchableOpacity
                     style={[styles.zoomButton, styles.zoomTopButton]}
                     onPress={handleZoomIn}
+                    testID={'zoom-in'}
                 >
                     <Icon source="plus" size={20} color="#000" />
                 </TouchableOpacity>
@@ -34,6 +35,7 @@ export default function MapZoomInOutButton({handleZoomIn, handleZoomOut}: props)
                 <TouchableOpacity
                     style={[styles.zoomButton, styles.zoomBottomButton]}
                     onPress={handleZoomOut}
+                    testID={'zoom-out'}
                 >
                     <Icon source="minus" size={20} color="#000" />
                 </TouchableOpacity>
