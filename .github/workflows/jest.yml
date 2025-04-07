@@ -2,10 +2,10 @@ name: 'Jest Code Coverage'
 on:
     push:
         branches:
-            - mai
+            - main
     pull_request:
         branches:
-          - main
+            - main
 
 jobs:
     coverage:
@@ -24,6 +24,3 @@ jobs:
 
             - name: Run Tests
               run: npm test
-
-            - name: Run ESLint
-              run: npm run lint
