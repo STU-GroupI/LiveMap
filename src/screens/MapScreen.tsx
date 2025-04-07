@@ -1,22 +1,27 @@
 import React, {useState} from 'react';
+import {Feature, Point} from 'geojson';
 import {useMapConfig} from '../config/MapConfigContext.tsx';
-import useBottomSheet from '../hooks/useBottomSheet.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
-
-import MapTopBarButton from '../components/map/MapTopBarButton.tsx';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
+import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
 
-import { POI } from '../models/POI/POI.ts';
-import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
+import {POI} from '../models/POI/POI.ts';
+import {ScreenState} from '../interfaces/MapConfig.ts';
+import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
+import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
+import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
+import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 
 const MapScreen = () => {
     const {
         config,
         pois,
+        screenState,
+        setScreenState,
         loading,
         hasLocationPermission,
         userLocation,
@@ -24,21 +29,46 @@ const MapScreen = () => {
         handleRecenter,
         handleZoomIn,
         handleZoomOut,
+        canInteractWithMap
     } = useMapConfig();
-    const { bottomSheetRef, handleOpen, handleClose } = useBottomSheet();
-    const [activePoi, setActivePoi] = useState<POI|undefined>();
+
+    const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
+    const [activePoi, setActivePoi] = useState<POI | undefined>();
+
+    const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
     }
 
     const handlePoiSelect = (selectedPoi: POI) => {
-        if (activePoi?.guid !== selectedPoi.guid) {
+        if (activePoi?.guid !== selectedPoi.guid && canInteractWithMap()) {
             cameraRef?.current?.flyTo([selectedPoi.coordinate.longitude, selectedPoi.coordinate.latitude]);
-            handleClose(() => setActivePoi(undefined));
 
             setActivePoi({ ...selectedPoi });
-            setTimeout(() => handleOpen(), 0);
+            handleOpen('detail');
+        }
+    };
+
+    const handleCreateSuggestion = () => {
+        if (userLocation) {
+            if (suggestedLocation === undefined) {
+                setSuggestedLocation(userLocation);
+            }
+        }
+
+        if (screenState === ScreenState.SUGGESTING) {
+            setScreenState(ScreenState.VIEWING);
+            handleClose();
+        } else {
+            setScreenState(ScreenState.SUGGESTING);
+            handleOpen('location');
+        }
+    };
+
+    const handleSetSuggestedLocation = (event: Feature<Point>) => {
+        if (suggestedLocation !== undefined) {
+            setSuggestedLocation([event.geometry.coordinates[0], event.geometry.coordinates[1]]);
         }
     };
 
@@ -50,6 +80,7 @@ const MapScreen = () => {
                 compassEnabled={true}
                 compassViewPosition={3}
                 rotateEnabled={false}
+                onPress={handleSetSuggestedLocation}
             >
                 <Camera
                     ref={cameraRef}
@@ -60,31 +91,47 @@ const MapScreen = () => {
                     followUserLocation={false}
                 />
 
-                {pois.length > 0 && pois.map((mapPoi) => (
-                    <POIMarker
-                        key={`poi-${mapPoi.guid}`}
-                        poi={mapPoi}
-                        isActive={activePoi?.guid === mapPoi.guid}
-                        onSelect={handlePoiSelect}
-                    />
-                ))}
+                {pois.length > 0 &&
+                    pois.map((mapPoi) => (
+                        <POIMarker
+                            key={`poi-${mapPoi.guid}`}
+                            poi={mapPoi}
+                            isActive={activePoi?.guid === mapPoi.guid}
+                            onSelect={handlePoiSelect}
+                        />
+                    ))}
+
+                {(suggestedLocation && screenState === ScreenState.SUGGESTING) && (
+                    <SuggestedPOIMarker location={suggestedLocation} />
+                )}
 
                 {userLocation && (
                     <PointAnnotation id="user-location" coordinate={userLocation}>
-                        <View
-                            style={styles.mapUserMarker}
-                        />
+                        <View style={styles.mapUserMarker} />
                     </PointAnnotation>
                 )}
             </MapView>
 
+            <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion} active={screenState === ScreenState.SUGGESTING}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
-            <MapTopBarButton />
+            {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
 
             {activePoi && (
-                <MapPOIBottomSheet bottomSheetRef={bottomSheetRef} poi={activePoi} onClose={() => setActivePoi(undefined)}/>
+                <MapPOIBottomSheet
+                    bottomSheetRef={bottomSheetRefs}
+                    poi={activePoi}
+                    onClose={() => {
+                        setActivePoi(undefined);
+                    }}
+                />
             )}
+
+            <MapCreateSuggestion
+                bottomSheetRef={bottomSheetRefs}
+                suggestedLocation={suggestedLocation}
+                setSuggestedLocation={setSuggestedLocation}
+            />
         </View>
     );
 };

@@ -6,11 +6,12 @@ import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface BaseBottomSheetProps {
     children: React.ReactNode;
-    bottomSheetRef: React.RefObject<BottomSheetMethods | null>;
+    bottomSheetRef: ((ref: BottomSheet | null) => void) | React.RefObject<BottomSheetMethods | null>;
     index?: number;
     onChange?: (index: number) => void;
     onClose?: () => void;
     snapPoints?: (string | number)[];
+    background?: string;
 }
 
 export default function BaseBottomSheet({
@@ -18,15 +19,19 @@ export default function BaseBottomSheet({
     bottomSheetRef,
     onChange,
     onClose,
-    snapPoints = ['40%', '70%'],
+    snapPoints = ["40%", "70%"],
+    background = '#fff',
 }: BaseBottomSheetProps) {
-    const handleSheetChange = useCallback((newIndex: number) => {
-        onChange?.(newIndex);
-
-        if (newIndex === -1) {
-            onClose?.();
-        }
-    }, [onChange, onClose]);
+    const styles = getStyles(background);
+    const handleSheetChange = useCallback(
+        (newIndex: number) => {
+            onChange?.(newIndex);
+            if (newIndex === -1) {
+                onClose?.();
+            }
+        },
+        [onChange, onClose]
+    );
 
     return (
         <BottomSheet
@@ -36,21 +41,18 @@ export default function BaseBottomSheet({
             onChange={handleSheetChange}
             style={styles.bottomSheetContainer}
         >
-            <BottomSheetScrollView style={styles.scrollContainer}>
-                {children}
-            </BottomSheetScrollView>
+            <BottomSheetScrollView style={styles.scrollContainer}>{children}</BottomSheetScrollView>
         </BottomSheet>
     );
 }
 
-
-const styles = StyleSheet.create({
+const getStyles = (background: string) => StyleSheet.create({
     bottomSheetContainer: {
         zIndex: 100,
         elevation: 100,
     },
     scrollContainer: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: background,
     },
 });
