@@ -2,8 +2,11 @@ name: 'Jest Code Coverage'
 on:
     push:
         branches:
-            - main
-            
+            - mai
+    pull_request:
+        branches:
+          - main
+
 jobs:
     coverage:
         runs-on: ubuntu-latest
