@@ -7,7 +7,7 @@ import SuggestLocationDataSheet from './suggestion/SuggestLocationDataSheet.tsx'
 import useBottomSheets from '../../hooks/useBottomSheet.tsx';
 import useSnackbar from '../../hooks/useSnackbar.tsx';
 import useDialog from '../../hooks/useDialog.tsx';
-import {useMapConfig} from '../../config/MapConfigContext.tsx';
+import {useMapConfig} from '../../context/MapConfigContext.tsx';
 import {BottomSheetMethods} from '@gorhom/bottom-sheet/lib/typescript/types';
 import {createSuggestionRFC} from '../../services/apiService.ts';
 

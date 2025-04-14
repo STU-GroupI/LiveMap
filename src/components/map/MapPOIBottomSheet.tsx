@@ -7,7 +7,7 @@ import {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {POI} from '../../models/POI/POI.ts';
 import {ScreenState} from '../../interfaces/MapConfig.ts';
 
-import {useMapConfig} from '../../config/MapConfigContext.tsx';
+import {useMapConfig} from '../../context/MapConfigContext.tsx';
 import BaseBottomSheet from '../base/baseBottomSheet.tsx';
 import useSnackbar from '../../hooks/useSnackbar.tsx';
 import useDialog from '../../hooks/useDialog.tsx';

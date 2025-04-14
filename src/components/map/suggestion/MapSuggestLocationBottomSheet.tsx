@@ -31,7 +31,7 @@ export default function MapSuggestLocationBottomSheet({
         >
             <View style={styles.modalDetails}>
                 <TouchableOpacity style={styles.flyButton} onPress={onFlyToLocation}>
-                    <Text style={styles.flyButtonText}>Fly to Location</Text>
+                    <Text style={styles.flyButtonText}>Re-center</Text>
                 </TouchableOpacity>
 
                 <View style={styles.buttonContainer}>

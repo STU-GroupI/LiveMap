@@ -1,5 +1,5 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
-import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from './MapConfig.ts';
+import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext, ScreenState} from '../interfaces/MapConfig.ts';
@@ -7,6 +7,7 @@ import {POI} from '../models/POI/POI.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
 import {fetchPois} from '../services/apiService.ts';
+import {useAppbar} from './AppbarContext.tsx';
 
 
 const defaultConfig: IMapConfig = {
@@ -41,6 +42,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const cameraRef = useRef<CameraRef>(null);
 
     const { hasLocationPermission, userLocation } = useLocation();
+    const { expandAppbar, collapseAppbar, setAppbarTitle, setCenterTitle, setOverlapContent, setShowAppbar } = useAppbar(); // Access Appbar context
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -57,7 +59,6 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     }, []);
 
     useEffect(() => {
-
         const loadPois = async () => {
             const loadedPois = await fetchPois('d6a6fbdd-be95-c767-a3f4-4096c91e9cbc');
             setPois(loadedPois);
@@ -65,6 +66,19 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
         loadPois();
     }, []);
+
+    useEffect(() => {
+        if (screenState === ScreenState.SUGGESTING) {
+            expandAppbar({
+                title: 'Click on the map to suggest a location',
+                actions: [],
+                centerTitle: true,
+                overlapContent: true,
+            });
+        } else {
+            collapseAppbar();
+        }
+    }, [screenState, collapseAppbar, expandAppbar]);
 
     const handleRecenter = async () => {
         try {

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Feature, Point} from 'geojson';
-import {useMapConfig} from '../config/MapConfigContext.tsx';
+import {useMapConfig} from '../context/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
 import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
@@ -29,7 +29,7 @@ const MapScreen = () => {
         handleRecenter,
         handleZoomIn,
         handleZoomOut,
-        canInteractWithMap
+        canInteractWithMap,
     } = useMapConfig();
 
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
