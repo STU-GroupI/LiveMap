@@ -9,19 +9,21 @@ import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
 
 import {POI} from '../models/POI/POI.ts';
-import {ScreenState} from '../interfaces/MapConfig.ts';
 import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 
+import {ScreenState} from '../state/screenStateReducer.ts';
+import {setSuggesting, setViewing} from '../state/screenStateActions.ts';
+
 const MapScreen = () => {
     const {
         config,
         pois,
         screenState,
-        setScreenState,
+        dispatch,
         loading,
         hasLocationPermission,
         userLocation,
@@ -45,23 +47,22 @@ const MapScreen = () => {
         if (activePoi?.guid !== selectedPoi.guid && canInteractWithMap()) {
             cameraRef?.current?.flyTo([selectedPoi.coordinate.longitude, selectedPoi.coordinate.latitude]);
 
+            dispatch(setViewing());
             setActivePoi({ ...selectedPoi });
             handleOpen('detail');
         }
     };
 
     const handleCreateSuggestion = () => {
-        if (userLocation) {
-            if (suggestedLocation === undefined) {
-                setSuggestedLocation(userLocation);
-            }
+        if (userLocation && suggestedLocation === undefined) {
+            setSuggestedLocation(userLocation);
         }
 
         if (screenState === ScreenState.SUGGESTING) {
-            setScreenState(ScreenState.VIEWING);
+            dispatch(setViewing());
             handleClose();
         } else {
-            setScreenState(ScreenState.SUGGESTING);
+            dispatch(setSuggesting());
             handleOpen('location');
         }
     };
@@ -96,12 +97,12 @@ const MapScreen = () => {
                         <POIMarker
                             key={`poi-${mapPoi.guid}`}
                             poi={mapPoi}
-                            isActive={activePoi?.guid === mapPoi.guid}
+                            isActive={screenState === ScreenState.VIEWING && activePoi?.guid === mapPoi.guid}
                             onSelect={handlePoiSelect}
                         />
                     ))}
 
-                {(suggestedLocation && screenState === ScreenState.SUGGESTING) && (
+                {(suggestedLocation && (screenState === ScreenState.SUGGESTING || screenState === ScreenState.FORM_POI_NEW)) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
                 )}
 

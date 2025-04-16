@@ -1,13 +1,14 @@
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
-import {IMapConfig, IMapConfigContext, ScreenState} from '../interfaces/MapConfig.ts';
+import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
 import {POI} from '../models/POI/POI.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
 import {fetchPois} from '../services/apiService.ts';
 import {useAppbar} from './AppbarContext.tsx';
+import {ScreenState, screenStateReducer} from '../state/ScreenStateReducer.ts';
 
 
 const defaultConfig: IMapConfig = {
@@ -22,7 +23,7 @@ const MapConfigContext = createContext<IMapConfigContext>({
     config: defaultConfig,
     pois: [],
     screenState: ScreenState.VIEWING,
-    setScreenState: () => {},
+    dispatch: () => {},
     loading: true,
     userLocation: null,
     hasLocationPermission: false,
@@ -36,13 +37,14 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const [config, setConfig] = useState<IMapConfig>(defaultConfig);
     const [loading, setLoading] = useState(true);
     const [pois, setPois] = useState<POI[]>([]);
-    const [screenState, setScreenState] = useState(ScreenState.VIEWING);
+
+    const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
 
     const zoomRef  = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
 
     const { hasLocationPermission, userLocation } = useLocation();
-    const { expandAppbar, collapseAppbar, setAppbarTitle, setCenterTitle, setOverlapContent, setShowAppbar } = useAppbar(); // Access Appbar context
+    const { expandAppbar, collapseAppbar } = useAppbar();
 
     useEffect(() => {
         const loadConfig = async () => {
@@ -60,7 +62,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
     useEffect(() => {
         const loadPois = async () => {
-            const loadedPois = await fetchPois('d6a6fbdd-be95-c767-a3f4-4096c91e9cbc');
+            const loadedPois = await fetchPois('944f6b3c-5cad-6ed7-4d42-7221b9908330');
             setPois(loadedPois);
         };
 
@@ -68,17 +70,19 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     }, []);
 
     useEffect(() => {
-        if (screenState === ScreenState.SUGGESTING) {
-            expandAppbar({
-                title: 'Click on the map to suggest a location',
-                actions: [],
-                centerTitle: true,
-                overlapContent: true,
-            });
-        } else {
-            collapseAppbar();
+        switch (screenState) {
+            case ScreenState.SUGGESTING:
+                expandAppbar({
+                    title: 'Click on the map to suggest a location',
+                    actions: [],
+                    centerTitle: true,
+                    overlapContent: true,
+                });
+                break;
+            default:
+                collapseAppbar();
         }
-    }, [screenState, collapseAppbar, expandAppbar]);
+    }, [screenState, expandAppbar, collapseAppbar]);
 
     const handleRecenter = async () => {
         try {
@@ -121,7 +125,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
                 config,
                 pois,
                 screenState,
-                setScreenState,
+                dispatch,
                 userLocation,
                 hasLocationPermission,
                 loading,

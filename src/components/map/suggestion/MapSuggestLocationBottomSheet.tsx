@@ -27,6 +27,7 @@ export default function MapSuggestLocationBottomSheet({
             bottomSheetRef={bottomSheetRef}
             index={-1}
             onClose={onClose}
+            enablePanDownToClose={false}
             snapPoints={['20%', '20%']}
         >
             <View style={styles.modalDetails}>
