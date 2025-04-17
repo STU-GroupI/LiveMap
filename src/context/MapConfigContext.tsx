@@ -8,7 +8,7 @@ import {POI} from '../models/POI/POI.ts';
 import useLocation from '../hooks/UseLocation.tsx';
 import {fetchPois} from '../services/apiService.ts';
 import {useAppbar} from './AppbarContext.tsx';
-import {ScreenState, screenStateReducer} from '../state/ScreenStateReducer.ts';
+import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 
 
 const defaultConfig: IMapConfig = {

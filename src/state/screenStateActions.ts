@@ -1,4 +1,4 @@
-import {ScreenState, ScreenStateAction} from './ScreenStateReducer.ts';
+import {ScreenState, ScreenStateAction} from './screenStateReducer.ts';
 
 export const setViewing = (): ScreenStateAction => ({
     type: 'SET_SCREEN',
