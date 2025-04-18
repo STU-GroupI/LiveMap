@@ -36,7 +36,7 @@ function formatTime(timeString: string): string {
 }
 
 function dayOfWeekToString(dayOfWeek: number): string {
-    const days = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'];
+    const days = ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'];
     return days[dayOfWeek] || days[0];
 }
 
@@ -54,6 +54,7 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
             const openingHours: POIOpeningHours[] = item.openingHours?.map((entry: any) => ({
                 guid: entry.guid,
                 dayOfWeek: dayOfWeekToString(entry.dayOfWeek),
+                dayIndex: entry.dayOfWeek,
                 start: formatTime(entry.start),
                 end: formatTime(entry.end),
             })) ?? [];
