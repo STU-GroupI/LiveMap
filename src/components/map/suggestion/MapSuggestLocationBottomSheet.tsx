@@ -27,11 +27,12 @@ export default function MapSuggestLocationBottomSheet({
             bottomSheetRef={bottomSheetRef}
             index={-1}
             onClose={onClose}
+            enablePanDownToClose={false}
             snapPoints={['20%', '20%']}
         >
             <View style={styles.modalDetails}>
                 <TouchableOpacity style={styles.flyButton} onPress={onFlyToLocation}>
-                    <Text style={styles.flyButtonText}>Fly to Location</Text>
+                    <Text style={styles.flyButtonText}>Re-center</Text>
                 </TouchableOpacity>
 
                 <View style={styles.buttonContainer}>

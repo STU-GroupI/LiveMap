@@ -90,7 +90,13 @@ export default function SuggestLocationDataSheet({
     };
 
     return (
-        <BaseBottomSheet bottomSheetRef={bottomSheetRef} index={0} onClose={onClose} snapPoints={['70%', '70%']}>
+        <BaseBottomSheet
+            bottomSheetRef={bottomSheetRef}
+            index={0}
+            onClose={onClose}
+            enablePanDownToClose={false}
+            snapPoints={['70%', '70%']}
+        >
             <View style={styles.modalContent} >
                 <Text variant="titleLarge" style={styles.title}>
                     {poi ? 'Suggest a change' : 'Suggest a Location'}

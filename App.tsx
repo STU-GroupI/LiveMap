@@ -14,6 +14,8 @@ import {MD3LightTheme, PaperProvider} from 'react-native-paper';
 import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
+import {AppbarProvider} from './src/context/AppbarContext.tsx';
+import AppbarContainer from './src/components/AppbarContainer.tsx';
 
 const theme = {
     ...MD3LightTheme,
@@ -33,7 +35,11 @@ function App(): React.JSX.Element {
         <PaperProvider theme={theme}>
             <NavigationContainer>
                 <BottomSheetModalProvider>
-                    <AppNavigator />
+                    <AppbarProvider>
+                        <AppbarContainer>
+                            <AppNavigator />
+                        </AppbarContainer>
+                    </AppbarProvider>
                 </BottomSheetModalProvider>
             </NavigationContainer>
         </PaperProvider>

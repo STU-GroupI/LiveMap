@@ -1,24 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { MD3Theme, Text, useTheme } from 'react-native-paper';
-import { EdgeInsets, useSafeAreaInsets} from 'react-native-safe-area-context';
-
+import { EdgeInsets, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useMapConfig } from '../../../context/MapConfigContext.tsx';
+import { ScreenState } from '../../../state/screenStateReducer.ts';
 
 interface props {
     handleCreateSuggestion: () => void;
-    active: boolean
+    active: boolean;
 }
 
-
-export default function SuggestPOIButton({handleCreateSuggestion, active}: props) {
+export default function SuggestPOIButton({ handleCreateSuggestion, active }: props) {
     const theme = useTheme();
     const insets = useSafeAreaInsets();
     const styles = getStyles(theme, insets, active);
 
+    const { screenState } = useMapConfig();
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+        setIsVisible(screenState === ScreenState.VIEWING);
+    }, [screenState]);
+
+    if (!isVisible) {
+        return null;
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.suggestButton}
-                              onPress={handleCreateSuggestion}>
+            <TouchableOpacity style={styles.suggestButton} onPress={handleCreateSuggestion}>
                 <Text style={styles.suggestButtonText}>Suggest POI</Text>
             </TouchableOpacity>
         </View>
@@ -51,7 +61,7 @@ const getStyles = (theme: MD3Theme, insets: EdgeInsets, active: boolean) =>
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 6,
-            padding: 5
+            padding: 5,
         },
 
         suggestButtonText: {

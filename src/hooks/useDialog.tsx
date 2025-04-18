@@ -6,14 +6,14 @@ export default function  useDialog() {
     const showDialog = useCallback((callback?: () => void) => {
         setVisibleDialog(true);
 
-        if (callback) {
+        if (typeof callback === 'function') {
             callback();
         }
     }, []);
     const hideDialog = useCallback((callback?: () => void) => {
         setVisibleDialog(false);
 
-        if (callback) {
+        if (typeof callback === 'function') {
             callback();
         }
     }, []);

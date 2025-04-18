@@ -13,11 +13,10 @@ const useBottomSheets = (ids: string[]) => {
     }, [ids]);
 
     const handleOpen = useCallback((id: string) => {
+        Object.values(bottomSheetRefs.current).forEach((ref) => ref?.close());
         Object.entries(bottomSheetRefs.current).forEach(([key, ref]) => {
             if (key === id) {
                 ref?.expand();
-            } else {
-                ref?.close();
             }
         });
     }, []);

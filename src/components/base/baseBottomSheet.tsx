@@ -10,6 +10,7 @@ interface BaseBottomSheetProps {
     index?: number;
     onChange?: (index: number) => void;
     onClose?: () => void;
+    enablePanDownToClose?: boolean;
     snapPoints?: (string | number)[];
     background?: string;
 }
@@ -19,6 +20,7 @@ export default function BaseBottomSheet({
     bottomSheetRef,
     onChange,
     onClose,
+    enablePanDownToClose = true,
     snapPoints = ["40%", "70%"],
     background = '#fff',
 }: BaseBottomSheetProps) {
@@ -37,7 +39,7 @@ export default function BaseBottomSheet({
         <BottomSheet
             ref={bottomSheetRef}
             snapPoints={snapPoints}
-            enablePanDownToClose
+            enablePanDownToClose={enablePanDownToClose}
             onChange={handleSheetChange}
             style={styles.bottomSheetContainer}
         >

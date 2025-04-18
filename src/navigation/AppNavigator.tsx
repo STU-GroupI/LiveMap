@@ -1,7 +1,7 @@
 import React from 'react';
 import { BottomNavigation, useTheme } from 'react-native-paper';
 import MapScreen from '../screens/MapScreen';
-import { MapConfigProvider } from '../config/MapConfigContext';
+import { MapConfigProvider } from '../context/MapConfigContext';
 
 function AppNavigator() {
     const theme = useTheme();
