@@ -18,6 +18,7 @@ interface POIForm {
 interface SuggestPOIChangeDataSheetProps {
     bottomSheetRef: ((ref: BottomSheet | null) => void) | RefObject<BottomSheetMethods | null>;
     onSubmit: (data: POIForm) => void;
+    isSubmitting: boolean;
     onClose?: () => void;
     onCancel: () => void;
     poi?: POI;
@@ -26,6 +27,7 @@ interface SuggestPOIChangeDataSheetProps {
 export default function SuggestPOIChangeDataSheet({
     bottomSheetRef,
     onSubmit,
+    isSubmitting,
     onClose,
     onCancel,
     poi,
@@ -67,7 +69,7 @@ export default function SuggestPOIChangeDataSheet({
                 {errors.message && <HelperText type="error">{errors.message.message}</HelperText>}
 
                 <View style={styles.buttonContainer}>
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
                         Suggest change
                     </Button>
                     <Button mode="outlined" onPress={onCancel}>

@@ -4,6 +4,7 @@ import {POI} from '../models/POI/POI.ts';
 import {ScreenState, ScreenStateAction} from '../state/ScreenStateReducer.ts';
 
 export interface IMapConfig {
+    mapId: string;
     mapStyle: any;
     center: [number, number];
     zoom: number;

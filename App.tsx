@@ -16,6 +16,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
 import {AppbarProvider} from './src/context/AppbarContext.tsx';
 import AppbarContainer from './src/components/AppbarContainer.tsx';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 const theme = {
     ...MD3LightTheme,
@@ -29,19 +30,23 @@ const theme = {
     },
 };
 
+const queryClient = new QueryClient();
+
 function App(): React.JSX.Element {
   return (
     <GestureHandlerRootView>
         <PaperProvider theme={theme}>
-            <NavigationContainer>
-                <BottomSheetModalProvider>
-                    <AppbarProvider>
-                        <AppbarContainer>
-                            <AppNavigator />
-                        </AppbarContainer>
-                    </AppbarProvider>
-                </BottomSheetModalProvider>
-            </NavigationContainer>
+            <QueryClientProvider client={queryClient}>
+                <NavigationContainer>
+                    <BottomSheetModalProvider>
+                        <AppbarProvider>
+                            <AppbarContainer>
+                                <AppNavigator />
+                            </AppbarContainer>
+                        </AppbarProvider>
+                    </BottomSheetModalProvider>
+                </NavigationContainer>
+            </QueryClientProvider>
         </PaperProvider>
     </GestureHandlerRootView>
   );

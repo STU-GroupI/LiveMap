@@ -8,9 +8,10 @@ import useSnackbar from '../../hooks/useSnackbar.tsx';
 import useDialog from '../../hooks/useDialog.tsx';
 import { useMapConfig } from '../../context/MapConfigContext.tsx';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { createSuggestionRFC } from '../../services/apiService.ts';
 import { setFormNewPOI, setSuggesting, setViewing } from '../../state/screenStateActions.ts';
 import { ScreenState } from '../../state/screenStateReducer.ts';
+import { createSuggestionRFC } from "../../services/rfcService.ts";
+import { useMutation } from '@tanstack/react-query';
 
 interface props {
     bottomSheetRef: React.RefObject<Record<string, BottomSheetMethods | null>>
@@ -24,11 +25,26 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
         dispatch,
         cameraRef,
     } = useMapConfig();
+
     const [snackbarMessage, setSnackbarMessage] = React.useState<string>('');
 
     const { handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const { visibleSnackbar, toggleSnackBar, dismissSnackBar } = useSnackbar();
     const { visibleDialog, showDialog, hideDialog } = useDialog();
+
+    const suggestionMutation = useMutation({
+        mutationFn: createSuggestionRFC,
+        onSuccess: () => {
+            setSnackbarMessage('Your suggestion has been submitted!');
+            toggleSnackBar();
+            dispatch(setViewing());
+        },
+        onError: (err) => {
+            console.log(err);
+            setSnackbarMessage('Your suggestion could not be submitted!');
+            toggleSnackBar();
+        },
+    });
 
     useEffect(() => {
         if (screenState === ScreenState.SUGGESTING && suggestedLocation) {
@@ -57,14 +73,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
             data.coordinate = { longitude: suggestedLocation[0], latitude: suggestedLocation[1] };
             data.mapId = 'd6a6fbdd-be95-c767-a3f4-4096c91e9cbc';
 
-            createSuggestionRFC(data).then(() => {
-                setSnackbarMessage('Your suggestion has been submitted!');
-                toggleSnackBar();
-                dispatch(setViewing());
-            }).catch(() => {
-                setSnackbarMessage('Your suggestion could not be submitted!');
-                toggleSnackBar();
-            });
+            suggestionMutation.mutate(data);
         }
     };
 
@@ -96,6 +105,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
                 <SuggestLocationDataSheet
                     onCancel={showDialog}
                     onSubmit={handleSubmitSuggestion}
+                    isSubmitting={suggestionMutation.isPending}
                     bottomSheetRef={(ref) => (bottomSheetRef.current.dataform = ref)}
                 />
             )}

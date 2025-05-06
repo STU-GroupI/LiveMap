@@ -11,6 +11,8 @@ interface POIMarkerProps {
 }
 
 export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) {
+    const iconName = poi.category.iconName || 'map-marker';
+
     return (
         <PointAnnotation
             key={`poi-${poi.guid}-${isActive ? 'active' : 'inactive'}`}
@@ -23,7 +25,7 @@ export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) 
                 <View style={[styles.markerHitbox, isActive && styles.markerSelected]}>
                     <Icon
                         size={30}
-                        source={isActive ? 'map-marker-check' : 'map-marker'}
+                        source={isActive ? 'map-marker-check' : iconName}
                         color={isActive ? '#0017EE' : '#000'}
                     />
                 </View>

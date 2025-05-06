@@ -11,6 +11,8 @@ import BaseBottomSheet from '../../base/baseBottomSheet.tsx';
 import {POI} from '../../../models/POI/POI.ts';
 import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
 import {POICategory} from '../../../models/POI/POICategory.ts';
+import {useQuery} from '@tanstack/react-query';
+import {fetchCategories} from '../../../services/poiCategoryService.ts';
 
 interface Map {
     id: string;
@@ -30,6 +32,7 @@ interface POIForm {
 interface SuggestLocationDataSheetProps {
     bottomSheetRef: ((ref: BottomSheet | null) => void) | RefObject<BottomSheetMethods | null>;
     onSubmit: (data: POIForm) => void;
+    isSubmitting: boolean;
     onClose?: () => void;
     onCancel: () => void;
     poi?: POI;
@@ -40,24 +43,10 @@ interface SuggestLocationDataSheetProps {
     };
 }
 
-//IMPORTANT NOTE
-/*
-Below, I've hardcoded the dropdown values for the categories and statuses.
-However, I planned on using the API endpoint to retrieve all possible categories and statuses.
-It turns out there hasn't been a set endpoint for the values.
-*/
-const categories: POICategory[] = [
-    { category: '1', categoryName: 'Entertainment' },
-    { category: '2', categoryName: 'First-aid & Medical' },
-    { category: '3', categoryName: 'Information' },
-    { category: '4', categoryName: 'Parking' },
-    { category: '5', categoryName: 'Store' },
-    { category: '6', categoryName: 'Trash Bin' },
-];
-
 export default function SuggestLocationDataSheet({
     bottomSheetRef,
     onSubmit,
+    isSubmitting,
     onClose,
     onCancel,
     poi,
@@ -66,6 +55,11 @@ export default function SuggestLocationDataSheet({
 }: SuggestLocationDataSheetProps) {
     const [categoryMenuVisible, setCategoryMenuVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
+
+    const { data: categories = []} = useQuery({
+        queryKey: ['poiCategories'],
+        queryFn: fetchCategories,
+    });
 
     const {
         control,
@@ -143,7 +137,12 @@ export default function SuggestLocationDataSheet({
                             anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
                         >
                             {categories.map((category) => (
-                                <Menu.Item key={category.category} title={category.categoryName} onPress={() => handleCategorySelect(category.categoryName)} />
+                                <Menu.Item
+                                    key={category.category}
+                                    title={category.categoryName}
+                                    onPress={() => handleCategorySelect(category.categoryName)}
+                                    leadingIcon={category.iconName}
+                                />
                             ))}
                         </Menu>
                     )}
@@ -163,7 +162,7 @@ export default function SuggestLocationDataSheet({
                 />
 
                 <View style={styles.buttonContainer}>
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
                         Submit
                     </Button>
                     <Button mode="outlined" onPress={onCancel}>
