@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-paper';
+
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
 import { POI } from '../../models/POI/POI.ts';
 
@@ -12,6 +14,7 @@ interface POIMarkerProps {
 
 export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) {
     const iconName = poi.category.iconName || 'map-marker';
+    const activeIconName = isActive ? 'map-marker-check' : iconName;
 
     return (
         <PointAnnotation
@@ -23,16 +26,16 @@ export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) 
         >
             <View style={styles.markerWrapper}>
                 <View style={[styles.markerHitbox, isActive && styles.markerSelected]}>
-                    <Icon
+                    <MaterialDesignIcons
                         size={30}
-                        source={isActive ? 'map-marker-check' : iconName}
                         color={isActive ? '#0017EE' : '#000'}
+                        name={activeIconName as any}
                     />
                 </View>
             </View>
         </PointAnnotation>
     );
-};
+}
 
 const styles = StyleSheet.create({
     markerWrapper: {

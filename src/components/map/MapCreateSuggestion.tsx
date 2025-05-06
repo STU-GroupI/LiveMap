@@ -10,7 +10,7 @@ import { useMapConfig } from '../../context/MapConfigContext.tsx';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { setFormNewPOI, setSuggesting, setViewing } from '../../state/screenStateActions.ts';
 import { ScreenState } from '../../state/screenStateReducer.ts';
-import { createSuggestionRFC } from "../../services/rfcService.ts";
+import { createSuggestionRFC } from '../../services/rfcService.ts';
 import { useMutation } from '@tanstack/react-query';
 
 interface props {

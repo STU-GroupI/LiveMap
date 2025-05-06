@@ -13,6 +13,7 @@ import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
 import {POICategory} from '../../../models/POI/POICategory.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchCategories} from '../../../services/poiCategoryService.ts';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 interface Map {
     id: string;
@@ -83,6 +84,11 @@ export default function SuggestLocationDataSheet({
         setCategoryMenuVisible(false);
     };
 
+    const leadingIcon = (category: string) => {
+        const icon = categories.find((cat) => cat.categoryName === category)?.iconName;
+        return <MaterialDesignIcons name={icon as any} size={20} color="#000" />;
+    };
+
     return (
         <BaseBottomSheet
             bottomSheetRef={bottomSheetRef}
@@ -136,12 +142,12 @@ export default function SuggestLocationDataSheet({
                             onDismiss={() => setCategoryMenuVisible(false)}
                             anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
                         >
-                            {categories.map((category) => (
+                            {categories.map((category, idx) => (
                                 <Menu.Item
-                                    key={category.category}
+                                    key={idx}
                                     title={category.categoryName}
                                     onPress={() => handleCategorySelect(category.categoryName)}
-                                    leadingIcon={category.iconName}
+                                    leadingIcon={() => leadingIcon(category.categoryName)}
                                 />
                             ))}
                         </Menu>

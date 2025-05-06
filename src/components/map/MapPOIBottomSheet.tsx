@@ -17,6 +17,7 @@ import { setFormEditPOI, setViewing } from '../../state/screenStateActions.ts';
 import { ScreenState } from '../../state/screenStateReducer.ts';
 import { createChangeRFC } from '../../services/rfcService.ts';
 import { useMutation } from '@tanstack/react-query';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
@@ -54,7 +55,6 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
     };
 
     if (!poi) {return null;}
-    console.log(poi);
 
     return (
         <>
@@ -108,6 +108,10 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                             <View style={styles.content}>
                                 {poi?.category && (
                                     <Chip style={styles.categoryChip} textStyle={styles.categoryText}>
+                                        {poi.category?.iconName && (
+                                            <MaterialDesignIcons size={16} name={poi.category.iconName as any} />
+                                        )}
+
                                         {poi.category?.categoryName}
                                     </Chip>
                                 )}
