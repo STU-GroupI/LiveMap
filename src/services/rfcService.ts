@@ -1,21 +1,6 @@
 import { apiClient } from './apiClient';
-
-interface SuggestionRFC {
-    title: string;
-    description: string;
-    category: string;
-    mapId: string;
-    coordinate: {
-        longitude: number;
-        latitude: number;
-    };
-    isWheelchairAccessible: boolean;
-}
-
-interface ChangeRFC {
-    poiId: string;
-    message: string;
-}
+import {SuggestionRFC} from '../models/RFC/RFCSuggestion.ts';
+import {ChangeRFC} from '../models/RFC/RFCChange.ts';
 
 export const createSuggestionRFC = async (data: SuggestionRFC): Promise<any> => {
     const response = await apiClient.post('/rfc/poisuggestion', data);

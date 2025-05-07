@@ -10,7 +10,6 @@ import BaseBottomSheet from '../../base/baseBottomSheet.tsx';
 
 import {POI} from '../../../models/POI/POI.ts';
 import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
-import {POICategory} from '../../../models/POI/POICategory.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchCategories} from '../../../services/poiCategoryService.ts';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
@@ -86,7 +85,7 @@ export default function SuggestLocationDataSheet({
 
     const leadingIcon = (category: string) => {
         const icon = categories.find((cat) => cat.categoryName === category)?.iconName;
-        return <MaterialDesignIcons name={icon as any} size={20} color="#000" />;
+        return icon ? <MaterialDesignIcons name={icon as any} size={20} color="#000" /> : <></>;
     };
 
     return (
