@@ -11,6 +11,7 @@ const dayOfWeekToString = (day: number): string => {
 };
 
 export const fetchPois = async (mapId: string): Promise<POI[]> => {
+    console.log(mapId);
     const response = await apiClient.get('/poi', { params: { mapId } });
 
     return response.data.map((item: any) => {

@@ -9,10 +9,12 @@ import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
+import {MAP_DEFAULT_ID} from '@env';
 
 const REFETCH_INTERVAL = 60_000;
+
 const defaultConfig: IMapConfig = {
-    mapId: 'b8762dd8-7bc1-b306-63ce-1d9c43b12c17',
+    mapId: MAP_DEFAULT_ID,
     mapStyle: MAP_STYLE,
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,
