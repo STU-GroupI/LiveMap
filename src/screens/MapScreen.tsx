@@ -95,7 +95,7 @@ const MapScreen = () => {
                 {pois.length > 0 &&
                     pois.map((mapPoi) => (
                         <POIMarker
-                            key={`poi-${mapPoi.guid}`}
+                            key={`poi-${mapPoi.guid}-${mapPoi.category.iconName ?? ''}`}
                             poi={mapPoi}
                             isActive={screenState === ScreenState.VIEWING && activePoi?.guid === mapPoi.guid}
                             onSelect={handlePoiSelect}

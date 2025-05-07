@@ -141,24 +141,26 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                                 </View>
                             </View>
 
-                            <View style={styles.content}>
-                                <Text variant="titleLarge" style={styles.title}>Opening Hours</Text>
-                                <DataTable>
-                                    <DataTable.Header>
-                                        <DataTable.Title>Day</DataTable.Title>
-                                        <DataTable.Title>Open - closed</DataTable.Title>
-                                    </DataTable.Header>
+                            {poi.openingHours.length > 0 && (
+                                <View style={styles.content}>
+                                    <Text variant="titleLarge" style={styles.title}>Opening Hours</Text>
+                                    <DataTable>
+                                        <DataTable.Header>
+                                            <DataTable.Title>Day</DataTable.Title>
+                                            <DataTable.Title>Open - closed</DataTable.Title>
+                                        </DataTable.Header>
 
-                                    {poi.openingHours
-                                        .sort((a, b) => (a.dayIndex < b.dayIndex ? -1 : 1))
-                                        .map((item, index) => (
-                                            <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
-                                                <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
-                                                <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
-                                            </DataTable.Row>
-                                        ))}
-                                </DataTable>
-                            </View>
+                                        {poi.openingHours
+                                            .sort((a, b) => (a.dayIndex < b.dayIndex ? -1 : 1))
+                                            .map((item, index) => (
+                                                <DataTable.Row key={'opening-hours-row-' + index + '-' + item.guid}>
+                                                    <DataTable.Cell>{item.dayOfWeek}</DataTable.Cell>
+                                                    <DataTable.Cell>{item.start} - {item.end}</DataTable.Cell>
+                                                </DataTable.Row>
+                                            ))}
+                                    </DataTable>
+                                </View>
+                            )}
                         </BottomSheetScrollView>
                     </View>
                 </BaseBottomSheet>

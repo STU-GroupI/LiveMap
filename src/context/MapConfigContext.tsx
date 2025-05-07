@@ -53,6 +53,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const { data: pois = [], isLoading: poisLoading } = useQuery({
         queryKey: ['pois'],
         queryFn: () => fetchPois(config.mapId),
+        refetchInterval: 60_000,
     });
 
     const loading = configLoading || poisLoading;
