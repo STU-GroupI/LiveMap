@@ -10,7 +10,7 @@ import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 
-
+const REFETCH_INTERVAL = 60_000;
 const defaultConfig: IMapConfig = {
     mapId: 'b8762dd8-7bc1-b306-63ce-1d9c43b12c17',
     mapStyle: MAP_STYLE,
@@ -53,7 +53,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const { data: pois = [], isLoading: poisLoading } = useQuery({
         queryKey: ['pois'],
         queryFn: () => fetchPois(config.mapId),
-        refetchInterval: 60_000,
+        refetchInterval: REFETCH_INTERVAL,
     });
 
     const loading = configLoading || poisLoading;
