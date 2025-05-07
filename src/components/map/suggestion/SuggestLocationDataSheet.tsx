@@ -13,6 +13,7 @@ import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchCategories} from '../../../services/poiCategoryService.ts';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import {formatIconName} from "../../../util/MaterialDesignIconsHelpers.ts";
 
 interface Map {
     id: string;
@@ -84,8 +85,9 @@ export default function SuggestLocationDataSheet({
     };
 
     const leadingIcon = (category: string) => {
-        const icon = categories.find((cat) => cat.categoryName === category)?.iconName;
-        return icon ? <MaterialDesignIcons name={icon as any} size={20} color="#000" /> : <></>;
+        const iconName = categories.find((cat) => cat.categoryName === category)?.iconName;
+        const formattedIconName = iconName ? formatIconName(iconName) : 'map-marker';
+        return formattedIconName ? <MaterialDesignIcons name={formattedIconName as any} size={20} color="#000" /> : <></>;
     };
 
     return (

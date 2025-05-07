@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
 import { POI } from '../../models/POI/POI.ts';
+import {formatIconName} from '../../util/MaterialDesignIconsHelpers.ts';
 
 interface POIMarkerProps {
     poi: POI;
@@ -11,14 +12,14 @@ interface POIMarkerProps {
 }
 
 export default function POIMarker({ poi, isActive, onSelect }: POIMarkerProps) {
-    const iconName = poi.category.iconName || 'map-marker';
+    const iconName = poi.category.iconName ? formatIconName(poi.category.iconName) : 'map-marker';
 
     return (
         <PointAnnotation
             key={`poi-${poi.guid}-${isActive ? 'active' : 'inactive'}`}
             id={`poi-${poi.guid}`}
             coordinate={[poi.coordinate.longitude, poi.coordinate.latitude]}
-            anchor={{ x: 0.5, y: 1 }}
+            anchor={{ x: 0.5, y: 0.5 }}
             onSelected={() => onSelect(poi)}
         >
             <View style={[styles.markerCircle, isActive && styles.markerSelected]}>

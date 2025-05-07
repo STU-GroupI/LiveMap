@@ -18,6 +18,7 @@ import { ScreenState } from '../../state/screenStateReducer.ts';
 import { createChangeRFC } from '../../services/rfcService.ts';
 import { useMutation } from '@tanstack/react-query';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import {formatIconName} from "../../util/MaterialDesignIconsHelpers.ts";
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
@@ -109,7 +110,7 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                                 {poi?.category && (
                                     <Chip style={styles.categoryChip} textStyle={styles.categoryText}>
                                         {poi.category?.iconName && (
-                                            <MaterialDesignIcons size={16} name={poi.category.iconName as any} />
+                                            <MaterialDesignIcons size={16} name={formatIconName(poi.category.iconName) as any} color='#fff' />
                                         )}
 
                                         {poi.category?.categoryName}
@@ -190,12 +191,12 @@ const styles = StyleSheet.create({
     },
     categoryChip: {
         alignSelf: 'flex-start',
-        backgroundColor: '#d7d7d7',
+        backgroundColor: '#0017EE',
         marginBottom: 5,
     },
     categoryText: {
         fontWeight: 'bold',
-        color: '#333',
+        color: '#fff',
     },
     title: {
         fontWeight: 'bold',
