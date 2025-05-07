@@ -40,8 +40,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
             toggleSnackBar();
             dispatch(setViewing());
         },
-        onError: (err) => {
-            console.log(err);
+        onError: () => {
             setSnackbarMessage('Your suggestion could not be submitted!');
             toggleSnackBar();
         },

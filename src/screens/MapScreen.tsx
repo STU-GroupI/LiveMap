@@ -92,6 +92,12 @@ const MapScreen = () => {
                     followUserLocation={false}
                 />
 
+                {userLocation && (
+                    <PointAnnotation id="user-location" coordinate={userLocation}>
+                        <View style={styles.mapUserMarker} />
+                    </PointAnnotation>
+                )}
+
                 {pois.length > 0 &&
                     pois.map((mapPoi) => (
                         <POIMarker
@@ -104,12 +110,6 @@ const MapScreen = () => {
 
                 {(suggestedLocation && (screenState === ScreenState.SUGGESTING || screenState === ScreenState.FORM_POI_NEW)) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
-                )}
-
-                {userLocation && (
-                    <PointAnnotation id="user-location" coordinate={userLocation}>
-                        <View style={styles.mapUserMarker} />
-                    </PointAnnotation>
                 )}
             </MapView>
 

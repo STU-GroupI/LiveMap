@@ -18,7 +18,7 @@ import { ScreenState } from '../../state/screenStateReducer.ts';
 import { createChangeRFC } from '../../services/rfcService.ts';
 import { useMutation } from '@tanstack/react-query';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
-import {formatIconName} from "../../util/MaterialDesignIconsHelpers.ts";
+import {formatIconName} from '../../util/MaterialDesignIconsHelpers.ts';
 
 interface MapPOIBottomSheetProps {
     poi?: POI;
@@ -100,7 +100,9 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                                     style={styles.image}
                                 />
                             )}
+                        </View>
 
+                        <BottomSheetScrollView>
                             <IconButton
                                 icon="alert-circle-outline"
                                 size={28}
@@ -109,14 +111,12 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                                 style={styles.reportButton}
                                 onPress={handleSuggestChange}
                             />
-                        </View>
 
-                        <BottomSheetScrollView>
                             <View style={styles.content}>
                                 {poi?.category && (
                                     <Chip style={styles.categoryChip} textStyle={styles.categoryText}>
                                         {poi.category?.iconName && (
-                                            <MaterialDesignIcons size={16} name={formatIconName(poi.category.iconName) as any} color='#fff' />
+                                            <MaterialDesignIcons size={16} name={formatIconName(poi.category.iconName) as any} color="#fff" />
                                         )}
 
                                         {poi.category?.categoryName}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         right: 10,
-        backgroundColor: 'tomato',
+        backgroundColor: '#D21F3C',
     },
     content: {
         paddingHorizontal: 15,

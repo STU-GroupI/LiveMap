@@ -86,6 +86,11 @@ export default function SuggestLocationDataSheet({
 
     const leadingIcon = (category: string) => {
         const iconName = categories.find((cat) => cat.categoryName === category)?.iconName;
+
+        if (!iconName) {
+            return <></>;
+        }
+
         const formattedIconName = iconName ? formatIconName(iconName) : 'map-marker';
         return formattedIconName ? <MaterialDesignIcons name={formattedIconName as any} size={20} color="#000" /> : <></>;
     };
@@ -141,7 +146,7 @@ export default function SuggestLocationDataSheet({
                         <Menu
                             visible={categoryMenuVisible}
                             onDismiss={() => setCategoryMenuVisible(false)}
-                            anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{selectedCategory || 'Select Category'}</Button>}
+                            anchor={<Button onPress={() => setCategoryMenuVisible(true)}>{leadingIcon(selectedCategory)}{selectedCategory || 'Select Category'}</Button>}
                         >
                             {categories.map((category, idx) => (
                                 <Menu.Item

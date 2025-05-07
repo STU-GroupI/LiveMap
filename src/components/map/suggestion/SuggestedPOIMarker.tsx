@@ -27,10 +27,6 @@ export default function SuggestedPOIMarker ({ location }: SuggestedPOIMarkerProp
 }
 
 const styles = StyleSheet.create({
-    markerWrapper: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     markerCircle: {
         width: 36,
         height: 36,
