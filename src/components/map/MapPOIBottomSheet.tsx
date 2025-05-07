@@ -97,7 +97,12 @@ export default function MapPOIBottomSheet({ poi, bottomSheetRef, onClose }: MapP
                 >
                     <View style={styles.container}>
                         <View style={styles.imageContainer}>
-                            <Image source={require('../../images/plus-supermarket.png')} style={styles.image} />
+                        {poi.image && (
+                            <Image
+                                source={{ uri: poi.image }}
+                                style={styles.image}
+                            />
+                        )}
                             <IconButton icon="alert-circle-outline" size={28} containerColor="red" iconColor="white" style={styles.reportButton} onPress={handleSuggestChange} />
                         </View>
 

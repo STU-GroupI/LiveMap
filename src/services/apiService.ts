@@ -62,6 +62,7 @@ export const fetchPois = async (mapId: String): Promise<POI[]> => {
             return {
                 guid: item.id,
                 title: item.title,
+                image: item.image,
                 description: item.description,
                 coordinate: {
                     longitude: isValidLongitude ? longitude : 0,
