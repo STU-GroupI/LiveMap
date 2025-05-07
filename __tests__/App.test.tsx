@@ -1,16 +1,16 @@
 import React from 'react';
 import axios from 'axios';
 import App from '../App';
-import ReactTestRenderer from 'react-test-renderer';
+import { render, screen, waitFor } from '@testing-library/react-native';
 
 jest.mock('axios');
 
-test('renders correctly', async () => {
+test('renders App component correctly', async () => {
   (axios.get as jest.Mock).mockResolvedValue({ data: {} });
 
-  await ReactTestRenderer.act(async () => {
-    ReactTestRenderer.create(<App />);
-  });
+  render(<App />);
 
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await waitFor(() => {
+    expect(screen.getByTestId('app-container')).toBeDefined();
+  });
 });
