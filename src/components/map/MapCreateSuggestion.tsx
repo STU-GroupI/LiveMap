@@ -24,6 +24,7 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
         screenState,
         dispatch,
         cameraRef,
+        config,
     } = useMapConfig();
 
     const [snackbarMessage, setSnackbarMessage] = React.useState<string>('');
@@ -70,8 +71,8 @@ export default function MapCreateSuggestion({ bottomSheetRef, suggestedLocation,
 
     const handleSubmitSuggestion = (data: any) => {
         if (suggestedLocation) {
+            data.mapId = config.mapId;
             data.coordinate = { longitude: suggestedLocation[0], latitude: suggestedLocation[1] };
-            data.mapId = 'd6a6fbdd-be95-c767-a3f4-4096c91e9cbc';
 
             suggestionMutation.mutate(data);
         }

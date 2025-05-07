@@ -12,7 +12,7 @@ import {fetchPois} from '../services/poiService.ts';
 
 
 const defaultConfig: IMapConfig = {
-    mapId: '49ddcfe8-945d-c3bb-5005-9ac2209d9ac8',
+    mapId: 'b8762dd8-7bc1-b306-63ce-1d9c43b12c17',
     mapStyle: MAP_STYLE,
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,

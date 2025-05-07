@@ -13,7 +13,7 @@ import {POICoordinate} from '../../../models/POI/POICoordinate.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchCategories} from '../../../services/poiCategoryService.ts';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
-import {formatIconName} from "../../../util/MaterialDesignIconsHelpers.ts";
+import {formatIconName} from '../../../util/MaterialDesignIconsHelpers.ts';
 
 interface Map {
     id: string;
