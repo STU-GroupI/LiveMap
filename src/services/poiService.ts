@@ -11,7 +11,6 @@ const dayOfWeekToString = (day: number): string => {
 };
 
 export const fetchPois = async (mapId: string): Promise<POI[]> => {
-    console.log(mapId);
     const response = await apiClient.get('/poi', { params: { mapId } });
 
     return response.data.map((item: any) => {
@@ -39,16 +38,16 @@ export const fetchPois = async (mapId: string): Promise<POI[]> => {
                 latitude: isValidLatitude ? lat : 0,
             },
             category: {
-                category: item.category.categoryName,
-                categoryName: item.category.categoryName,
-                iconName: item.category.iconName,
+                category: item.category?.categoryName || 'Unknown',
+                categoryName: item.category?.categoryName || 'Unknown',
+                iconName: item.category?.iconName || 'default-icon',
             },
-            status: item.status as POIStatus,
+            status: item.status || 'Unknown',
             map: {
-                guid: item.mapId,
-                name: item.mapName || '',
+                guid: item.mapId || 'Unknown',
+                name: item.map?.name || '',
             },
-            wheelChairAccessible: item.wheelChairAccessible ?? false,
+            wheelChairAccessible: item.isWheelchairAccessible ?? false,
             openingHours,
         } as POI;
     });
