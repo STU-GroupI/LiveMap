@@ -19,6 +19,17 @@ jest.mock('react-native-safe-area-context', () => ({
     useSafeAreaInsets: () => ({ bottom: 10, right: 10 }),
 }));
 
+jest.mock('@react-native-vector-icons/material-design-icons', () => {
+    const React = require('react');
+    const { View } = require('react-native');
+    return {
+        __esModule: true,
+        default: ({ name }: { name: string; size: number; color: string }) => (
+            <View testID={`mock-icon-${name}`} />
+        ),
+    };
+});
+
 describe('MapZoomInOutButton Component', () => {
     it('calls zoomIn and zoomOut when button is pressed', () => {
         const zoomIn = jest.fn();

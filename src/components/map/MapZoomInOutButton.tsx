@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {Icon, MD3Theme, useTheme} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import {MD3Theme, useTheme} from 'react-native-paper';
 
 interface props {
     handleZoomIn: () => void;
@@ -29,7 +30,7 @@ export default function MapZoomInOutButton({handleZoomIn, handleZoomOut}: props)
                     onPress={handleZoomIn}
                     testID={'zoom-in'}
                 >
-                    <Icon source="plus" size={20} color="#000" />
+                    <MaterialDesignIcons name="plus" size={20} color="#000" />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -37,7 +38,7 @@ export default function MapZoomInOutButton({handleZoomIn, handleZoomOut}: props)
                     onPress={handleZoomOut}
                     testID={'zoom-out'}
                 >
-                    <Icon source="minus" size={20} color="#000" />
+                    <MaterialDesignIcons name="minus" size={20} color="#000" />
                 </TouchableOpacity>
             </View>
         </View>

@@ -21,7 +21,7 @@ export default function BaseBottomSheet({
     onChange,
     onClose,
     enablePanDownToClose = true,
-    snapPoints = ["40%", "70%"],
+    snapPoints = ['40%', '70%'],
     background = '#fff',
 }: BaseBottomSheetProps) {
     const styles = getStyles(background);
