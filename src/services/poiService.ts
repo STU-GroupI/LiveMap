@@ -1,7 +1,6 @@
 import { apiClient } from './apiClient';
 import { POI } from '../models/POI/POI';
 import { POIOpeningHours } from '../models/POI/POIOpeningHours';
-import { POIStatus } from '../models/POI/POIStatus';
 
 const formatTime = (time: string): string => time.slice(0, 5);
 
