@@ -12,6 +12,7 @@ import {POI} from '../../../models/POI/POI.ts';
 
 interface POIForm {
     poiId: string;
+    suggestedPoiId: string;
     message: string;
 }
 
@@ -38,7 +39,8 @@ export default function SuggestPOIChangeDataSheet({
         formState: { errors },
     } = useForm<POIForm>({
         defaultValues: {
-            poiId: poi?.guid || uuid.v4(),
+            poiId: poi?.guid || '',
+            suggestedPoiId: poi?.guid || '',
             message: '',
         },
     });
@@ -49,6 +51,30 @@ export default function SuggestPOIChangeDataSheet({
                 <Text variant="titleLarge" style={styles.title}>
                     {poi ? 'Suggest a change' : 'Suggest a Location'}
                 </Text>
+
+                <Controller
+                    control={control}
+                    name="poiId"
+                    render={({ field: { value } }) => (
+                        <TextInput
+                            value={poi?.guid || value}
+                            style={styles.hiddenInput}
+                            editable={false}
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="suggestedPoiId"
+                    render={({ field: { value } }) => (
+                        <TextInput
+                            value={poi?.guid || value}
+                            style={styles.hiddenInput}
+                            editable={false}
+                        />
+                    )}
+                />
 
                 <Controller
                     control={control}
@@ -99,5 +125,8 @@ const styles = StyleSheet.create({
     messageInput: {
         height: 200,
         textAlignVertical: 'top',
+    },
+    hiddenInput: {
+        display: 'none',
     },
 });
