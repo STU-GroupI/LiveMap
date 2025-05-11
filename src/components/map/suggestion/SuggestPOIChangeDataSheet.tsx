@@ -1,5 +1,4 @@
 import React, {RefObject} from 'react';
-import uuid from 'react-native-uuid';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import {Text} from 'react-native-paper';
