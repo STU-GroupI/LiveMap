@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useReducer, useRef, useState} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
@@ -9,7 +9,6 @@ import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
-import {POI} from '../models/POI/POI.ts';
 import {MAP_DEFAULT_ID} from '@env';
 
 const REFETCH_INTERVAL = 60_000;
