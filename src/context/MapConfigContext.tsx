@@ -39,7 +39,7 @@ const MapConfigContext = createContext<IMapConfigContext>({
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
 
-    const zoomRef  = useRef<number>(DEFAULT_ZOOM);
+    const zoomRef = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
 
     const { hasLocationPermission, userLocation } = useLocation();
@@ -52,11 +52,13 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         },
     });
 
-    const { data: pois = [], isLoading: poisLoading } = useQuery({
-        queryKey: ['pois'],
+    const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
+        queryKey: ['pois', config.mapId],
         queryFn: () => fetchPois(config.mapId),
         refetchInterval: REFETCH_INTERVAL,
     });
+
+    const pois = React.useMemo(() => fetchedPois, [fetchedPois]);
 
     const loading = configLoading || poisLoading;
 
