@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-paper';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
 import { POI } from '../../models/POI/POI.ts';
+import {formatIconName} from '../../util/MaterialDesignIconsHelpers.ts';
 
 interface POIMarkerProps {
     poi: POI;
@@ -10,40 +11,46 @@ interface POIMarkerProps {
     onSelect: (poi: POI) => void;
 }
 
-export default function POIMarker ({ poi, isActive, onSelect }: POIMarkerProps) {
+export default function POIMarker({ poi, isActive, onSelect }: POIMarkerProps) {
+    const iconName = poi.category.iconName ? formatIconName(poi.category.iconName) : 'map-marker';
+
     return (
         <PointAnnotation
             key={`poi-${poi.guid}-${isActive ? 'active' : 'inactive'}`}
             id={`poi-${poi.guid}`}
             coordinate={[poi.coordinate.longitude, poi.coordinate.latitude]}
-            anchor={{ x: 0.5, y: 1 }}
+            anchor={{ x: 0.5, y: 0.5 }}
             onSelected={() => onSelect(poi)}
         >
-            <View style={styles.markerWrapper}>
-                <View style={[styles.markerHitbox, isActive && styles.markerSelected]}>
-                    <Icon
-                        size={30}
-                        source={isActive ? 'map-marker-check' : 'map-marker'}
-                        color={isActive ? '#0017EE' : '#000'}
-                    />
-                </View>
+            <View style={[styles.markerCircle, isActive && styles.markerSelected]}>
+                <MaterialDesignIcons
+                    size={20}
+                    color={isActive ? '#0017EE' : '#001743'}
+                    name={iconName as any}
+                />
             </View>
         </PointAnnotation>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    markerWrapper: {
-        alignItems: 'center',
+    markerCircle: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        borderColor: '#e1e1e1',
+        borderWidth: 2,
+        backgroundColor: '#FFFFFF',
         justifyContent: 'center',
-    },
-    markerHitbox: {
-        padding: 10,
-        borderRadius: 30,
-        justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 4,
     },
     markerSelected: {
-        backgroundColor: 'rgba(0, 23, 238, 0.1)',
+        borderColor: '#0017EE',
+        borderWidth: 2,
     },
 });

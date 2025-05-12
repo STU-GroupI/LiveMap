@@ -1,17 +1,20 @@
-import React, {createContext, useContext, useEffect, useReducer, useRef, useState} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
 import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
-import {POI} from '../models/POI/POI.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
-import {fetchPois} from '../services/apiService.ts';
 import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
+import {useQuery} from '@tanstack/react-query';
+import {fetchPois} from '../services/poiService.ts';
+import {MAP_DEFAULT_ID} from '@env';
 
+const REFETCH_INTERVAL = 60_000;
 
 const defaultConfig: IMapConfig = {
+    mapId: MAP_DEFAULT_ID,
     mapStyle: MAP_STYLE,
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,
@@ -34,10 +37,6 @@ const MapConfigContext = createContext<IMapConfigContext>({
 });
 
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
-    const [config, setConfig] = useState<IMapConfig>(defaultConfig);
-    const [loading, setLoading] = useState(true);
-    const [pois, setPois] = useState<POI[]>([]);
-
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
 
     const zoomRef  = useRef<number>(DEFAULT_ZOOM);
@@ -46,28 +45,20 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const { hasLocationPermission, userLocation } = useLocation();
     const { expandAppbar, collapseAppbar } = useAppbar();
 
-    useEffect(() => {
-        const loadConfig = async () => {
-            try {
-                setConfig((prev) => ({...prev}));
-            } catch (error) {
-                console.error('Failed to load map config:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
+        queryKey: ['mapConfig'],
+        queryFn: async () => {
+            return { ...defaultConfig };
+        },
+    });
 
-        loadConfig();
-    }, []);
+    const { data: pois = [], isLoading: poisLoading } = useQuery({
+        queryKey: ['pois'],
+        queryFn: () => fetchPois(config.mapId),
+        refetchInterval: REFETCH_INTERVAL,
+    });
 
-    useEffect(() => {
-        const loadPois = async () => {
-            const loadedPois = await fetchPois('67611ad5-4ce0-6709-b4cd-17a9f92ceabc');
-            setPois(loadedPois);
-        };
-
-        loadPois();
-    }, []);
+    const loading = configLoading || poisLoading;
 
     useEffect(() => {
         switch (screenState) {

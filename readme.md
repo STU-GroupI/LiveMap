@@ -27,7 +27,23 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 > [!IMPORTANT]
 > Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-### Step 1: Start Metro
+### Step 1: Copy .env.example to your .env
+> [!IMPORTANT]
+> Make sure to copy the `.env.example` file to `.env` in the root of your project and clear the Metro cache!
+
+```sh
+A good development practice is to use environment variables to store sensitive information such as API keys, database URLs, etc. This way, you can keep your codebase clean and secure.
+Metro has a built-in cache system, meaning that if you change the `.env` file, you need to clear the cache for the changes to take effect. To do this, run the following command:
+
+```sh
+# Using Yarn (preferred)
+yarn start --reset-cache
+
+# OR using npm
+npm start -- --reset-cache
+```
+
+### Step 2: Start Metro
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
 To start the Metro dev server, run the following command from the root of your React Native project:
 
@@ -39,7 +55,7 @@ npm start
 yarn start
 ```
 
-### Step 2: Build and run your app
+### Step 3: Build and run your app
 
 With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
@@ -80,7 +96,7 @@ If everything is set up correctly, you should see your new app running in the An
 
 This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
-### Step 3: Modify
+### Step 4: Modify
 
 Now that you have successfully run the app, let's make changes!
 Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).

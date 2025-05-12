@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Icon } from 'react-native-paper';
 import { PointAnnotation } from '@maplibre/maplibre-react-native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 interface SuggestedPOIMarkerProps {
     location: [number, number];
@@ -13,33 +13,37 @@ export default function SuggestedPOIMarker ({ location }: SuggestedPOIMarkerProp
             key={`suggested-poi-${Math.round(location[0])}-${Math.round(location[1])}`}
             id={`suggested-poi-${Math.round(location[0])}}`}
             coordinate={[location[0], location[1]]}
-            anchor={{ x: 0.5, y: 1 }}
+            anchor={{ x: 0.5, y: 0.5 }}
         >
-            <View style={styles.markerWrapper}>
-                <View style={[styles.markerHitbox, styles.markerSelected]}>
-                    <Icon
-                        size={30}
-                        source={'map-marker-check'}
-                        color={'#0017EE'}
-                    />
-                </View>
+            <View style={[styles.markerCircle, styles.markerSelected]}>
+                <MaterialDesignIcons
+                    size={20}
+                    color="#0017EE"
+                    name="alert-box"
+                />
             </View>
         </PointAnnotation>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    markerWrapper: {
-        alignItems: 'center',
+    markerCircle: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        borderColor: '#e1e1e1',
+        borderWidth: 2,
+        backgroundColor: '#FFFFFF',
         justifyContent: 'center',
-    },
-    markerHitbox: {
-        padding: 10,
-        borderRadius: 30,
-        justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 4,
     },
     markerSelected: {
-        backgroundColor: 'rgba(0, 23, 238, 0.1)',
+        borderColor: '#0017EE',
+        borderWidth: 2,
     },
 });

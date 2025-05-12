@@ -1,5 +1,4 @@
 import React, {RefObject} from 'react';
-import uuid from 'react-native-uuid';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import {Text} from 'react-native-paper';
@@ -12,12 +11,14 @@ import {POI} from '../../../models/POI/POI.ts';
 
 interface POIForm {
     poiId: string;
+    suggestedPoiId: string;
     message: string;
 }
 
 interface SuggestPOIChangeDataSheetProps {
     bottomSheetRef: ((ref: BottomSheet | null) => void) | RefObject<BottomSheetMethods | null>;
     onSubmit: (data: POIForm) => void;
+    isSubmitting: boolean;
     onClose?: () => void;
     onCancel: () => void;
     poi?: POI;
@@ -26,6 +27,7 @@ interface SuggestPOIChangeDataSheetProps {
 export default function SuggestPOIChangeDataSheet({
     bottomSheetRef,
     onSubmit,
+    isSubmitting,
     onClose,
     onCancel,
     poi,
@@ -36,7 +38,8 @@ export default function SuggestPOIChangeDataSheet({
         formState: { errors },
     } = useForm<POIForm>({
         defaultValues: {
-            poiId: poi?.guid || uuid.v4(),
+            poiId: poi?.guid || '',
+            suggestedPoiId: poi?.guid || '',
             message: '',
         },
     });
@@ -47,6 +50,30 @@ export default function SuggestPOIChangeDataSheet({
                 <Text variant="titleLarge" style={styles.title}>
                     {poi ? 'Suggest a change' : 'Suggest a Location'}
                 </Text>
+
+                <Controller
+                    control={control}
+                    name="poiId"
+                    render={({ field: { value } }) => (
+                        <TextInput
+                            value={poi?.guid || value}
+                            style={styles.hiddenInput}
+                            editable={false}
+                        />
+                    )}
+                />
+
+                <Controller
+                    control={control}
+                    name="suggestedPoiId"
+                    render={({ field: { value } }) => (
+                        <TextInput
+                            value={poi?.guid || value}
+                            style={styles.hiddenInput}
+                            editable={false}
+                        />
+                    )}
+                />
 
                 <Controller
                     control={control}
@@ -67,7 +94,7 @@ export default function SuggestPOIChangeDataSheet({
                 {errors.message && <HelperText type="error">{errors.message.message}</HelperText>}
 
                 <View style={styles.buttonContainer}>
-                    <Button mode="contained" onPress={handleSubmit(onSubmit)}>
+                    <Button mode="contained" onPress={handleSubmit(onSubmit)} disabled={isSubmitting}>
                         Suggest change
                     </Button>
                     <Button mode="outlined" onPress={onCancel}>
@@ -97,5 +124,8 @@ const styles = StyleSheet.create({
     messageInput: {
         height: 200,
         textAlignVertical: 'top',
+    },
+    hiddenInput: {
+        display: 'none',
     },
 });
