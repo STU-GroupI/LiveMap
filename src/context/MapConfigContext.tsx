@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useReducer, useRef} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef, useState} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
@@ -9,6 +9,7 @@ import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
+import {POI} from '../models/POI/POI.ts';
 import {MAP_DEFAULT_ID} from '@env';
 
 const REFETCH_INTERVAL = 60_000;
@@ -37,6 +38,7 @@ const MapConfigContext = createContext<IMapConfigContext>({
 });
 
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
+    const [pois, setPois] = useState<POI[]>([]);
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
 
     const zoomRef  = useRef<number>(DEFAULT_ZOOM);
@@ -52,11 +54,15 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         },
     });
 
-    const { data: pois = [], isLoading: poisLoading } = useQuery({
+    const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
         queryKey: ['pois'],
         queryFn: () => fetchPois(config.mapId),
         refetchInterval: REFETCH_INTERVAL,
     });
+
+    useEffect(() => {
+        setPois([...fetchedPois]);
+    }, [fetchedPois]);
 
     const loading = configLoading || poisLoading;
 
