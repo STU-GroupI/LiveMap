@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Feature, Point} from 'geojson';
+import React, {useEffect, useRef, useState} from 'react';
+import {Feature, Point, GeoJSON} from 'geojson';
 import {useMapConfig} from '../context/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
@@ -7,10 +7,12 @@ import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native'
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
+import SuperCluster from 'supercluster';
 
 import {POI} from '../models/POI/POI.ts';
 import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import POIMarker from '../components/map/POIMarker.tsx';
+import POIClusterMarker from '../components/map/POIClusterMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
@@ -36,8 +38,69 @@ const MapScreen = () => {
 
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
-
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
+    const [visibleBounds, setVisibleBounds] = useState<[[number, number], [number, number]] | null>(null);
+    const [currentZoom, setCurrentZoom] = useState(config.zoom);
+    const [clusters, setClusters] = useState<any[]>([]);
+
+
+    const superclusterRef = useRef<SuperCluster | null>(null);
+    const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        if (pois.length === 0) return;
+
+        const points = pois.map(poi => ({
+            type: 'Feature' as const,
+            properties: {
+                cluster: false,
+                poiId: poi.guid,
+                poi: poi,
+        },
+            geometry: {
+                type: 'Point' as const,
+                coordinates: [poi.coordinate.longitude, poi.coordinate.latitude]
+            }
+        }));
+
+        const cluster = new SuperCluster({
+            radius: 40,
+            maxZoom: 17,
+            minPoints: 2,
+        });
+
+        cluster.load(points);
+        superclusterRef.current = cluster;
+        updateClusters();
+    }, [pois]);
+
+    const updateClusters = () => {
+        if (!superclusterRef.current || !visibleBounds) return;
+
+        if (throttleTimeoutRef.current) {
+            clearTimeout(throttleTimeoutRef.current);
+        }
+
+        const updateWithThrottle = () => {
+            try {
+                const [[swLng, swLat], [neLng, neLat]] = visibleBounds;
+                const clusters = superclusterRef.current!.getClusters(
+                    [swLng, swLat, neLng, neLat], 
+                    Math.floor(currentZoom)
+                );
+                setClusters(clusters);
+            } catch (error) {
+                console.error('Error updating clusters:', error);
+            }
+        };
+
+        throttleTimeoutRef.current = setTimeout(updateWithThrottle, 16);
+    };
+
+
+    useEffect(() => {
+        updateClusters();
+    }, [currentZoom, visibleBounds]);
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -73,6 +136,37 @@ const MapScreen = () => {
         }
     };
 
+    const handleClusterPress = (cluster: any) => {
+        if (!superclusterRef.current) return;
+
+        if (cluster.properties.cluster) {
+            const clusterId = cluster.properties.cluster_id;
+            const expansionZoom = superclusterRef.current.getClusterExpansionZoom(clusterId);
+            const [longitude, latitude] = cluster.geometry.coordinates;
+            const nextZoom = Math.min(expansionZoom + 1, config.maxZoom);
+            setCurrentZoom(nextZoom);
+
+            cameraRef?.current?.setCamera({
+                centerCoordinate: [longitude, latitude],
+                zoomLevel: nextZoom,
+                animationDuration: 1500,
+            });            
+        }
+    };
+
+    const handleMapRegionChange = (event: any) => {
+        if (event.properties) {
+            if (event.properties.zoomLevel) {
+                setCurrentZoom(event.properties.zoomLevel);
+            }
+
+            if (event.properties.visibleBounds) {
+                const [ne, sw] = event.properties.visibleBounds;
+                setVisibleBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
+            }
+        }
+    };
+
     return (
         <View style={styles.container}>
             <MapView
@@ -82,6 +176,24 @@ const MapScreen = () => {
                 compassViewPosition={3}
                 rotateEnabled={false}
                 onPress={handleSetSuggestedLocation}
+                onRegionWillChange={(event) => {
+                    if (event.properties && event.properties.visibleBounds) {
+                        const [ne, sw] = event.properties.visibleBounds;
+                        setVisibleBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
+                    }
+                    if (event.properties && event.properties.zoomLevel) {
+                        setCurrentZoom(event.properties.zoomLevel);
+                    }
+                }}
+                onRegionDidChange={(event) => {
+                    if (event.properties && event.properties.visibleBounds) {
+                        const [ne, sw] = event.properties.visibleBounds;
+                        setVisibleBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
+                    }
+                    if (event.properties && event.properties.zoomLevel) {
+                        setCurrentZoom(event.properties.zoomLevel);
+                    }
+                }}
             >
                 <Camera
                     ref={cameraRef}
@@ -98,15 +210,33 @@ const MapScreen = () => {
                     </PointAnnotation>
                 )}
 
-                {pois.length > 0 &&
-                    pois.map((mapPoi) => (
-                        <POIMarker
-                            key={`poi-${mapPoi.guid}-${mapPoi.category.iconName ?? ''}`}
-                            poi={mapPoi}
-                            isActive={screenState === ScreenState.VIEWING && activePoi?.guid === mapPoi.guid}
-                            onSelect={handlePoiSelect}
-                        />
-                    ))}
+                {clusters.map(cluster => {
+                    const [longitude, latitude] = cluster.geometry.coordinates;
+                    const { cluster: isCluster, cluster_id, point_count } = cluster.properties;
+
+                    if (isCluster) {
+                        return (
+                            <POIClusterMarker
+                                key={`cluster-${cluster_id}`}
+                                id={`${cluster_id}`}
+                                coordinate={[longitude, latitude]}
+                                pointCount={point_count}
+                                onPress={() => handleClusterPress(cluster)}
+                            />
+                        );
+                    } else {
+                        // Individual POI marker
+                        const poi = cluster.properties.poi;
+                        return (
+                            <POIMarker
+                                key={`poi-${poi.guid}`}
+                                poi={poi}
+                                isActive={screenState === ScreenState.VIEWING && activePoi?.guid === poi.guid}
+                                onSelect={handlePoiSelect}
+                            />
+                        );
+                    }
+                })}
 
                 {(suggestedLocation && (screenState === ScreenState.SUGGESTING || screenState === ScreenState.FORM_POI_NEW)) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
