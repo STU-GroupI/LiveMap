@@ -10,6 +10,7 @@ import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {MAP_DEFAULT_ID} from '@env';
+import {ensureOfflinePack} from '../services/offlineService.ts';
 
 const REFETCH_INTERVAL = 60_000;
 
@@ -20,6 +21,7 @@ const defaultConfig: IMapConfig = {
     zoom: DEFAULT_ZOOM,
     minZoom: MIN_ZOOM,
     maxZoom: MAX_ZOOM,
+    cachingEnabled: false,
 };
 
 const MapConfigContext = createContext<IMapConfigContext>({
@@ -52,13 +54,15 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         },
     });
 
-    const { data: pois = [], isLoading: poisLoading } = useQuery({
-        queryKey: ['pois'],
+    const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
+        queryKey: ['pois', config.mapId],
         queryFn: () => fetchPois(config.mapId),
         refetchInterval: REFETCH_INTERVAL,
     });
 
-    const loading = configLoading || poisLoading;
+    const pois = React.useMemo(() => fetchedPois, [fetchedPois]);
+
+    const loading = false;
 
     useEffect(() => {
         switch (screenState) {
@@ -74,6 +78,20 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
                 collapseAppbar();
         }
     }, [screenState, expandAppbar, collapseAppbar]);
+
+
+    useEffect(() => {
+        if (!configLoading && config.cachingEnabled) {
+            ensureOfflinePack(config)
+                .then(() => {
+                    console.log('Offline pack ensured');
+                })
+                .catch((err) => {
+                    console.error('Error ensuring offline pack:', err);
+                });
+        }
+    }, [config, configLoading]);
+
 
     const handleRecenter = async () => {
         try {
