@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {Feature, Point, GeoJSON} from 'geojson';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Feature, Point} from 'geojson';
 import {useMapConfig} from '../context/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
@@ -47,6 +47,27 @@ const MapScreen = () => {
     const superclusterRef = useRef<SuperCluster | null>(null);
     const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+    const updateClusters = useCallback(() => {
+        if (!superclusterRef.current || !visibleBounds) return;
+
+        if (throttleTimeoutRef.current) {
+            clearTimeout(throttleTimeoutRef.current);
+        }
+
+        throttleTimeoutRef.current = setTimeout(() => {
+            try {
+                const [[swLng, swLat], [neLng, neLat]] = visibleBounds;
+                const clusters = superclusterRef.current!.getClusters(
+                    [swLng, swLat, neLng, neLat], 
+                    Math.floor(currentZoom)
+                );
+                setClusters(clusters);
+            } catch (error) {
+                console.error('Error updating clusters:', error);
+            }
+        }, 16);
+    }, [currentZoom, visibleBounds]);
+
     useEffect(() => {
         if (pois.length === 0) return;
 
@@ -72,35 +93,11 @@ const MapScreen = () => {
         cluster.load(points);
         superclusterRef.current = cluster;
         updateClusters();
-    }, [pois]);
-
-    const updateClusters = () => {
-        if (!superclusterRef.current || !visibleBounds) return;
-
-        if (throttleTimeoutRef.current) {
-            clearTimeout(throttleTimeoutRef.current);
-        }
-
-        const updateWithThrottle = () => {
-            try {
-                const [[swLng, swLat], [neLng, neLat]] = visibleBounds;
-                const clusters = superclusterRef.current!.getClusters(
-                    [swLng, swLat, neLng, neLat], 
-                    Math.floor(currentZoom)
-                );
-                setClusters(clusters);
-            } catch (error) {
-                console.error('Error updating clusters:', error);
-            }
-        };
-
-        throttleTimeoutRef.current = setTimeout(updateWithThrottle, 16);
-    };
-
+    }, [pois, updateClusters]);
 
     useEffect(() => {
         updateClusters();
-    }, [currentZoom, visibleBounds]);
+    }, [currentZoom, visibleBounds, updateClusters]);
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
@@ -176,24 +173,8 @@ const MapScreen = () => {
                 compassViewPosition={3}
                 rotateEnabled={false}
                 onPress={handleSetSuggestedLocation}
-                onRegionWillChange={(event) => {
-                    if (event.properties && event.properties.visibleBounds) {
-                        const [ne, sw] = event.properties.visibleBounds;
-                        setVisibleBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
-                    }
-                    if (event.properties && event.properties.zoomLevel) {
-                        setCurrentZoom(event.properties.zoomLevel);
-                    }
-                }}
-                onRegionDidChange={(event) => {
-                    if (event.properties && event.properties.visibleBounds) {
-                        const [ne, sw] = event.properties.visibleBounds;
-                        setVisibleBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
-                    }
-                    if (event.properties && event.properties.zoomLevel) {
-                        setCurrentZoom(event.properties.zoomLevel);
-                    }
-                }}
+                onRegionWillChange={handleMapRegionChange}
+                onRegionDidChange={handleMapRegionChange}
             >
                 <Camera
                     ref={cameraRef}
@@ -225,7 +206,6 @@ const MapScreen = () => {
                             />
                         );
                     } else {
-                        // Individual POI marker
                         const poi = cluster.properties.poi;
                         return (
                             <POIMarker
@@ -237,7 +217,6 @@ const MapScreen = () => {
                         );
                     }
                 })}
-
                 {(suggestedLocation && (screenState === ScreenState.SUGGESTING || screenState === ScreenState.FORM_POI_NEW)) && (
                     <SuggestedPOIMarker location={suggestedLocation} />
                 )}
@@ -246,7 +225,6 @@ const MapScreen = () => {
             <SuggestPOIButton handleCreateSuggestion={handleCreateSuggestion} active={screenState === ScreenState.SUGGESTING}/>
             <MapZoomInOutButton handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
             <MapCenterButton handleRecenter={handleRecenter} />
-            {/*<MapTopBarButton /> HIDDEN FOR NOW DUE TO UNNECESSARY USE*/}
 
             {activePoi && (
                 <MapPOIBottomSheet
