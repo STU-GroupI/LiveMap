@@ -58,6 +58,8 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         queryKey: ['pois', config.mapId],
         queryFn: () => fetchPois(config.mapId),
         refetchInterval: REFETCH_INTERVAL,
+        enabled: !!config.mapId,
+        staleTime: 1000 * 60 * 60,
     });
 
     const pois = React.useMemo(() => fetchedPois, [fetchedPois]);
@@ -77,7 +79,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
             default:
                 collapseAppbar();
         }
-    }, [screenState, expandAppbar, collapseAppbar]);
+    }, [collapseAppbar, expandAppbar, screenState]);
 
 
     useEffect(() => {
