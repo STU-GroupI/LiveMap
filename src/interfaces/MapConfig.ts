@@ -1,5 +1,5 @@
 import React from 'react';
-import {CameraRef} from '@maplibre/maplibre-react-native';
+import {CameraRef, MapViewRef} from '@maplibre/maplibre-react-native';
 import {POI} from '../models/POI/POI.ts';
 import {ScreenState, ScreenStateAction} from '../state/ScreenStateReducer.ts';
 
@@ -20,9 +20,12 @@ export interface IMapConfigContext {
     loading: boolean,
     userLocation: [number, number] | null,
     hasLocationPermission: boolean,
+    mapViewRef?: React.RefObject<MapViewRef | null>,
     cameraRef?: React.RefObject<CameraRef | null>,
+    zoomRef?: React.RefObject<number>,
     handleRecenter: () => void,
     handleZoomIn: () => void,
     handleZoomOut: () => void,
+    setZoomLevel: (zoomLevel: number) => void,
     canInteractWithMap: () => boolean,
 }
