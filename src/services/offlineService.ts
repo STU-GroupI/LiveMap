@@ -23,7 +23,7 @@ export async function createOfflinePack(mapConfig: IMapConfig): Promise<string> 
         OfflineManager.createPack(
             {
                 name: offlinePackName,
-                styleURL: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+                styleURL: "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json",
                 minZoom: mapConfig.minZoom,
                 maxZoom: mapConfig.maxZoom,
                 bounds: [

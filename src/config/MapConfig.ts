@@ -3,6 +3,6 @@ export const DEFAULT_ZOOM = 15;
 export const MAX_ZOOM = 19;
 export const MIN_ZOOM = 0;
 
-export const MAP_STYLE = 'https://raw.githubusercontent.com/go2garret/maps/main/src/assets/json/openStreetMap.json';
+export const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 export default MAP_STYLE;

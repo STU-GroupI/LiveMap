@@ -21,7 +21,7 @@ const defaultConfig: IMapConfig = {
     zoom: DEFAULT_ZOOM,
     minZoom: MIN_ZOOM,
     maxZoom: MAX_ZOOM,
-    cachingEnabled: false,
+    cachingEnabled: true,
 };
 
 const MapConfigContext = createContext<IMapConfigContext>({
