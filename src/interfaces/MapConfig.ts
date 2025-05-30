@@ -25,4 +25,5 @@ export interface IMapConfigContext {
     handleZoomIn: () => void,
     handleZoomOut: () => void,
     canInteractWithMap: () => boolean,
+    setMapId: (mapId: string) => void,
 }

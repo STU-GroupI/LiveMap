@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useReducer, useRef} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef, useCallback} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
@@ -7,7 +7,7 @@ import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
 import useLocation from '../hooks/UseLocation.tsx';
 import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {MAP_DEFAULT_ID} from '@env';
 
@@ -34,10 +34,12 @@ const MapConfigContext = createContext<IMapConfigContext>({
     handleZoomIn: () => {},
     handleZoomOut: () => {},
     canInteractWithMap: () => false,
+    setMapId: () => {},
 });
 
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
+    const queryClient = useQueryClient();
 
     const zoomRef = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
@@ -112,6 +114,11 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
         return screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
     };
 
+    const setMapId = useCallback((mapId: string) => {
+        queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
+        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+    }, [queryClient]);
+
     return (
         <MapConfigContext.Provider value={
             {
@@ -127,6 +134,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
                 handleZoomIn,
                 handleZoomOut,
                 canInteractWithMap,
+                setMapId,
             }
         }>
             {children}
