@@ -73,6 +73,9 @@ const MapScreen = () => {
         }
     };
 
+    console.log(`MapScreen - Current mapId: ${config.mapId}`);
+    console.log(`MapScreen - POIs count: ${pois.length}`);
+
     return (
         <View style={styles.container}>
             <MapView

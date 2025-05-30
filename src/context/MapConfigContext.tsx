@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useReducer, useRef, useCallback} from 'react';
+import React, {createContext, useContext, useEffect, useReducer, useRef, useCallback, useState} from 'react';
 import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
 import {CameraRef} from '@maplibre/maplibre-react-native';
@@ -9,6 +9,7 @@ import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
+import {fetchMaps} from '../services/mapService.ts';
 import {MAP_DEFAULT_ID} from '@env';
 
 const REFETCH_INTERVAL = 60_000;
@@ -40,6 +41,8 @@ const MapConfigContext = createContext<IMapConfigContext>({
 export const MapConfigProvider = ({ children }: { children: React.ReactNode}) => {
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
     const queryClient = useQueryClient();
+    const [initialMapIdLoaded, setInitialMapIdLoaded] = useState(false);
+
 
     const zoomRef = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
@@ -47,11 +50,30 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const { hasLocationPermission, userLocation } = useLocation();
     const { expandAppbar, collapseAppbar } = useAppbar();
 
+    const { data: maps = [] } = useQuery({
+        queryKey: ['maps'],
+        queryFn: fetchMaps,
+    });
+
+    useEffect(() => {
+        if (!initialMapIdLoaded && maps.length > 0) {
+            console.log('Setting initial mapId to first available map:', maps[0].guid);
+            defaultConfig.mapId = maps[0].guid;
+            
+            const updatedConfig = { ...defaultConfig, mapId: maps[0].guid };
+            queryClient.setQueryData(['mapConfig'], updatedConfig);
+            
+            queryClient.invalidateQueries({ queryKey: ['pois', maps[0].guid] });
+            setInitialMapIdLoaded(true);
+        }
+    }, [maps, initialMapIdLoaded, queryClient]);
+
     const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
         queryKey: ['mapConfig'],
         queryFn: async () => {
             return { ...defaultConfig };
         },
+        enabled: true,
     });
 
     const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
@@ -115,9 +137,16 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     };
 
     const setMapId = useCallback((mapId: string) => {
+        console.log(`MapConfigContext: Setting mapId to: ${mapId}`);
+        
+        defaultConfig.mapId = mapId;
+        
         queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
         queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
-    }, [queryClient]);
+        
+        const updatedConfig = { ...config, mapId };
+        queryClient.setQueryData(['mapConfig'], updatedConfig);
+    }, [queryClient, config]);
 
     return (
         <MapConfigContext.Provider value={
