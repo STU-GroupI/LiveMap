@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import {Feature, Point} from 'geojson';
+import {Feature, Point, Position} from 'geojson';
 import {useMapConfig} from '../context/MapConfigContext.tsx';
 import Loader from '../components/Loader.tsx';
 import {StyleSheet, View} from 'react-native';
-import {Camera, MapView, PointAnnotation} from '@maplibre/maplibre-react-native';
+import {Camera, ImageSource, MapView, PointAnnotation, RasterLayer} from '@maplibre/maplibre-react-native';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
@@ -17,6 +17,7 @@ import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 
 import {ScreenState} from '../state/screenStateReducer.ts';
 import {setSuggesting, setViewing} from '../state/screenStateActions.ts';
+import {isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
 
 const MapScreen = () => {
     const {
@@ -36,7 +37,6 @@ const MapScreen = () => {
 
     const { bottomSheetRefs, handleOpen, handleClose } = useBottomSheets(['detail', 'location', 'dataform']);
     const [activePoi, setActivePoi] = useState<POI | undefined>();
-
     const [suggestedLocation, setSuggestedLocation] = useState<[number, number] | undefined>();
 
     if (loading || !hasLocationPermission) {
@@ -68,10 +68,23 @@ const MapScreen = () => {
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
-        if (suggestedLocation !== undefined) {
-            setSuggestedLocation([event.geometry.coordinates[0], event.geometry.coordinates[1]]);
+        if (suggestedLocation !== undefined && config.area) {
+            const coordinates: [number, number][] = config.area.map(coord => [coord.latitude, coord.longitude]);
+            const pointCoordinates: [number, number] = [
+                event.geometry.coordinates[0],
+                event.geometry.coordinates[1],
+            ];
+
+            if (isCoordinateInPolygon(pointCoordinates, coordinates)) {
+                setSuggestedLocation(pointCoordinates);
+            }
         }
     };
+
+    const fixedCoordinates: [Position, Position, Position, Position] | undefined =
+        config.bounds
+            ? toFixedCoordinates(config.bounds)
+            : undefined;
 
     return (
         <View style={styles.container}>
@@ -91,6 +104,21 @@ const MapScreen = () => {
                     maxZoomLevel={config.maxZoom}
                     followUserLocation={false}
                 />
+
+                {config.imageUrl && (
+                    <ImageSource
+                        id={'background-overlay'}
+                        url={config.imageUrl}
+                        coordinates={fixedCoordinates}
+                    >
+                        <RasterLayer
+                            id="custom-background-layer"
+                            sourceID="custom-background-source"
+                            style={{ rasterOpacity: 1 }}
+                            layerIndex={1}
+                        />
+                    </ImageSource>
+                )}
 
                 {userLocation && (
                     <PointAnnotation id="user-location" coordinate={userLocation}>

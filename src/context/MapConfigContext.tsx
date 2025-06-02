@@ -10,6 +10,7 @@ import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {MAP_DEFAULT_ID} from '@env';
+import {fetchMap} from '../services/mapService.ts';
 
 const REFETCH_INTERVAL = 60_000;
 
@@ -20,6 +21,9 @@ const defaultConfig: IMapConfig = {
     zoom: DEFAULT_ZOOM,
     minZoom: MIN_ZOOM,
     maxZoom: MAX_ZOOM,
+    area: null,
+    bounds: null,
+    imageUrl: null,
 };
 
 const MapConfigContext = createContext<IMapConfigContext>({
@@ -47,9 +51,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
     const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
         queryKey: ['mapConfig'],
-        queryFn: async () => {
-            return { ...defaultConfig };
-        },
+        queryFn: async () => fetchMap(MAP_DEFAULT_ID),
     });
 
     const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
@@ -59,7 +61,6 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     });
 
     const pois = React.useMemo(() => fetchedPois, [fetchedPois]);
-
     const loading = configLoading || poisLoading;
 
     useEffect(() => {
