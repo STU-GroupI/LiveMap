@@ -62,16 +62,6 @@ const SettingsScreen = () => {
             setMapId(mapId);
             setSnackbarMessage(`Switched to ${selectedMap.name}`);
             toggleSnackBar();
-            
-            const navigationTimer = setTimeout(() => {
-                const state = navigation.getState();
-                if (state) {
-                    console.log(`Navigating to map screen with mapId: ${mapId}`);
-                    navigation.navigate('map');
-                }
-            }, 300);
-
-            return () => clearTimeout(navigationTimer);
         }
     };
 
