@@ -20,7 +20,7 @@ const POIClusterMarker = ({ id, coordinate, pointCount, onPress }: POIClusterMar
             coordinate={coordinate}
             onSelected={handlePress}
         >
-            <TouchableOpacity 
+            <TouchableOpacity
                 activeOpacity={0.7}
                 onPress={handlePress}
                 style={styles.touchable}
