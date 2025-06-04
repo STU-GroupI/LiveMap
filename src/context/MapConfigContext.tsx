@@ -9,7 +9,7 @@ import {useAppbar} from './AppbarContext.tsx';
 import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
-import {fetchMaps} from '../services/mapService.ts';
+import {fetchMaps, fetchClosestMap} from '../services/mapService.ts';
 import {MAP_DEFAULT_ID} from '@env';
 
 const REFETCH_INTERVAL = 60_000;
@@ -50,23 +50,40 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     const { hasLocationPermission, userLocation } = useLocation();
     const { expandAppbar, collapseAppbar } = useAppbar();
 
-    const { data: maps = [] } = useQuery({
+    const { data: maps = [], isSuccess: mapsCallDone } = useQuery({
         queryKey: ['maps'],
         queryFn: fetchMaps,
     });
 
+const locationReady = Array.isArray(userLocation) &&
+                      typeof userLocation[0] === 'number' &&
+                      typeof userLocation[1] === 'number';
+
+    const { data: closestMap, isSuccess: closestCallDone, isError: closestCallError} = useQuery({
+      queryKey: ['maps', 'closest', userLocation],
+      queryFn: async () => {
+        const [lng, lat] = userLocation;
+        return await fetchClosestMap(lat, lng);
+      },
+      enabled: locationReady,
+    });
+
     useEffect(() => {
-        if (!initialMapIdLoaded && maps.length > 0) {
-            console.log('Setting initial mapId to first available map:', maps[0].guid);
-            defaultConfig.mapId = maps[0].guid;
-            
-            const updatedConfig = { ...defaultConfig, mapId: maps[0].guid };
-            queryClient.setQueryData(['mapConfig'], updatedConfig);
-            
-            queryClient.invalidateQueries({ queryKey: ['pois', maps[0].guid] });
-            setInitialMapIdLoaded(true);
-        }
-    }, [maps, initialMapIdLoaded, queryClient]);
+    if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
+        const mapId = closestMap?.id || maps[0]?.guid || null;
+        console.log(userLocation);
+        console.log("Closest map id: " + closestMap?.id);
+        console.log("First map id: " + maps[0]?.guid);
+        console.log("Chosen map id: " + mapId);
+        setMapId(mapId);
+        defaultConfig.mapId = mapId;
+        const updatedConfig = { ...defaultConfig, mapId: mapId };
+        queryClient.setQueryData(['mapConfig'], updatedConfig);
+
+        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+        setInitialMapIdLoaded(true);
+    }
+    }, [maps, closestMap, initialMapIdLoaded, queryClient]);
 
     const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
         queryKey: ['mapConfig'],

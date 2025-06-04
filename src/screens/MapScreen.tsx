@@ -18,6 +18,8 @@ import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import {ScreenState} from '../state/screenStateReducer.ts';
 import {setSuggesting, setViewing} from '../state/screenStateActions.ts';
 
+import EmptyScreen from '../screens/EmptyScreen.tsx';
+
 const MapScreen = () => {
     const {
         config,
@@ -41,6 +43,9 @@ const MapScreen = () => {
 
     if (loading || !hasLocationPermission) {
         return <Loader />;
+    }
+    if (!config.mapId) {
+        return <EmptyScreen />;
     }
 
     const handlePoiSelect = (selectedPoi: POI) => {
