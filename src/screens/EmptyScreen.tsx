@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const EmptyScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>No maps available</Text>
+      <Text style={styles.message}>No maps available. Please try again later</Text>
     </View>
   );
 };

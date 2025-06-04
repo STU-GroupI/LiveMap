@@ -15,7 +15,7 @@ import {MAP_DEFAULT_ID} from '@env';
 const REFETCH_INTERVAL = 60_000;
 
 const defaultConfig: IMapConfig = {
-    mapId: MAP_DEFAULT_ID,
+    mapId: '',
     mapStyle: MAP_STYLE,
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,
