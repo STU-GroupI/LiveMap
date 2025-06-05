@@ -25,8 +25,6 @@ import POIClusterMarker from '../components/map/POIClusterMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
-import {ScreenState} from '../state/screenStateReducer.ts';
-import {setSuggesting, setViewing} from '../state/screenStateActions.ts';
 
 import EmptyScreen from '../screens/EmptyScreen.tsx';
 const MapScreen = () => {
