@@ -3,7 +3,8 @@ export enum ScreenState {
     SUGGESTING,     // When suggesting a new location (state in between states)
     SELECTING_POI,  // When selecting a POI
     FORM_POI_NEW,       // When creating a new POI
-    FORM_POI_CHANGE     // When changing an existing POI
+    FORM_POI_CHANGE,     // When changing an existing POI
+    EMPTY_MAP     // When there is no map to retrieve
 }
 
 export type ScreenStateAction = {
