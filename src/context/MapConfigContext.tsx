@@ -11,6 +11,8 @@ import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {fetchMaps, fetchClosestMap} from '../services/mapService.ts';
 import {MAP_DEFAULT_ID} from '@env';
+import { setEmpty } from '../state/screenStateActions.ts';
+
 
 const REFETCH_INTERVAL = 60_000;
 
@@ -70,20 +72,24 @@ const locationReady = Array.isArray(userLocation) &&
 
     useEffect(() => {
     if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
+        console.log("Default config map id: " + defaultConfig.mapId);
         const mapId = closestMap?.id || maps[0]?.guid || null;
         console.log(userLocation);
         console.log("Closest map id: " + closestMap?.id);
         console.log("First map id: " + maps[0]?.guid);
         console.log("Chosen map id: " + mapId);
-        setMapId(mapId);
-        defaultConfig.mapId = mapId;
-        const updatedConfig = { ...defaultConfig, mapId: mapId };
-        queryClient.setQueryData(['mapConfig'], updatedConfig);
-
-        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+        if (!mapId) {
+           dispatch(setEmpty());
+        } else {
+            setMapId(mapId);
+            defaultConfig.mapId = mapId;
+            const updatedConfig = { ...defaultConfig, mapId: mapId };
+            queryClient.setQueryData(['mapConfig'], updatedConfig);
+            queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+        }
         setInitialMapIdLoaded(true);
     }
-    }, [maps, closestMap, initialMapIdLoaded, queryClient]);
+    }, [maps, closestMap, initialMapIdLoaded, mapsCallDone, closestCallDone, closestCallError, queryClient, setMapId]);
 
     const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
         queryKey: ['mapConfig'],

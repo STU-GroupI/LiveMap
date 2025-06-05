@@ -44,7 +44,8 @@ const MapScreen = () => {
     if (loading || !hasLocationPermission) {
         return <Loader />;
     }
-    if (!config.mapId) {
+
+    if(screenState === ScreenState.EMPTY_MAP || !config.mapId) {
         return <EmptyScreen />;
     }
 
