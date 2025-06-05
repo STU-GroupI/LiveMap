@@ -57,7 +57,6 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
 
     useEffect(() => {
         if (!initialMapIdLoaded && maps.length > 0) {
-            console.log('Setting initial mapId to first available map:', maps[0].guid);
             defaultConfig.mapId = maps[0].guid;
             
             const updatedConfig = { ...defaultConfig, mapId: maps[0].guid };
@@ -137,8 +136,6 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode}) =>
     };
 
     const setMapId = useCallback((mapId: string) => {
-        console.log(`MapConfigContext: Setting mapId to: ${mapId}`);
-        
         defaultConfig.mapId = mapId;
         
         queryClient.invalidateQueries({ queryKey: ['mapConfig'] });

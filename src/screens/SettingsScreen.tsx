@@ -58,7 +58,6 @@ const SettingsScreen = () => {
     const handleMapSelection = (mapId: string) => {
         const selectedMap = maps.find(map => map.guid === mapId);
         if (selectedMap) {
-            console.log(`Setting mapId to: ${mapId}`);
             setMapId(mapId);
             setSnackbarMessage(`Switched to ${selectedMap.name}`);
             toggleSnackBar();
