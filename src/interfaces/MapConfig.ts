@@ -21,8 +21,10 @@ export interface IMapConfigContext {
     userLocation: [number, number] | null,
     hasLocationPermission: boolean,
     cameraRef?: React.RefObject<CameraRef | null>,
+    zoomRef?: React.RefObject<number>,
     handleRecenter: () => void,
     handleZoomIn: () => void,
     handleZoomOut: () => void,
+    setZoomLevel: (zoomLevel: number) => void,
     canInteractWithMap: () => boolean,
 }

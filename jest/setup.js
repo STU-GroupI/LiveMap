@@ -51,3 +51,11 @@ jest.mock('@tanstack/react-query', () => {
         useQuery: jest.fn(), // Mock useQuery
     };
 });
+
+jest.mock('supercluster', () => {
+    return jest.fn().mockImplementation(() => ({
+        load: jest.fn(),
+        getClusters: jest.fn(() => []),
+        getClusterExpansionZoom: jest.fn(() => 10),
+    }));
+});
