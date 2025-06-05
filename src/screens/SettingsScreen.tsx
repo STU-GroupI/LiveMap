@@ -11,6 +11,10 @@ import { useMapConfig } from '../context/MapConfigContext';
 import { Map } from '../models/Map/Map';
 import Loader from '../components/Loader';
 
+const CheckIcon = (props: React.ComponentProps<typeof List.Icon>) => (
+  <List.Icon {...props} icon="check" color="#0017EE" />
+);
+
 const SettingsScreen = () => {
     const { expandAppbar, collapseAppbar } = useAppbar();
     const { visibleSnackbar, toggleSnackBar, dismissSnackBar } = useSnackbar();
@@ -90,9 +94,8 @@ const SettingsScreen = () => {
                                 <List.Item
                                     title={map.name}
                                     titleStyle={styles.itemTitle}
-                                    left={props =>
-                                        map.guid === config.mapId ?
-                                            <List.Icon {...props} icon="check" color="#0017EE" /> :
+                                    left={map.guid === config.mapId ?
+                                            CheckIcon :
                                             null
                                     }
                                 />

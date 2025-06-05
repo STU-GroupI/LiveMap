@@ -8,6 +8,20 @@ import { useAppbar } from '../context/AppbarContext';
 
 const Tab = createBottomTabNavigator();
 
+function getTabBarIcon(routeName: string) {
+  return ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
+    const iconName =
+      routeName === 'Map'
+        ? focused
+          ? 'map'
+          : 'map-outline'
+        : focused
+        ? 'cog'
+        : 'cog-outline';
+    return <Icon source={iconName} size={size} color={color} />;
+  };
+}
+
 function AppNavigator() {
     const theme = useTheme();
     const { collapseAppbar } = useAppbar();
@@ -17,19 +31,7 @@ function AppNavigator() {
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     headerShown: false,
-                    tabBarIcon: ({ focused, color, size }) => {
-                        let iconName: string;
-
-                        if (route.name === 'Map') {
-                            iconName = focused ? 'map' : 'map-outline';
-                        } else if (route.name === 'Settings') {
-                            iconName = focused ? 'cog' : 'cog-outline';
-                        } else {
-                            iconName = 'help';
-                        }
-
-                        return <Icon source={iconName} size={size} color={color} />;
-                    },
+                    tabBarIcon: getTabBarIcon(route.name),
                     tabBarActiveTintColor: theme.colors.primary,
                     tabBarInactiveTintColor: 'gray',
                     tabBarStyle: {
