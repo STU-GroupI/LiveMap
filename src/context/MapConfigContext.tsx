@@ -10,7 +10,6 @@ import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {fetchMaps, fetchClosestMap} from '../services/mapService.ts';
-import {MAP_DEFAULT_ID} from '@env';
 import { setEmpty } from '../state/screenStateActions.ts';
 
 const REFETCH_INTERVAL = 60_000;
@@ -153,10 +152,10 @@ const locationReady = Array.isArray(userLocation) &&
 
     const setMapId = useCallback((mapId: string) => {
         defaultConfig.mapId = mapId;
-        
+
         queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
         queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
-        
+
         const updatedConfig = { ...config, mapId };
         queryClient.setQueryData(['mapConfig'], updatedConfig);
     }, [queryClient, config]);

@@ -1,5 +1,5 @@
-import { apiClient } from "./apiClient";
-import { Map } from "../models/Map/Map";
+import { apiClient } from './apiClient';
+import { Map } from '../models/Map/Map';
 
 interface MapApiResponse {
     items: Array<{
@@ -10,17 +10,15 @@ interface MapApiResponse {
 
 export const fetchMaps = async (): Promise<Map[]> => {
     const response = await apiClient.get<MapApiResponse>('/map');
-  
     if (response.data && response.data.items) {
         const maps = response.data.items.map(item => ({
             guid: item.id,
-            name: item.name
-        }));
+            name: item.name}));
         return maps;
     }
-  
+
     return [];
-};
+    };
 
 export const fetchClosestMap = async (
   latitude: number,

@@ -16,10 +16,10 @@ function AppNavigator() {
         <MapConfigProvider>
             <Tab.Navigator
                 screenOptions={({ route }) => ({
-                    headerShown: false, 
+                    headerShown: false,
                     tabBarIcon: ({ focused, color, size }) => {
                         let iconName: string;
-                        
+
                         if (route.name === 'Map') {
                             iconName = focused ? 'map' : 'map-outline';
                         } else if (route.name === 'Settings') {
@@ -27,12 +27,12 @@ function AppNavigator() {
                         } else {
                             iconName = 'help';
                         }
-                        
+
                         return <Icon source={iconName} size={size} color={color} />;
                     },
                     tabBarActiveTintColor: theme.colors.primary,
                     tabBarInactiveTintColor: 'gray',
-                    tabBarStyle: { 
+                    tabBarStyle: {
                         backgroundColor: theme.colors.background,
                         borderTopColor: theme.colors.outline || '#e0e0e0',
                         borderTopWidth: 1,
@@ -48,7 +48,7 @@ function AppNavigator() {
                 <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
         </MapConfigProvider>
-    )
+    );
 }
 
 export default AppNavigator;
