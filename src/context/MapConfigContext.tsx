@@ -72,12 +72,7 @@ const locationReady = Array.isArray(userLocation) &&
 
     useEffect(() => {
     if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
-        console.log("Default config map id: " + defaultConfig.mapId);
         const mapId = closestMap?.id || maps[0]?.guid || null;
-        console.log(userLocation);
-        console.log("Closest map id: " + closestMap?.id);
-        console.log("First map id: " + maps[0]?.guid);
-        console.log("Chosen map id: " + mapId);
         if (!mapId) {
            dispatch(setEmpty());
         } else {
@@ -160,8 +155,6 @@ const locationReady = Array.isArray(userLocation) &&
     };
 
     const setMapId = useCallback((mapId: string) => {
-        console.log(`MapConfigContext: Setting mapId to: ${mapId}`);
-        
         defaultConfig.mapId = mapId;
         
         queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
