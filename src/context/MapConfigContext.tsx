@@ -1,32 +1,21 @@
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useReducer,
-    useRef,
-    useMemo,
-} from 'react';
-import MAP_STYLE, {
-    DEFAULT_CENTER,
-    DEFAULT_ZOOM,
-    MAX_ZOOM,
-    MIN_ZOOM,
-} from '../config/MapConfig.ts';
+import React, {createContext, useContext, useEffect, useReducer, useRef, useCallback, useState, useMemo} from 'react';
+import MAP_STYLE, {DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 
-import { CameraRef } from '@maplibre/maplibre-react-native';
-import { IMapConfig, IMapConfigContext } from '../interfaces/MapConfig.ts';
+import {CameraRef} from '@maplibre/maplibre-react-native';
+import {IMapConfig, IMapConfigContext} from '../interfaces/MapConfig.ts';
 
 import useLocation from '../hooks/UseLocation.tsx';
-import { useAppbar } from './AppbarContext.tsx';
-import { ScreenState, screenStateReducer } from '../state/screenStateReducer.ts';
-import { useQuery } from '@tanstack/react-query';
-import { fetchPois } from '../services/poiService.ts';
-import { MAP_DEFAULT_ID } from '@env';
+import {useAppbar} from './AppbarContext.tsx';
+import {ScreenState, screenStateReducer} from '../state/screenStateReducer.ts';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {fetchPois} from '../services/poiService.ts';
+import {fetchMaps, fetchClosestMap} from '../services/mapService.ts';
+import { setEmpty } from '../state/screenStateActions.ts';
 
 const REFETCH_INTERVAL = 60_000;
 
 const defaultConfig: IMapConfig = {
-    mapId: MAP_DEFAULT_ID,
+    mapId: '',
     mapStyle: MAP_STYLE,
     center: DEFAULT_CENTER,
     zoom: DEFAULT_ZOOM,
@@ -47,10 +36,14 @@ const MapConfigContext = createContext<IMapConfigContext>({
     handleZoomOut: () => {},
     setZoomLevel: () => {},
     canInteractWithMap: () => false,
+    setMapId: () => {},
 });
 
 export const MapConfigProvider = ({ children }: { children: React.ReactNode }) => {
     const [screenState, dispatch] = useReducer(screenStateReducer, ScreenState.VIEWING);
+    const queryClient = useQueryClient();
+    const [initialMapIdLoaded, setInitialMapIdLoaded] = useState(false);
+
 
     const zoomRef = useRef<number>(DEFAULT_ZOOM);
     const cameraRef = useRef<CameraRef>(null);
@@ -58,9 +51,62 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
     const { hasLocationPermission, userLocation } = useLocation();
     const { expandAppbar, collapseAppbar } = useAppbar();
 
+    const { data: maps = [], isSuccess: mapsCallDone } = useQuery({
+        queryKey: ['maps'],
+        queryFn: fetchMaps,
+    });
+
+const locationReady =
+    Array.isArray(userLocation) &&
+    typeof userLocation[0] === 'number' &&
+    typeof userLocation[1] === 'number';
+
+    const { data: closestMap, isSuccess: closestCallDone, isError: closestCallError} = useQuery({
+      queryKey: ['maps', 'closest', userLocation],
+      queryFn: async () => {
+      if (userLocation) {
+        const [lng, lat] = userLocation;
+        return await fetchClosestMap(lat, lng);
+      }
+      return null;
+    },
+      enabled: locationReady,
+    });
+
+    const setMapId = useCallback((mapId: string) => {
+        defaultConfig.mapId = mapId;
+
+        queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
+        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+
+        const updatedConfig = { ...config, mapId };
+        queryClient.setQueryData(['mapConfig'], updatedConfig);
+    }, [queryClient, config]);
+    const canInteractWithMap = () =>
+        screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
+
+    useEffect(() => {
+    if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
+        const mapId = closestMap?.id || maps[0]?.guid || null;
+        if (!mapId) {
+           dispatch(setEmpty());
+        } else {
+            setMapId(mapId);
+            defaultConfig.mapId = mapId;
+            const updatedConfig = { ...defaultConfig, mapId: mapId };
+            queryClient.setQueryData(['mapConfig'], updatedConfig);
+            queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+        }
+        setInitialMapIdLoaded(true);
+    }
+    }, [maps, closestMap, initialMapIdLoaded, mapsCallDone, closestCallDone, closestCallError, queryClient, setMapId]);
+
     const { data: config = defaultConfig, isLoading: configLoading } = useQuery({
         queryKey: ['mapConfig'],
-        queryFn: async () => ({ ...defaultConfig }),
+        queryFn: async () => {
+            return { ...defaultConfig };
+        },
+        enabled: true,
     });
 
     const { data: fetchedPois = [], isLoading: poisLoading } = useQuery({
@@ -120,9 +166,6 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
         cameraRef.current?.zoomTo(clampedZoom);
     };
 
-    const canInteractWithMap = () =>
-        screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
-
     return (
         <MapConfigContext.Provider
             value={{
@@ -140,8 +183,9 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
                 handleZoomOut,
                 setZoomLevel,
                 canInteractWithMap,
-            }}
-        >
+                setMapId,
+            }
+        }>
             {children}
         </MapConfigContext.Provider>
     );

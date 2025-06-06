@@ -33,6 +33,7 @@ export default function BaseSnackbar({
             action={action}
             theme={theme}
             style={styles.snackbar}
+            duration={4000}
         >
             {children}
         </Snackbar>

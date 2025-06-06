@@ -26,6 +26,7 @@ import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 
+import EmptyScreen from '../screens/EmptyScreen.tsx';
 const MapScreen = () => {
     const {
         config,
@@ -115,6 +116,10 @@ const MapScreen = () => {
     useEffect(() => {
         updateClusters();
     }, [zoomRef, visibleBounds, updateClusters]);
+
+    if((screenState === ScreenState.EMPTY_MAP || !config.mapId) && !loading) {
+        return <EmptyScreen />;
+    }
 
     const handlePoiSelect = (selectedPoi: POI) => {
         if (activePoi?.guid !== selectedPoi.guid && canInteractWithMap()) {
