@@ -43,7 +43,7 @@ export const fetchPois = async (mapId: string): Promise<POI[]> => {
             },
             status: item.status || 'Unknown',
             map: {
-                guid: item.mapId || 'Unknown',
+                id: item.mapId || 'Unknown',
                 name: item.map?.name || '',
             },
             wheelChairAccessible: item.isWheelchairAccessible ?? false,

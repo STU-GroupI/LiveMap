@@ -2,6 +2,7 @@ import React from 'react';
 import {CameraRef} from '@maplibre/maplibre-react-native';
 import {POI} from '../models/POI/POI.ts';
 import {ScreenState, ScreenStateAction} from '../state/ScreenStateReducer.ts';
+import {POICoordinate} from '../models/POI/POICoordinate.ts';
 
 export interface IMapConfig {
     mapId: string;
@@ -10,6 +11,9 @@ export interface IMapConfig {
     zoom: number;
     minZoom: number;
     maxZoom: number;
+    area: POICoordinate[] | null;
+    bounds: POICoordinate[] | null;
+    imageUrl: string | null;
 }
 
 export interface IMapConfigContext {
