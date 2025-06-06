@@ -56,18 +56,34 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
         queryFn: fetchMaps,
     });
 
-const locationReady = Array.isArray(userLocation) &&
-                      typeof userLocation[0] === 'number' &&
-                      typeof userLocation[1] === 'number';
+const locationReady =
+    Array.isArray(userLocation) &&
+    typeof userLocation[0] === 'number' &&
+    typeof userLocation[1] === 'number';
 
     const { data: closestMap, isSuccess: closestCallDone, isError: closestCallError} = useQuery({
       queryKey: ['maps', 'closest', userLocation],
       queryFn: async () => {
+      if (userLocation) {
         const [lng, lat] = userLocation;
         return await fetchClosestMap(lat, lng);
-      },
+      }
+      return null;
+    },
       enabled: locationReady,
     });
+
+    const setMapId = useCallback((mapId: string) => {
+        defaultConfig.mapId = mapId;
+
+        queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
+        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
+
+        const updatedConfig = { ...config, mapId };
+        queryClient.setQueryData(['mapConfig'], updatedConfig);
+    }, [queryClient, config]);
+    const canInteractWithMap = () =>
+        screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
 
     useEffect(() => {
     if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
@@ -149,18 +165,6 @@ const locationReady = Array.isArray(userLocation) &&
         zoomRef.current = clampedZoom;
         cameraRef.current?.zoomTo(clampedZoom);
     };
-
-    const setMapId = useCallback((mapId: string) => {
-        defaultConfig.mapId = mapId;
-
-        queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
-        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
-
-        const updatedConfig = { ...config, mapId };
-        queryClient.setQueryData(['mapConfig'], updatedConfig);
-    }, [queryClient, config]);
-    const canInteractWithMap = () =>
-        screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
 
     return (
         <MapConfigContext.Provider
