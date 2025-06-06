@@ -117,7 +117,7 @@ const MapScreen = () => {
         updateClusters();
     }, [zoomRef, visibleBounds, updateClusters]);
 
-    if(screenState === ScreenState.EMPTY_MAP || !config.mapId) {
+    if((screenState === ScreenState.EMPTY_MAP || !config.mapId) && !loading) {
         return <EmptyScreen />;
     }
 
