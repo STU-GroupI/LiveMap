@@ -120,7 +120,6 @@ const locationReady =
     });
 
     const pois = useMemo(() => fetchedPois, [fetchedPois]);
-
     const loading = configLoading || poisLoading;
 
     useEffect(() => {
@@ -137,7 +136,7 @@ const locationReady =
     }, [screenState, expandAppbar, collapseAppbar]);
 
     useEffect(() => {
-        if (!configLoading && config.cachingEnabled) {
+        if (!configLoading && config.cachingEnabled && config.mapId.length > 0) {
             ensureOfflinePack(config)
                 .then(() => {
                     console.log('Offline pack ensured');
