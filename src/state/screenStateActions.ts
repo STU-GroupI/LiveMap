@@ -5,6 +5,11 @@ export const setViewing = (): ScreenStateAction => ({
     payload: ScreenState.VIEWING,
 });
 
+export const setEmpty = (): ScreenStateAction => ({
+    type: 'SET_SCREEN',
+    payload: ScreenState.EMPTY_MAP,
+    });
+
 export const setSuggesting = (): ScreenStateAction => ({
     type: 'SET_SCREEN',
     payload: ScreenState.SUGGESTING,
