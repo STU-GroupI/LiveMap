@@ -43,3 +43,19 @@ jest.mock('@react-native-vector-icons/material-design-icons', () => {
         ),
     };
 });
+
+jest.mock('@tanstack/react-query', () => {
+    const originalModule = jest.requireActual('@tanstack/react-query');
+    return {
+        ...originalModule,
+        useQuery: jest.fn(), // Mock useQuery
+    };
+});
+
+jest.mock('supercluster', () => {
+    return jest.fn().mockImplementation(() => ({
+        load: jest.fn(),
+        getClusters: jest.fn(() => []),
+        getClusterExpansionZoom: jest.fn(() => 10),
+    }));
+});
