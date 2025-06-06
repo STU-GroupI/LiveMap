@@ -1,23 +1,24 @@
-import { apiClient } from './apiClient';
-import { Map } from '../models/Map/Map';
-import { IMapConfig } from '../interfaces/MapConfig.ts';
-import { DEFAULT_CENTER, DEFAULT_ZOOM, MIN_ZOOM, MAX_ZOOM, MAP_STYLE } from '../config/MapConfig.ts';
+import {apiClient} from './apiClient';
+import {Map} from '../models/Map/Map';
+import {IMapConfig} from '../interfaces/MapConfig.ts';
+import {DEFAULT_CENTER, DEFAULT_ZOOM, MAP_STYLE, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 import * as turf from '@turf/turf';
 
 interface MapApiResponse {
-    items: Array<{
-        id: string;
-        name: string;
-    }>;
+    items: Array<Map>;
 }
 
 export const fetchMaps = async (): Promise<Map[]> => {
     const response = await apiClient.get<MapApiResponse>('/map');
     if (response.data && response.data.items) {
-        const maps = response.data.items.map(item => ({
-            guid: item.id,
-            name: item.name}));
-        return maps;
+        return response.data.items.map(item => ({
+            id: item.id,
+            name: item.name,
+            area: item.area,
+            bounds: item.bounds,
+            imageUrl: item.imageUrl,
+            pointsOfInterest: item.pointsOfInterest,
+        }));
     }
 
     return [];
@@ -26,8 +27,8 @@ export const fetchMaps = async (): Promise<Map[]> => {
 export const fetchClosestMap = async (
   latitude: number,
   longitude: number
-): Promise<MapItem> => {
-  const response = await apiClient.get<MapItem>('/map/closest', {
+): Promise<Map> => {
+  const response = await apiClient.get<Map>('/map/closest', {
     params: {
       latitude,
       longitude,

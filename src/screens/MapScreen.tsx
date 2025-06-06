@@ -16,7 +16,7 @@ import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import { POI } from '../models/POI/POI.ts';
 
 import Loader from '../components/Loader.tsx';
-import { Camera, MapView, PointAnnotation } from '@maplibre/maplibre-react-native';
+import { Camera, ImageSource, MapView, PointAnnotation, RasterLayer } from '@maplibre/maplibre-react-native';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
@@ -26,7 +26,7 @@ import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import EmptyScreen from '../screens/EmptyScreen.tsx';
-import {isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
+import {getBoundingBoxFromCoordinates, isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
 
 
 const MapScreen = () => {
@@ -60,6 +60,10 @@ const MapScreen = () => {
 
     const superclusterRef = useRef<SuperCluster | null>(null);
     const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const boundsBox = useMemo(() => {
+        return getBoundingBoxFromCoordinates(config.bounds || []);
+    }, [config.bounds]);
 
     const points = useMemo(() => {
         return pois.map((poi) => ({
@@ -151,19 +155,16 @@ const MapScreen = () => {
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
-        // if (suggestedLocation !== undefined && config.area) {
-        //     const coordinates: [number, number][] = config.area.map(coord => [coord.latitude, coord.longitude]);
-        //     const pointCoordinates: [number, number] = [
-        //         event.geometry.coordinates[0],
-        //         event.geometry.coordinates[1],
-        //     ];
-        //
-        //     if (isCoordinateInPolygon(pointCoordinates, coordinates)) {
-        //         setSuggestedLocation(pointCoordinates);
-        //     }
-        if (suggestedLocation !== undefined) {
-            const [lng, lat] = event.geometry.coordinates;
-            setSuggestedLocation([lng, lat]);
+        if (suggestedLocation !== undefined && config.area) {
+            const coordinates: [number, number][] = config.area.map(coord => [coord.latitude, coord.longitude]);
+            const pointCoordinates: [number, number] = [
+                event.geometry.coordinates[0],
+                event.geometry.coordinates[1],
+            ];
+
+            if (isCoordinateInPolygon(pointCoordinates, coordinates)) {
+                setSuggestedLocation(pointCoordinates);
+            }
         }
     };
 
@@ -224,6 +225,10 @@ const MapScreen = () => {
                     minZoomLevel={config.minZoom}
                     maxZoomLevel={config.maxZoom}
                     followUserLocation={false}
+                    maxBounds={boundsBox ? {
+                        ne: boundsBox.ne,
+                        sw: boundsBox.sw,
+                    } : undefined }
                 />
 
                 {config.imageUrl && (
@@ -302,6 +307,7 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
     },
     map: {
         flex: 1,

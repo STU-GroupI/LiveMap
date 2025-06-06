@@ -29,3 +29,27 @@ export const isCoordinateInPolygon = (
 
     return turf.booleanPointInPolygon(point, polygon);
 };
+
+export function getBoundingBoxFromCoordinates(coords: POICoordinate[]) {
+    if (!coords || coords.length === 0) {
+        return null;
+    }
+
+    let minLat = coords[0].latitude;
+    let maxLat = coords[0].latitude;
+    let minLng = coords[0].longitude;
+    let maxLng = coords[0].longitude;
+
+    for (let i = 1; i < coords.length; i++) {
+        const { latitude, longitude } = coords[i];
+        minLat = Math.min(minLat, latitude);
+        maxLat = Math.max(maxLat, latitude);
+        minLng = Math.min(minLng, longitude);
+        maxLng = Math.max(maxLng, longitude);
+    }
+
+    return {
+        sw: [minLng, minLat] as [number, number],
+        ne: [maxLng, maxLat] as [number, number],
+    };
+}

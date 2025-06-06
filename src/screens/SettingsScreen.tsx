@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { List, Searchbar, Divider, Text } from 'react-native-paper';
-import { useAppbar } from '../context/AppbarContext';
-import { useFocusEffect } from '@react-navigation/native';
+import {useAppbar} from '../context/AppbarContext';
+import {useFocusEffect} from '@react-navigation/native';
 import useSnackbar from '../hooks/useSnackbar';
 import CustomSnackbar from '../components/CustomSnackbar';
-import { useQuery } from '@tanstack/react-query';
-import { fetchMaps } from '../services/mapService';
-import { useMapConfig } from '../context/MapConfigContext';
-import { Map } from '../models/Map/Map';
+import {useQuery} from '@tanstack/react-query';
+import {fetchMaps} from '../services/mapService';
+import {useMapConfig} from '../context/MapConfigContext';
+import {Map} from '../models/Map/Map';
 import Loader from '../components/Loader';
 
-const CheckIcon = (props: React.ComponentProps<typeof List.Icon>) => (
-  <List.Icon {...props} icon="check" color="#0017EE" />
-);
+const CheckIcon = () => <List.Icon icon="check" color="#0017EE" />;
 
 const SettingsScreen = () => {
     const { expandAppbar, collapseAppbar } = useAppbar();
@@ -46,7 +44,7 @@ const SettingsScreen = () => {
     );
 
     const handleMapSelection = (mapId: string) => {
-        const selectedMap = maps.find(map => map.guid === mapId);
+        const selectedMap = maps.find(map => map.id === mapId);
         if (selectedMap) {
             console.log(`Setting mapId to: ${mapId}`);
             setMapId(mapId);
@@ -89,15 +87,12 @@ const SettingsScreen = () => {
             <ScrollView style={styles.scrollView}>
                 {filteredMaps.length > 0 ? (
                     filteredMaps.map((map, index) => (
-                        <React.Fragment key={map.guid}>
-                            <TouchableOpacity onPress={() => handleMapSelection(map.guid)}>
+                        <React.Fragment key={map.id}>
+                            <TouchableOpacity onPress={() => handleMapSelection(map.id)}>
                                 <List.Item
                                     title={map.name}
                                     titleStyle={styles.itemTitle}
-                                    left={map.guid === config.mapId ?
-                                            CheckIcon :
-                                            null
-                                    }
+                                    left={map.id === config.mapId ? CheckIcon : undefined}
                                 />
                             </TouchableOpacity>
                             {index < filteredMaps.length - 1 && <Divider />}
