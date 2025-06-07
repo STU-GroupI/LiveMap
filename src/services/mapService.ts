@@ -24,13 +24,13 @@ export const fetchMaps = async (): Promise<Map[]> => {
 export const fetchClosestMap = async (
   latitude: number,
   longitude: number
-): Promise<MapItem> => {
-  const response = await apiClient.get<MapItem>('/map/closest', {
+): Promise<Map> => {
+  const response = await apiClient.get('/map/closest', {
     params: {
       latitude,
       longitude,
     },
   });
-
-  return response.data;
+     
+  return {guid: response.data.id, name: response.data.name};
 };

@@ -82,12 +82,13 @@ const locationReady =
         const updatedConfig = { ...config, mapId };
         queryClient.setQueryData(['mapConfig'], updatedConfig);
     }, [queryClient, config]);
+
     const canInteractWithMap = () =>
         screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
 
     useEffect(() => {
     if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
-        const mapId = closestMap?.id || maps[0]?.guid || null;
+        const mapId = closestMap?.guid || maps[0]?.guid || null;
         if (!mapId) {
            dispatch(setEmpty());
         } else {
@@ -165,16 +166,6 @@ const locationReady =
         zoomRef.current = clampedZoom;
         cameraRef.current?.zoomTo(clampedZoom);
     };
-
-    const setMapId = useCallback((mapId: string) => {
-        defaultConfig.mapId = mapId;
-        
-        queryClient.invalidateQueries({ queryKey: ['mapConfig'] });
-        queryClient.invalidateQueries({ queryKey: ['pois', mapId] });
-        
-        const updatedConfig = { ...config, mapId };
-        queryClient.setQueryData(['mapConfig'], updatedConfig);
-    }, [queryClient, config]);
 
     return (
         <MapConfigContext.Provider
