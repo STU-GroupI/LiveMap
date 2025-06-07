@@ -17,6 +17,10 @@ type RootStackParamList = {
 };
 
 type ScreenNavigationProp = NavigationProp<RootStackParamList>;
+  
+const CheckIcon = (props: React.ComponentProps<typeof List.Icon>) => (
+  <List.Icon {...props} icon="check" color="#0017EE" />
+);
 
 const SettingsScreen = () => {
     const { expandAppbar, collapseAppbar } = useAppbar();
@@ -86,7 +90,6 @@ const SettingsScreen = () => {
                 dismissSnackBar={dismissSnackBar}
                 message={snackbarMessage}
             />
-            
             <Searchbar
                 placeholder="Search park..."
                 onChangeText={onChangeSearch}
@@ -94,7 +97,6 @@ const SettingsScreen = () => {
                 style={styles.searchBar}
                 iconColor="#666"
             />
-            
             <ScrollView style={styles.scrollView}>
                 {filteredMaps.length > 0 ? (
                     filteredMaps.map((map, index) => (
@@ -103,9 +105,8 @@ const SettingsScreen = () => {
                                 <List.Item
                                     title={map.name}
                                     titleStyle={styles.itemTitle}
-                                    left={props => 
-                                        map.guid === config.mapId ? 
-                                            <List.Icon {...props} icon="check" color="#0017EE" /> : 
+                                    left={map.guid === config.mapId ?
+                                            CheckIcon :
                                             null
                                     }
                                 />
@@ -152,3 +153,4 @@ const styles = StyleSheet.create({
 });
 
 export default SettingsScreen;
+
