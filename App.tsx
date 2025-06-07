@@ -16,7 +16,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import AppNavigator from './src/navigation/AppNavigator';
 import {AppbarProvider} from './src/context/AppbarContext.tsx';
 import AppbarContainer from './src/components/AppbarContainer.tsx';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {QueryClientProvider} from '@tanstack/react-query';
+import queryClient from './src/persistQueryClient.ts';
 
 const theme = {
     ...MD3LightTheme,
@@ -29,8 +30,6 @@ const theme = {
         surface: '#ffffff',
     },
 };
-
-const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
   return (

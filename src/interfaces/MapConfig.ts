@@ -5,11 +5,12 @@ import {ScreenState, ScreenStateAction} from '../state/ScreenStateReducer.ts';
 
 export interface IMapConfig {
     mapId: string;
-    mapStyle: any;
+    mapStyle: string;
     center: [number, number];
     zoom: number;
     minZoom: number;
     maxZoom: number;
+    cachingEnabled?: boolean;
 }
 
 export interface IMapConfigContext {

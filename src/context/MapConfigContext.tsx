@@ -11,6 +11,7 @@ import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchPois} from '../services/poiService.ts';
 import {fetchMaps, fetchClosestMap} from '../services/mapService.ts';
 import { setEmpty } from '../state/screenStateActions.ts';
+import {ensureOfflinePack} from '../services/offlineService.ts';
 
 const REFETCH_INTERVAL = 60_000;
 
@@ -21,6 +22,7 @@ const defaultConfig: IMapConfig = {
     zoom: DEFAULT_ZOOM,
     minZoom: MIN_ZOOM,
     maxZoom: MAX_ZOOM,
+    cachingEnabled: true,
 };
 
 const MapConfigContext = createContext<IMapConfigContext>({
@@ -113,10 +115,11 @@ const locationReady =
         queryKey: ['pois', config.mapId],
         queryFn: () => fetchPois(config.mapId),
         refetchInterval: REFETCH_INTERVAL,
+        enabled: !!config.mapId,
+        staleTime: 1000 * 60 * 60,
     });
 
     const pois = useMemo(() => fetchedPois, [fetchedPois]);
-
     const loading = configLoading || poisLoading;
 
     useEffect(() => {
@@ -131,6 +134,15 @@ const locationReady =
             collapseAppbar();
         }
     }, [screenState, expandAppbar, collapseAppbar]);
+
+    useEffect(() => {
+        if (!configLoading && config.cachingEnabled && config.mapId.length > 0) {
+            ensureOfflinePack(config)
+                .catch((err) => {
+                    console.error('Error ensuring offline pack:', err);
+                });
+        }
+    }, [config, configLoading]);
 
     const handleRecenter = async () => {
         try {

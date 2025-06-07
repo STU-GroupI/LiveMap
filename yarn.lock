@@ -1920,17 +1920,58 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@tanstack/query-core@5.75.4":
-  version "5.75.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.75.4.tgz#e05f2fe4145fb5354271ad19e63eec61f6ce3012"
-  integrity sha512-pcqOUgWG9oGlzkfRQQMMsEFmtQu0wq81A414CtELZGq+ztVwSTAaoB3AZRAXQJs88LmNMk2YpUKuQbrvzNDyRg==
-
-"@tanstack/react-query@^5.75.4":
-  version "5.75.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.75.4.tgz#721e1cdf7debb110671f558dc2b6276f637554a5"
-  integrity sha512-Vf65pzYRkf8fk9SP1ncIZjvaXszBhtsvpf+h45Y/9kOywOrVZfBGUpCdffdsVzbmBzmz6TCFes9bM0d3pRrIsA==
+"@tanstack/query-async-storage-persister@^5.76.1":
+  version "5.76.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-async-storage-persister/-/query-async-storage-persister-5.76.1.tgz#7ee6ff22f03edf80e205f6b3b873d0789879c09f"
+  integrity sha512-XemnWlSfX0U6LIV5WqfIFqYgaaGTz+jSEqo9Ku5l24NJzCIgY2lHjHf9fQ11Lbffc2zR1SV/JvqMTNuhsnZF6Q==
   dependencies:
-    "@tanstack/query-core" "5.75.4"
+    "@tanstack/query-persist-client-core" "5.76.1"
+
+"@tanstack/query-core@5.76.0":
+  version "5.76.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.76.0.tgz#3b4d5d34ce307ba0cf7d1a3e90d7adcdc6c46be0"
+  integrity sha512-FN375hb8ctzfNAlex5gHI6+WDXTNpe0nbxp/d2YJtnP+IBM6OUm7zcaoCW6T63BawGOYZBbKC0iPvr41TteNVg==
+
+"@tanstack/query-core@5.76.2":
+  version "5.76.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.76.2.tgz#67439edc48ff5a654c8e25979be4660e6402130b"
+  integrity sha512-PFGwWh5ss9cJQ67l6bZ7hqXbisX2gy13G2jP+VGY1bgdbCfOMWh6UBVnN62QbFXro6CCoX9hYzTnZHr6Rz00YQ==
+
+"@tanstack/query-persist-client-core@5.76.1":
+  version "5.76.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-persist-client-core/-/query-persist-client-core-5.76.1.tgz#82df844e3eb1870838873d81954cf46f7d6323ec"
+  integrity sha512-BkNL5QMXLwTMv5po6Ex68/xWCWdnjxx2rWeRf/we6hCI5dCN5Yf+GCbsJcSuc27I2paQJ1xFbfYs18Zmc1kJmA==
+  dependencies:
+    "@tanstack/query-core" "5.76.0"
+
+"@tanstack/query-persist-client-core@5.76.2":
+  version "5.76.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-persist-client-core/-/query-persist-client-core-5.76.2.tgz#46ebf639dbca5e7f3926dbbee6dbf35e323e71dc"
+  integrity sha512-aue39xihS9bK2pg+Tg+WMneysQAV3HhrWsFJhOQ0WL6is+ybpBoSFACny/opxroOWGK6uRHHEQ/oS1n/6Dh23Q==
+  dependencies:
+    "@tanstack/query-core" "5.76.2"
+
+"@tanstack/query-sync-storage-persister@^5.76.2":
+  version "5.76.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-sync-storage-persister/-/query-sync-storage-persister-5.76.2.tgz#1e3f17e9a2e43ea6e28a1ca2a559e634f323088b"
+  integrity sha512-4BcqeKZy/fguj8tmk4wONuvQDah2abDpp4JuBIbAY7oY07dv41AC1L/VAIYqxCui5m3rSbTqy/6slBMqqqcGDQ==
+  dependencies:
+    "@tanstack/query-core" "5.76.2"
+    "@tanstack/query-persist-client-core" "5.76.2"
+
+"@tanstack/react-query-persist-client@^5.76.1":
+  version "5.76.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query-persist-client/-/react-query-persist-client-5.76.1.tgz#d4badc3d23d74eb10991761d3f4d0b29c026c9f6"
+  integrity sha512-LN8LLBDyQLTBifbL3HIAOPh48MNw2y5ff49nBUsJO6nwpl3iRKp6qwQ58rGUqHflvuAfKQKeJIvwSXMvckxJMg==
+  dependencies:
+    "@tanstack/query-persist-client-core" "5.76.1"
+
+"@tanstack/react-query@^5.76.1":
+  version "5.76.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.76.1.tgz#ac8a19f99dfec1452a44fe22d46680c396c21152"
+  integrity sha512-YxdLZVGN4QkT5YT1HKZQWiIlcgauIXEIsMOTSjvyD5wLYK8YVvKZUPAysMqossFJJfDpJW3pFn7WNZuPOqq+fw==
+  dependencies:
+    "@tanstack/query-core" "5.76.0"
 
 "@testing-library/react-native@^13.2.0":
   version "13.2.0"
@@ -7450,6 +7491,11 @@ react-native-is-edge-to-edge@1.1.6:
   version "1.1.6"
   resolved "https://registry.npmjs.org/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.1.6.tgz"
   integrity sha512-1pHnFTlBahins6UAajXUqeCOHew9l9C2C8tErnpGC3IyLJzvxD+TpYAixnCbrVS52f7+NvMttbiSI290XfwN0w==
+
+react-native-mmkv@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-3.2.0.tgz#460723eb23b9cc92c65b0416eae9874a6ddf5b82"
+  integrity sha512-9y7K//1MaU46TFrXkyU0wT5VGk9Y2FDLFV6NPl+z3jTbm2G7SC1UIxneF6CfhSmBX5CfKze9SO7kwDuRx7flpQ==
 
 react-native-paper@^5.13.1:
   version "5.13.1"
