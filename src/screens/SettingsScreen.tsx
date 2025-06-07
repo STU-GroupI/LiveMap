@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { List, Searchbar, Divider, Text } from 'react-native-paper';
 import { useAppbar } from '../context/AppbarContext';
-import { useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import useSnackbar from '../hooks/useSnackbar';
 import CustomSnackbar from '../components/CustomSnackbar';
 import { useQuery } from '@tanstack/react-query';
@@ -11,20 +11,13 @@ import { useMapConfig } from '../context/MapConfigContext';
 import { Map } from '../models/Map/Map';
 import Loader from '../components/Loader';
 
-type RootStackParamList = {
-  map: undefined;
-  settings: undefined;
-};
 
-type ScreenNavigationProp = NavigationProp<RootStackParamList>;
-  
 const CheckIcon = (props: React.ComponentProps<typeof List.Icon>) => (
   <List.Icon {...props} icon="check" color="#0017EE" />
 );
 
 const SettingsScreen = () => {
     const { expandAppbar, collapseAppbar } = useAppbar();
-    const navigation = useNavigation<ScreenNavigationProp>();
     const { visibleSnackbar, toggleSnackBar, dismissSnackBar } = useSnackbar();
     const { config, setMapId } = useMapConfig();
     
