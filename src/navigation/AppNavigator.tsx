@@ -30,6 +30,7 @@ function AppNavigator() {
         <MapConfigProvider>
             <Tab.Navigator
                 screenOptions={({ route }) => ({
+
                     headerShown: false,
                     tabBarIcon: getTabBarIcon(route.name),
                     tabBarActiveTintColor: theme.colors.primary,
@@ -50,7 +51,7 @@ function AppNavigator() {
                 <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
         </MapConfigProvider>
-    );
+    )
 }
 
 export default AppNavigator;

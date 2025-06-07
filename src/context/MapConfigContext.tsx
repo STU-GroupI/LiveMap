@@ -82,12 +82,13 @@ const locationReady =
         const updatedConfig = { ...config, mapId };
         queryClient.setQueryData(['mapConfig'], updatedConfig);
     }, [queryClient, config]);
+
     const canInteractWithMap = () =>
         screenState === ScreenState.VIEWING || screenState === ScreenState.SUGGESTING;
 
     useEffect(() => {
     if (!initialMapIdLoaded && mapsCallDone && (closestCallDone || closestCallError)) {
-        const mapId = closestMap?.id || maps[0]?.guid || null;
+        const mapId = closestMap?.guid || maps[0]?.guid || null;
         if (!mapId) {
            dispatch(setEmpty());
         } else {
