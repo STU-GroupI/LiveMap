@@ -138,9 +138,6 @@ const locationReady =
     useEffect(() => {
         if (!configLoading && config.cachingEnabled && config.mapId.length > 0) {
             ensureOfflinePack(config)
-                .then(() => {
-                    console.log('Offline pack ensured');
-                })
                 .catch((err) => {
                     console.error('Error ensuring offline pack:', err);
                 });
