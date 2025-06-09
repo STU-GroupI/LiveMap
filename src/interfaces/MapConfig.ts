@@ -6,11 +6,12 @@ import {POICoordinate} from '../models/POI/POICoordinate.ts';
 
 export interface IMapConfig {
     mapId: string;
-    mapStyle: any;
+    mapStyle: string;
     center: [number, number];
     zoom: number;
     minZoom: number;
     maxZoom: number;
+    cachingEnabled?: boolean;
     area: POICoordinate[] | null;
     bounds: POICoordinate[] | null;
     imageUrl: string | null;

@@ -14,6 +14,12 @@ import com.facebook.soloader.SoLoader
 
 class MainApplication : Application(), ReactApplication {
 
+    companion object {
+        init {
+            System.loadLibrary("maplibre")  // Load the native maplibre library
+        }
+    }
+
   override val reactNativeHost: ReactNativeHost =
       object : DefaultReactNativeHost(this) {
         override fun getPackages(): List<ReactPackage> =

@@ -241,7 +241,7 @@ const MapScreen = () => {
                             id="custom-background-layer"
                             sourceID="custom-background-source"
                             style={{ rasterOpacity: 1 }}
-                            layerIndex={1}
+                            layerIndex={666}
                         />
                     </ImageSource>
                 )}

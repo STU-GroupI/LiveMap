@@ -28,6 +28,7 @@ import { useAppbar } from './AppbarContext.tsx';
 import useLocation from '../hooks/UseLocation.tsx';
 
 import type { IMapConfig, IMapConfigContext } from '../interfaces/MapConfig.ts';
+import {ensureOfflinePack} from '../services/offlineService.ts';
 
 const REFETCH_INTERVAL = 60_000;
 
@@ -38,6 +39,7 @@ const defaultConfig: IMapConfig = {
     zoom: DEFAULT_ZOOM,
     minZoom: MIN_ZOOM,
     maxZoom: MAX_ZOOM,
+    cachingEnabled: true,
     area: null,
     bounds: null,
     imageUrl: null,
@@ -147,6 +149,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
         queryFn: () => fetchPois(mapId as string),
         refetchInterval: REFETCH_INTERVAL,
         enabled: !!mapId && !isEmptyState,
+        staleTime: 1000 * 60 * 60,
     });
 
     const loading =
@@ -166,6 +169,15 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
             collapseAppbar();
         }
     }, [screenState, expandAppbar, collapseAppbar]);
+
+    useEffect(() => {
+        if (!configLoading && config?.cachingEnabled && config.mapId.length > 0) {
+            ensureOfflinePack(config)
+                .catch((err) => {
+                    console.error('Error ensuring offline pack:', err);
+                });
+        }
+    }, [config, configLoading]);
 
     const handleRecenter = async () => {
         try {
