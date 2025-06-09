@@ -5,7 +5,7 @@ import React, {
     useState,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Feature, Point } from 'geojson';
+import { Feature, Point, Position } from 'geojson';
 import SuperCluster from 'supercluster';
 
 import { useMapConfig } from '../context/MapConfigContext.tsx';
@@ -16,7 +16,7 @@ import useBottomSheets from '../hooks/useBottomSheet.tsx';
 import { POI } from '../models/POI/POI.ts';
 
 import Loader from '../components/Loader.tsx';
-import { Camera, MapView, PointAnnotation } from '@maplibre/maplibre-react-native';
+import { Camera, ImageSource, MapView, PointAnnotation, RasterLayer } from '@maplibre/maplibre-react-native';
 import MapCenterButton from '../components/map/MapCenterButton.tsx';
 import MapZoomInOutButton from '../components/map/MapZoomInOutButton.tsx';
 import SuggestPOIButton from '../components/map/suggestion/SuggestPOIButton.tsx';
@@ -25,8 +25,10 @@ import POIClusterMarker from '../components/map/POIClusterMarker.tsx';
 import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.tsx';
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
-
 import EmptyScreen from '../screens/EmptyScreen.tsx';
+import {getBoundingBoxFromCoordinates, isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
+
+
 const MapScreen = () => {
     const {
         config,
@@ -58,6 +60,10 @@ const MapScreen = () => {
 
     const superclusterRef = useRef<SuperCluster | null>(null);
     const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    const boundsBox = useMemo(() => {
+        return getBoundingBoxFromCoordinates(config.bounds || []);
+    }, [config.bounds]);
 
     const points = useMemo(() => {
         return pois.map((poi) => ({
@@ -149,9 +155,16 @@ const MapScreen = () => {
     };
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
-        if (suggestedLocation !== undefined) {
-            const [lng, lat] = event.geometry.coordinates;
-            setSuggestedLocation([lng, lat]);
+        if (suggestedLocation !== undefined && config.area) {
+            const coordinates: [number, number][] = config.area.map(coord => [coord.latitude, coord.longitude]);
+            const pointCoordinates: [number, number] = [
+                event.geometry.coordinates[0],
+                event.geometry.coordinates[1],
+            ];
+
+            if (isCoordinateInPolygon(pointCoordinates, coordinates)) {
+                setSuggestedLocation(pointCoordinates);
+            }
         }
     };
 
@@ -185,6 +198,11 @@ const MapScreen = () => {
         }
     };
 
+    const fixedCoordinates: [Position, Position, Position, Position] | undefined =
+        config.bounds
+            ? toFixedCoordinates(config.bounds)
+            : undefined;
+
     if (loading || !hasLocationPermission) {
         return <Loader />;
     }
@@ -207,7 +225,26 @@ const MapScreen = () => {
                     minZoomLevel={config.minZoom}
                     maxZoomLevel={config.maxZoom}
                     followUserLocation={false}
+                    maxBounds={boundsBox ? {
+                        ne: boundsBox.ne,
+                        sw: boundsBox.sw,
+                    } : undefined }
                 />
+
+                {config.imageUrl && (
+                    <ImageSource
+                        id={'background-overlay'}
+                        url={config.imageUrl}
+                        coordinates={fixedCoordinates}
+                    >
+                        <RasterLayer
+                            id="custom-background-layer"
+                            sourceID="custom-background-source"
+                            style={{ rasterOpacity: 1 }}
+                            layerIndex={1}
+                        />
+                    </ImageSource>
+                )}
 
                 {userLocation && (
                     <PointAnnotation id="user-location" coordinate={userLocation}>
@@ -270,6 +307,7 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#fff',
     },
     map: {
         flex: 1,
