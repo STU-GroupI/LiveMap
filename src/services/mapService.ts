@@ -3,6 +3,9 @@ import {Map} from '../models/Map/Map';
 import {IMapConfig} from '../interfaces/MapConfig.ts';
 import {DEFAULT_CENTER, DEFAULT_ZOOM, MAP_STYLE, MAX_ZOOM, MIN_ZOOM} from '../config/MapConfig.ts';
 import * as turf from '@turf/turf';
+import { apiClient } from "./apiClient";
+import { Map } from "../models/Map/Map";
+
 
 interface MapApiResponse {
     items: Array<Map>;

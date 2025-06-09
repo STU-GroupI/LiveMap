@@ -17,17 +17,23 @@ const SettingsScreen = () => {
     const { expandAppbar, collapseAppbar } = useAppbar();
     const { visibleSnackbar, toggleSnackBar, dismissSnackBar } = useSnackbar();
     const { config, setMapId } = useMapConfig();
+
     const [snackbarMessage, setSnackbarMessage] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState('');
+
     const { data, isLoading, error } = useQuery({
         queryKey: ['maps'],
         queryFn: fetchMaps,
 
     });
+
     const maps: Map[] = Array.isArray(data) ? data : [];
+
     const filteredMaps = searchQuery && maps.length > 0
         ? maps.filter(map =>
-            map.name.toLowerCase().includes(searchQuery.toLowerCase())) : maps;
+            map.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        : maps;
+
     useFocusEffect(
         React.useCallback(() => {
             expandAppbar({
@@ -46,7 +52,6 @@ const SettingsScreen = () => {
     const handleMapSelection = (mapId: string) => {
         const selectedMap = maps.find(map => map.id === mapId);
         if (selectedMap) {
-            console.log(`Setting mapId to: ${mapId}`);
             setMapId(mapId);
             setSnackbarMessage(`Switched to ${selectedMap.name}`);
             toggleSnackBar();
@@ -75,7 +80,6 @@ const SettingsScreen = () => {
                 dismissSnackBar={dismissSnackBar}
                 message={snackbarMessage}
             />
-
             <Searchbar
                 placeholder="Search park..."
                 onChangeText={onChangeSearch}
@@ -83,7 +87,6 @@ const SettingsScreen = () => {
                 style={styles.searchBar}
                 iconColor="#666"
             />
-
             <ScrollView style={styles.scrollView}>
                 {filteredMaps.length > 0 ? (
                     filteredMaps.map((map, index) => (
