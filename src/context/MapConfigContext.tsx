@@ -148,7 +148,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
         queryKey: ['pois', mapId],
         queryFn: () => fetchPois(mapId as string),
         refetchInterval: REFETCH_INTERVAL,
-        enabled: !!mapId && !isEmptyState && !!config.mapId,
+        enabled: !!mapId && !isEmptyState,
         staleTime: 1000 * 60 * 60,
     });
 
@@ -171,7 +171,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
     }, [screenState, expandAppbar, collapseAppbar]);
 
     useEffect(() => {
-        if (!configLoading && config.cachingEnabled && config.mapId.length > 0) {
+        if (!configLoading && config?.cachingEnabled && config.mapId.length > 0) {
             ensureOfflinePack(config)
                 .catch((err) => {
                     console.error('Error ensuring offline pack:', err);
