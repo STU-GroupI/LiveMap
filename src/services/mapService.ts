@@ -69,6 +69,6 @@ export const fetchMap = async (id: string): Promise<IMapConfig> => {
         maxZoom: MAX_ZOOM,
         area: map.area || null,
         bounds: map.bounds || null,
-        imageUrl: map.imageUrl?.replace('localhost', '10.0.2.2') || null,
+        imageUrl: map.imageUrl?.replace(/localhost/g, '10.0.2.2') || null,
     };
 };
