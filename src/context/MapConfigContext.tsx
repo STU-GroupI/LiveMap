@@ -94,7 +94,7 @@ export const MapConfigProvider = ({ children }: { children: React.ReactNode }) =
         isError: closestCallError,
         isLoading: isClosestLoading,
     } = useQuery({
-        queryKey: ['maps', 'closest', userLocation],
+        queryKey: ['maps', 'closest'],
         queryFn: () => {
             if (userLocation) {
                 const [lng, lat] = userLocation;
