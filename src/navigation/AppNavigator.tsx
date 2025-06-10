@@ -51,7 +51,7 @@ function AppNavigator() {
                 <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
         </MapConfigProvider>
-    )
+    );
 }
 
 export default AppNavigator;
