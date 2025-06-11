@@ -30,7 +30,7 @@ export const fetchPois = async (mapId: string): Promise<POI[]> => {
         return {
             guid: item.id,
             title: item.title,
-            image: item.image,
+            image: item.image?.replace(/localhost/g, '10.0.2.2') || '',
             description: item.description,
             coordinate: {
                 longitude: isValidLongitude ? lon : 0,
@@ -43,7 +43,7 @@ export const fetchPois = async (mapId: string): Promise<POI[]> => {
             },
             status: item.status || 'Unknown',
             map: {
-                guid: item.mapId || 'Unknown',
+                id: item.mapId || 'Unknown',
                 name: item.map?.name || '',
             },
             wheelChairAccessible: item.isWheelchairAccessible ?? false,
