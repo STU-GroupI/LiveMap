@@ -46,7 +46,7 @@ jest.mock('../../src/components/map/suggestion/MapSuggestLocationBottomSheet.tsx
                 <Text>Confirm</Text>
             </TouchableOpacity>
         ) : null
-    )
+    );
 });
 jest.mock('../../src/components/map/suggestion/SuggestLocationDataSheet.tsx', () => (props: any) => {
     const { Text, TouchableOpacity } = require('react-native');
@@ -57,7 +57,7 @@ jest.mock('../../src/components/map/suggestion/SuggestLocationDataSheet.tsx', ()
                 <Text>Submit</Text>
             </TouchableOpacity>
         ) : null
-    )
+    );
 });
 
 describe('MapCreateSuggestion', () => {
@@ -106,9 +106,9 @@ describe('MapCreateSuggestion', () => {
 
         fireEvent.press(getByText('Confirm'));
         await waitFor(() => {
-            expect(dispatchMock).toHaveBeenCalledWith({ 
+            expect(dispatchMock).toHaveBeenCalledWith({
                 payload: 3,
-                type: 'SET_SCREEN'
+                type: 'SET_SCREEN',
             });
         });
     });

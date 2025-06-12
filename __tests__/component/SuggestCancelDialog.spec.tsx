@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import SuggestCancelDialog from '../../src/components/map/suggestion/SuggestCancelDialog';
 

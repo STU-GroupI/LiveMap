@@ -1,10 +1,9 @@
-import React from 'react';
+
 import { render } from '@testing-library/react-native';
 import MapTopBarButton from '../../src/components/map/MapTopBarButton';
 
 // Mocks
 jest.mock('react-native-paper', () => {
-    const React = require('react');
     const { Text, View } = require('react-native');
 
     return {

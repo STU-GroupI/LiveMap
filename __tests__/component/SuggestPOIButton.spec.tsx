@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import SuggestPOIButton from '../../src/components/map/suggestion/SuggestPOIButton';
 import { useMapConfig } from '../../src/context/MapConfigContext';
