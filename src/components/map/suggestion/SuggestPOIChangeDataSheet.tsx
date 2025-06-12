@@ -54,31 +54,40 @@ export default function SuggestPOIChangeDataSheet({
                 <Controller
                     control={control}
                     name="poiId"
+                    rules={{ required: 'POI ID is required' }}
                     render={({ field: { value } }) => (
                         <TextInput
                             value={poi?.guid || value}
                             style={styles.hiddenInput}
                             editable={false}
+                            error={!!errors.poiId}
                         />
                     )}
                 />
+                {errors.poiId && <HelperText type="error">{errors.poiId.message}</HelperText>}
 
                 <Controller
                     control={control}
                     name="suggestedPoiId"
+                    rules={{ required: 'Suggested POI ID is required' }}
                     render={({ field: { value } }) => (
                         <TextInput
                             value={poi?.guid || value}
                             style={styles.hiddenInput}
                             editable={false}
+                            error={!!errors.suggestedPoiId}
                         />
                     )}
                 />
+                {errors.suggestedPoiId && <HelperText type="error">{errors.suggestedPoiId.message}</HelperText>}
 
                 <Controller
                     control={control}
                     name="message"
-                    rules={{ required: 'Message is required' }}
+                    rules={{
+                        required: 'Message is required',
+                        minLength: { value: 10, message: 'Message must be at least 10 characters' },
+                    }}
                     render={({ field: { onChange, value } }) => (
                         <TextInput
                             label="Message*"

@@ -111,7 +111,10 @@ export default function SuggestLocationDataSheet({
                 <Controller
                     control={control}
                     name="title"
-                    rules={{ required: 'Title is required' }}
+                    rules={{
+                        required: 'Title is required',
+                        minLength: { value: 3, message: 'Title must be at least 3 characters' },
+                    }}
                     render={({ field: { onChange, value } }) => (
                         <TextInput
                             label="Title*"
@@ -126,7 +129,10 @@ export default function SuggestLocationDataSheet({
                 <Controller
                     control={control}
                     name="description"
-                    rules={{ required: 'Description is required' }}
+                    rules={{
+                        required: 'Description is required',
+                        minLength: { value: 10, message: 'Description must be at least 10 characters' },
+                    }}
                     render={({ field: { onChange, value } }) => (
                         <TextInput
                             label="Description*"

@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react-native';
-import MapCenterButton from './MapCenterButton';
+import MapCenterButton from '../../src/components/map/MapCenterButton';
 
 jest.mock('react-native-paper', () => {
     const React = require('react');

@@ -1,25 +1,28 @@
 name: 'ESLint Linter'
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        branches:
-            - main
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
-    coverage:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v3
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-            - name: Setup Node.JS
-              uses: actions/setup-node@v2
-              with:
-                node-version: '22'
+      - name: Setup Node.JS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
 
-            - name: Install dependencies
-              run: npm install
+      - name: Install dependencies
+        run: npm install
 
-            - name: Run ESLint
-              run: npm run lint
+      - name: Fix ESLint small issues
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx --fix
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx

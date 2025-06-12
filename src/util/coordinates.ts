@@ -30,7 +30,7 @@ export const isCoordinateInPolygon = (
     return turf.booleanPointInPolygon(point, polygon);
 };
 
-export function getBoundingBoxFromCoordinates(coords: POICoordinate[]) {
+export function getAreaBoxFromCoordinates(coords: POICoordinate[]) {
     if (!coords || coords.length === 0) {
         return null;
     }

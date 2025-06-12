@@ -26,7 +26,7 @@ import SuggestedPOIMarker from '../components/map/suggestion/SuggestedPOIMarker.
 import MapCreateSuggestion from '../components/map/MapCreateSuggestion.tsx';
 import MapPOIBottomSheet from '../components/map/MapPOIBottomSheet.tsx';
 import EmptyScreen from '../screens/EmptyScreen.tsx';
-import {getBoundingBoxFromCoordinates, isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
+import {getAreaBoxFromCoordinates, isCoordinateInPolygon, toFixedCoordinates} from '../util/coordinates.ts';
 
 
 const MapScreen = () => {
@@ -61,9 +61,9 @@ const MapScreen = () => {
     const superclusterRef = useRef<SuperCluster | null>(null);
     const throttleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const boundsBox = useMemo(() => {
-        return getBoundingBoxFromCoordinates(config.bounds || []);
-    }, [config.bounds]);
+    const areaBox = useMemo(() => {
+        return getAreaBoxFromCoordinates(config.area || []);
+    }, [config.area]);
 
     const points = useMemo(() => {
         return pois.map((poi) => ({
@@ -156,7 +156,7 @@ const MapScreen = () => {
 
     const handleSetSuggestedLocation = (event: Feature<Point>) => {
         if (suggestedLocation !== undefined && config.area) {
-            const coordinates: [number, number][] = config.area.map(coord => [coord.latitude, coord.longitude]);
+            const coordinates: [number, number][] = config.area.map(coord => [coord.longitude, coord.latitude]);
             const pointCoordinates: [number, number] = [
                 event.geometry.coordinates[0],
                 event.geometry.coordinates[1],
@@ -198,7 +198,7 @@ const MapScreen = () => {
         }
     };
 
-    const fixedCoordinates: [Position, Position, Position, Position] | undefined =
+    const fixedBoundsCoordinates: [Position, Position, Position, Position] | undefined =
         config.bounds
             ? toFixedCoordinates(config.bounds)
             : undefined;
@@ -225,9 +225,9 @@ const MapScreen = () => {
                     minZoomLevel={config.minZoom}
                     maxZoomLevel={config.maxZoom}
                     followUserLocation={false}
-                    maxBounds={boundsBox ? {
-                        ne: boundsBox.ne,
-                        sw: boundsBox.sw,
+                    maxBounds={areaBox ? {
+                        ne: areaBox.ne,
+                        sw: areaBox.sw,
                     } : undefined }
                 />
 
@@ -235,7 +235,7 @@ const MapScreen = () => {
                     <ImageSource
                         id={'background-overlay'}
                         url={config.imageUrl}
-                        coordinates={fixedCoordinates}
+                        coordinates={fixedBoundsCoordinates}
                     >
                         <RasterLayer
                             id="custom-background-layer"

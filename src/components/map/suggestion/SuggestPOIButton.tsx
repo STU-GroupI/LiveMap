@@ -28,7 +28,11 @@ export default function SuggestPOIButton({ handleCreateSuggestion, active }: pro
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.suggestButton} onPress={handleCreateSuggestion}>
+            <TouchableOpacity
+                style={styles.suggestButton}
+                onPress={handleCreateSuggestion}
+                testID="suggest-poi-btn"
+            >
                 <Text style={styles.suggestButtonText}>Suggest POI</Text>
             </TouchableOpacity>
         </View>
