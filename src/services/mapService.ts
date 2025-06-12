@@ -46,6 +46,13 @@ export const fetchMap = async (id: string): Promise<IMapConfig> => {
         throw new Error('Map not found');
     }
 
+    map.area = map.area
+        ? map.area.map(point => ({
+            latitude: point.longitude,
+            longitude: point.latitude,
+        }))
+        : null;
+
     const coordinates = map.area
         ?.map(point => [point.longitude, point.latitude])
         .filter(point => point[0] !== undefined && point[1] !== undefined);

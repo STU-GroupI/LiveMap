@@ -16,15 +16,15 @@ jest.mock('@maplibre/maplibre-react-native', () => {
 });
 
 describe('POIClusterMarker Component', () => {
-    const props = {
-        id: 'cluster-123',
+    const baseProps = {
+        id: '123',
         coordinate: [12.34, 56.78] as [number, number],
         pointCount: 5,
         onPress: jest.fn(),
     };
 
     it('renders correctly with the given point count', () => {
-        const { getByText, getByTestId } = render(<POIClusterMarker {...props} />);
+        const { getByText, getByTestId } = render(<POIClusterMarker {...baseProps} />);
         expect(getByText('5')).toBeTruthy();
         expect(getByTestId('point-annotation-cluster-123')).toBeTruthy();
     });
@@ -32,7 +32,7 @@ describe('POIClusterMarker Component', () => {
     it('calls onPress when TouchableOpacity is pressed', () => {
         const onPressMock = jest.fn();
         const { getByText } = render(
-            <POIClusterMarker {...props} onPress={onPressMock} />
+            <POIClusterMarker {...baseProps} onPress={onPressMock} />
         );
 
         fireEvent.press(getByText('5'));
@@ -42,7 +42,7 @@ describe('POIClusterMarker Component', () => {
     it('calls onPress when PointAnnotation is selected', () => {
         const onPressMock = jest.fn();
         const { getByTestId } = render(
-            <POIClusterMarker {...props} onPress={onPressMock} />
+            <POIClusterMarker {...baseProps} onPress={onPressMock} />
         );
 
         fireEvent(getByTestId('point-annotation-cluster-123'), 'touchStart');

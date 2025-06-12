@@ -48,8 +48,12 @@ const samplePOI: POI = {
     },
     status: POIStatus.Active,
     map: {
-        guid: 'map-1234',
+        id: 'map-1234',
         name: 'Sample Map',
+        imageUrl: 'https://example.com/map.jpg',
+        bounds: [],
+        area: [],
+        pointsOfInterest: [],
     },
     wheelChairAccessible: false,
     openingHours: [],
@@ -86,3 +90,4 @@ describe('POIMarker Component', () => {
         expect(getByTestId('point-annotation-poi-1234')).toBeTruthy();
     });
 });
+
