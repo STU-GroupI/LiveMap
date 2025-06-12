@@ -22,7 +22,7 @@ jest.mock('@react-native-vector-icons/material-design-icons', () => {
 describe('SuggestedPOIMarker', () => {
     it('renders with correct testID and icon', () => {
         const location: [number, number] = [12.34, 56.78];
-        const { getByTestId, queryByText } = render(<SuggestedPOIMarker location={location} />);
+        const { getByTestId } = render(<SuggestedPOIMarker location={location} />);
         const expectedId = `suggested-poi-${Math.round(location[0])}`;
         const annotation = getByTestId(`point-annotation-${expectedId}`);
         expect(annotation).toBeTruthy();

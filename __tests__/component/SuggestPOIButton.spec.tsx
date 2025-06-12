@@ -67,7 +67,7 @@ describe('SuggestPOIButton', () => {
 
         // Debug: print the style if the test fails
         if (style.backgroundColor !== '#0017EE') {
-            // eslint-disable-next-line no-console
+
             console.log('Button style:', style);
         }
 

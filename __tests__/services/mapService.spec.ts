@@ -1,4 +1,3 @@
-import * as turf from '@turf/turf';
 import { fetchMaps, fetchClosestMap, fetchMap } from '../../src/services/mapService';
 import { apiClient } from '../../src/services/apiClient';
 
