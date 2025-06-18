@@ -5,22 +5,29 @@
 | Eslint | [![ESLint Linter](https://github.com/STU-GroupI/LiveMap/actions/workflows/linter.yml/badge.svg)](https://github.com/STU-GroupI/LiveMap/actions/workflows/linter.yml)  |
 | Jest   | [![Jest Code Coverage](https://github.com/STU-GroupI/LiveMap/actions/workflows/jest.yml/badge.svg)](https://github.com/STU-GroupI/LiveMap/actions/workflows/jest.yml) |
 
-## 🚩 Structure
+---
+## 🚩 Project Structure
 
 ```markdown
+# The most important directories and files in this project
+
+├── __tests__        # Test files 
 │── src/             # App code (create this directory)
-│   ├── Interfaces/  # Interfaces (TS)
 │   ├── components/  # Reusable UI components
-│   ├── screens/     # Screens
+│   ├── hooks/       # Custom hooks
+│   ├── interfaces/  # Interfaces (TS)
+│   ├── models/      # Data models that represent the structure of data
 │   ├── navigation/  # Navigation setup
-│   ├── store/       # State management?
-│   ├── models/
+│   ├── screens/     # Screen components (The base components that make up the app)
 │   ├── services/    # API calls
-│   ├── assets/      # Images, icons, fonts
+│   ├── state/       # State management utilities
+│   ├── util/        # Utility functions
 │── App.js           # Entry point
+├── .env.example     # Example environment variables
 ```
 
 
+---
 ## ⏳ Installation
 
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
@@ -29,14 +36,12 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 ### Step 1: Copy .env.example to your .env
 > [!IMPORTANT]
-> Make sure to copy the `.env.example` file to `.env` in the root of your project and clear the Metro cache!
+> Make sure to copy the `.env.example` file to `.env` in the root of your project and clear the Metro cache! The port of the baseURL can be different depending on your backend setup, so make sure to adjust it accordingly.
 
 ```sh
-A good development practice is to use environment variables to store sensitive information such as API keys, database URLs, etc. This way, you can keep your codebase clean and secure.
-Metro has a built-in cache system, meaning that if you change the `.env` file, you need to clear the cache for the changes to take effect. To do this, run the following command:
+Metro has a built-in cache system, meaning that if you change the `.env` file, you need to clear the cache for the changes to take effect. To do this, run the following command with an additional flag:
 
-```sh
-# Using Yarn (preferred)
+# Using Yarn
 yarn start --reset-cache
 
 # OR using npm
@@ -44,7 +49,7 @@ npm start -- --reset-cache
 ```
 
 ### Step 2: Start Metro
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Now that you've copied the .env, you will need to run **Metro**, The JavaScript build tool for React Native. Open a terminal in the project and stop all active processes.
 To start the Metro dev server, run the following command from the root of your React Native project:
 
 ```sh
@@ -67,6 +72,9 @@ npm run android
 # OR using Yarn
 yarn android
 ```
+
+> [!NOTE]
+> The building process can take a while depending on your hardware. It can take up to 30 minutes for a complete clean build. The reason for this is that React Native is a large framework and the build process needs to compile all the native code and dependencies. Subsequent builds will be faster as the build cache is used. After the main build it should only take around 1 minute to build the app again.
 
 #### iOS
 For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
@@ -106,6 +114,17 @@ When you want to forcefully reload, for example to reset the state of your app, 
 - **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
 
+---
+## 🗺️ Features
+This app is a React Native application that shows maps of recreational parks, which can be created in the backend service. A user can view the park and suggest possible changes in this app. The current features of the app include:
+- **Map View**: Displays a map of your current location and allows you to view parks.
+- **Points of interest Details**: When you click on a point of interest, you can see the details of marker, such as the name, description, and opening hours.
+- **Point of interest suggestions**: You can suggest changes to the point of interest, such as incorrect information or missing points of interest.
+- **Point of interest creation**: You can sugggest new points of interest by clicking on the map and filling in the details.
+- **Park switching**: You can switch between different parks to view their location and points of interest
+
+
+---
 ## Tests
 In this package all tests are handled with Jest. To run the tests, you can use the following command:
 
@@ -129,28 +148,42 @@ Each component requires a test file with the same name as the component file. Fo
 Besides the component tests, there are also tests for the services and functions which are handled the same way as the component tests.
 
 
+---
 ## 📦 Packages
-> [!IMPORTANT]
-> This list is not exhaustive and may be updated as the project progresses.
+Down below is a list of the most notable packages used in this project, along with their documentation links. These packages are essential for the functionality and features of the app. The full list can be found in the dependabot on GitHub, which we have enabled on all repositories.
 
-| Package        | Source                                                                                                                         |
-|----------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Reanimated     | [https://docs.swmansion.com/react-native-reanimated/ ](https://docs.swmansion.com/react-native-reanimated/)                    |
-| GestureHandler | [https://docs.swmansion.com/react-native-gesture-handler/docs/](https://docs.swmansion.com/react-native-gesture-handler/docs/) |
-| Navigation     | [https://reactnavigation.org/](https://reactnavigation.org/)                                                                   |
-| Screens        | [https://docs.swmansion.com/react-native-screens/](https://docs.swmansion.com/react-native-screens/)                           |
-| Gorham Sheets  | [https://github.com/gorhom/react-native-bottom-sheetl](https://github.com/gorhom/react-native-bottom-sheetl)                   |
-| Paper          | [https://reactnativepaper.com/](https://reactnativepaper.com/)                                                                 |
-| Maplibre       | [https://github.com/maplibre/maplibre-react-native](https://github.com/maplibre/maplibre-react-native)                         |
-| Turf           | [https://www.npmjs.com/package/@turf/turf](https://www.npmjs.com/package/@turf/turf)                                           |
-| Axios          | [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)                                                     |
+| Package                                          | Version | Source                                                                                                                                       |
+|--------------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| Reanimated                                       | ^3.17.1 | [https://docs.swmansion.com/react-native-reanimated/](https://docs.swmansion.com/react-native-reanimated/)                                   |
+| GestureHandler                                   | ^2.24.0 | [https://docs.swmansion.com/react-native-gesture-handler/docs/](https://docs.swmansion.com/react-native-gesture-handler/docs/)               |
+| Navigation                                       | ^7.0.15 | [https://reactnavigation.org/](https://reactnavigation.org/)                                                                                 |
+| Screens                                          | ^4.9.1  | [https://docs.swmansion.com/react-native-screens/](https://docs.swmansion.com/react-native-screens/)                                         |
+| Gorham Sheets                                    | ^5      | [https://github.com/gorhom/react-native-bottom-sheet](https://github.com/gorhom/react-native-bottom-sheet)                                   |
+| Paper                                            | ^5.13.1 | [https://reactnativepaper.com/](https://reactnativepaper.com/)                                                                               |
+| Maplibre                                         | ^10.1.0 | [https://github.com/maplibre/maplibre-react-native](https://github.com/maplibre/maplibre-react-native)                                       |
+| Turf                                             | ^7.2.0  | [https://www.npmjs.com/package/@turf/turf](https://www.npmjs.com/package/@turf/turf)                                                         |
+| Axios                                            | ^1.8.3  | [https://www.npmjs.com/package/axios](https://www.npmjs.com/package/axios)                                                                   |
+| @react-native-community/geolocation              | ^3.4.0  | [https://github.com/react-native-geolocation/react-native-geolocation](https://github.com/react-native-geolocation/react-native-geolocation) |
+| @react-native-vector-icons/material-design-icons | ^12.0.0 | [https://github.com/oblador/react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)                                 |
+| @react-navigation/bottom-tabs                    | ^7.3.14 | [https://reactnavigation.org/docs/bottom-tab-navigator/](https://reactnavigation.org/docs/bottom-tab-navigator/)                             |
+| @react-navigation/native-stack                   | ^7.2.1  | [https://reactnavigation.org/docs/stack-navigator/](https://reactnavigation.org/docs/stack-navigator/)                                       |
+| react-native-mmkv                                | ^3.2.0  | [https://github.com/mrousavy/react-native-mmkv](https://github.com/mrousavy/react-native-mmkv)                                               |
+| react-native-safe-area-context                   | ^5.3.0  | [https://github.com/th3rdwave/react-native-safe-area-context](https://github.com/th3rdwave/react-native-safe-area-context)                   |
+| react-native-vector-icons                        | ^10.2.0 | [https://github.com/oblador/react-native-vector-icons](https://github.com/oblador/react-native-vector-icons)                                 |
+| react-hook-form                                  | ^7.55.0 | [https://react-hook-form.com/](https://react-hook-form.com/)                                                                                 |
+| @tanstack/react-query                            | ^5.76.1 | [https://tanstack.com/query/latest](https://tanstack.com/query/latest)                                                                       |
+| @tanstack/query-async-storage-persister          | ^5.76.1 | [https://tanstack.com/query/latest/docs/react/persist](https://tanstack.com/query/latest/docs/react/persist)                                 |
+| @tanstack/query-sync-storage-persister           | ^5.76.2 | [https://tanstack.com/query/latest/docs/react/persist](https://tanstack.com/query/latest/docs/react/persist)                                 |
+| @tanstack/react-query-persist-client             | ^5.76.1 | [https://tanstack.com/query/latest/docs/react/persist](https://tanstack.com/query/latest/docs/react/persist)                                 |
 
 
+---
 ## ⛓️‍💥 Troubleshooting
 
 If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
 
+---
 ## 🧪 Learn More
 
 To learn more about React Native, take a look at the following resources:
