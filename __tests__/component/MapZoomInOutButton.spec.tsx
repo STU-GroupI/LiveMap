@@ -1,5 +1,5 @@
 import { render, fireEvent } from '@testing-library/react-native';
-import MapZoomInOutButton from './MapZoomInOutButton.tsx';
+import MapZoomInOutButton from '../../src/components/map/MapZoomInOutButton.tsx';
 
 jest.mock('react-native-paper', () => {
     const React = require('react');
